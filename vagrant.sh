@@ -14,7 +14,7 @@ echo -e "
 apt-get -qq update
 apt-get -y install software-properties-common
 add-apt-repository -u -y ppa:elementary-os/os-patches
-add-apt-repository -u -y ppa:elementary-os/stable
+add-apt-repository -u -y ppa:elementary-os/daily
 apt-get install -y elementary-os-overlay
 apt-get update
 apt-get -y dist-upgrade
@@ -26,6 +26,7 @@ apt-get -q -y install git devscripts debhelper dctrl-tools dpkg-dev genisoimage 
 git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme
 debuild -S -sd
 
+sed -i "s/@CHANNEL/daily/" etc/terraform.conf
 
 echo -e "
 #----------------------#
