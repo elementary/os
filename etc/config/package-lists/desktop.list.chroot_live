@@ -1,0 +1,16 @@
+#if ARCHITECTURES amd64
+linux-signed-generic
+linux-signed-image-generic
+#endif
+
+bcmwl-kernel-source
+#elementary-live-settings
+#distinst
+#libdistinst
+cifs-utils
+gparted
+lupin-casper
+ubiquity-frontend-gtk
+ubiquity-slideshow-elementary
+ubiquity-ubuntu-artwork
+xfsprogs

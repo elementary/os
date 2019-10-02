@@ -1,0 +1,31 @@
+#!/usr/bin/python2
+import datetime
+import os
+
+info = 'elementary OS '
+
+cf = open("terraform.conf", "r")
+config = cf.read()
+cf.close()
+
+version = config.split('\nVERSION="')[1]
+version = version.split('"')[0]
+
+codename = config.split('\nCODENAME="')[1]
+codename = codename.split('"')[0]
+codename = codename.capitalize()
+
+channel = config.split('CHANNEL="')[1]
+channel = channel.split('"')[0]
+channel = channel.capitalize()
+
+arch = config.split('ARCH="')[1]
+arch = arch.split('"')[0]
+
+date = datetime.datetime.now().strftime("%Y%m%d")
+
+info = info + version + " \"" + codename + "\" - " + channel + " " + arch + " (" + date + ")\n"
+
+f = open("binary/.disk/info", "w")
+f.write(info)
+f.close()

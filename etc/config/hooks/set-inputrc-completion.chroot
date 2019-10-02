@@ -1,0 +1,10 @@
+#!/bin/sh
+# Description: Enable case-insensitive tab completion in /etc/inputrc
+
+echo "P: Begin executing set-inputrc-completion chroot hook..."
+
+cat >> /etc/inputrc <<'EOF'
+
+# Case-insensitive tab completion
+set completion-ignore-case on
+EOF

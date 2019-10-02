@@ -1,0 +1,2 @@
+deb http://ppa.launchpad.net/elementary-os/os-patches/ubuntu @BASECODENAME main 
+deb-src http://ppa.launchpad.net/elementary-os/os-patches/ubuntu @BASECODENAME main 

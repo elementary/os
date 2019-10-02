@@ -1,0 +1,6 @@
+#!/bin/sh
+# Description: Create a symbolic link from systemd to resolv.conf
+
+echo "P: Begin executing link-resolv-conf chroot hook..."
+
+ln -nsf /lib/systemd/resolv.conf /etc/resolv.conf
