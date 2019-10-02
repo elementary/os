@@ -26,7 +26,7 @@ apt-get -q -y install git devscripts debhelper dctrl-tools dpkg-dev genisoimage 
 git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme
 debuild -S -sd
 
-sed -i "s/@CHANNEL/daily/" etc/terraform.conf
+sed -i "s/CHANNEL=\"stable\"/CHANNEL=\"daily\"/" etc/terraform.conf
 
 echo -e "
 #----------------------#

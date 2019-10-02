@@ -2,6 +2,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 CHANNEL="$1"
+VERSION="$2"
 
 echo -e "
 #----------------------#
@@ -24,7 +25,8 @@ apt-get -q -y install git devscripts debhelper dctrl-tools dpkg-dev genisoimage 
 git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme
 debuild -S -sd
 
-sed -i "s/@CHANNEL/$CHANNEL/" etc/terraform.conf
+sed -i "s/CHANNEL=\"stable\"/CHANNEL=\"$CHANNEL\"/" etc/terraform.conf
+sed -i "s/VERSION=\"5.0\"/VERSION=\"$VERSION\"/" etc/terraform.conf
 
 echo -e "
 #----------------------#
