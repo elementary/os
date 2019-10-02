@@ -2,7 +2,7 @@ name: Stable Builder
 on:
   push:
     # create an official stable build based on a pushed tag.
-    - tags:
+    tags:
       - '*'
 jobs:
   build:
