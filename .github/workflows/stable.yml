@@ -1,14 +1,16 @@
 name: Stable Builder
+
 on:
   push:
-    # create an official stable build based on a pushed tag.
     tags:
       - '*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Build
-      # the ref here is the triggered tag, eg. "5.1"
-      run: ./workflows.sh stable "$GITHUB_REF"
+      - name: Clone
+        uses: actions/checkout@v1
+
+      - name: Build
+        run: ./workflows.sh stable "$GITHUB_REF"
