@@ -31,13 +31,15 @@ apt-get -q -y install --no-install-recommends \
     live-build \
     squashfs-tools \
     syslinux \
-    syslinux-utils
+    syslinux-utils \
+    syslinux-common
 
 # manually build this for now, until it's builds are automated.
 git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme || exit 1
 debuild -us -uc -b
 dpkg-deb -b debian/syslinux-themes-elementary-juno
 dpkg -i debian/syslinux-themes-elementary-juno.deb
+cd .. || exit 1
 
 sed -i "s/CHANNEL=\"stable\"/CHANNEL=\"$CHANNEL\"/" ./etc/terraform.conf
 sed -i "s/VERSION=\"5.0\"/VERSION=\"$VERSION\"/" ./etc/terraform.conf
