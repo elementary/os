@@ -1,5 +1,10 @@
 name: Daily Builder
+
 on:
+  push:
+    branches:
+      - add-build-system
+
   schedule:
     - cron:  '0 0 * * *'
 
@@ -7,6 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Clone
+      uses: actions/checkout@v1
+
     - name: Build
       run: ./workflows.sh daily
