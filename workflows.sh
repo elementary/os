@@ -1,6 +1,9 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
+echo: "pwd: $(pwd)"
+ls
+
 CHANNEL="$1"
 VERSION="$2"
 
@@ -33,4 +36,4 @@ echo -e "
 # RUN TERRAFORM SCRIPT #
 #----------------------#
 "
-./terraform.sh
+sudo ./terraform.sh
