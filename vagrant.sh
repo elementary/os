@@ -23,13 +23,10 @@ wget -q --show-progress --progress=bar:force:noscroll  2>&1 -O /etc/apt/trusted.
 apt-get install --no-install-recommends -y elementary-sdk
 apt-get -q -y install git devscripts debhelper dctrl-tools dpkg-dev genisoimage gfxboot-theme-ubuntu isolinux live-build squashfs-tools syslinux syslinux-utils
 
-git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme
-debuild -S -sd
-
 sed -i "s/CHANNEL=\"stable\"/CHANNEL=\"daily\"/" etc/terraform.conf
 
 # manually build this for now, until it's builds are automated.
-git clone --depth=1 https://github.com/elementary/syslinux-theme.git && (cd syslinux-theme || exit 1)
+git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme || exit 1
 debuild -us -uc -b
 dpkg-deb -b debian/syslinux-themes-elementary-juno
 dpkg -i debian/syslinux-themes-elementary-juno.deb

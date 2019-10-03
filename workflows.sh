@@ -34,7 +34,7 @@ apt-get -q -y install --no-install-recommends \
     syslinux-utils
 
 # manually build this for now, until it's builds are automated.
-git clone --depth=1 https://github.com/elementary/syslinux-theme.git && (cd syslinux-theme || exit 1)
+git clone --depth=1 https://github.com/elementary/syslinux-theme.git && cd syslinux-theme || exit 1
 debuild -us -uc -b
 dpkg-deb -b debian/syslinux-themes-elementary-juno
 dpkg -i debian/syslinux-themes-elementary-juno.deb
