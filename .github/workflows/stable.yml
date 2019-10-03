@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Build
-        run: ./workflows.sh stable "$GITHUB_REF"
+        run: sudo ./workflows.sh stable "$GITHUB_REF"

@@ -16,4 +16,4 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Build
-      run: ./workflows.sh daily
+      run: sudo ./workflows.sh daily
