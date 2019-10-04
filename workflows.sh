@@ -3,6 +3,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 CHANNEL="$1"
 VERSION="$2"
+KEY="$3"
+SECRET="$4"
+ENDPOINT="$5"
+BUCKET="$6"
 
 echo -e "
 #----------------------#
@@ -69,8 +73,8 @@ SHASUM="$(basename "$SHAPATH")"
 MD5PATH="$(find builds -name "*.md5.txt")"
 MD5="$(basename "$MD5PATH")"
 
-python upload.py "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}" "$ISOPATH" "$ISO"
-python upload.py "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}" "$SHAPATH" "$SHASUM"
-python upload.py "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}" "$MD5PATH" "$MD5"
+python upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO"
+python upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM"
+python upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5"
 
 
