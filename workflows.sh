@@ -50,3 +50,38 @@ echo -e "
 #----------------------#
 "
 sudo bash ./terraform.sh
+
+echo -e "
+#------------#
+# UPLOAD ISO #
+#------------#
+"
+
+# get the paths & filenames of the files to upload
+ISOPATH="$(find builds -name "*.iso")"
+ISO="$(basename "$ISOPATH")"
+SHAPATH="$(find builds -name "*.sha256.txt")"
+SHASUM="$(basename "$SHAPATH")"
+MD5PATH="$(find builds -name "*.md5.txt")"
+MD5="$(basename "$MD5PATH")"
+
+upload () {
+  # set date and content type for related headers
+  DATE="$(date -R)"
+  CONTENT_TYPE="$3"
+  # Create signature for upload
+  stringToSign="PUT\n\n${CONTENT_TYPE}\n${DATE}\n/${{ secrets.bucket }}/$1"
+  signature="$(echo -en "${stringToSign}" | openssl sha1 -hmac "${{ secrets.secret }}" -binary | base64)"
+  curl -D- -X PUT -T "$1" \
+    -H "Host: ${{ secrets.bucket }}.${{ secrets.endpoint }}" \
+    -H "Date: ${DATE}" \
+    -H "Content-Type: ${CONTENT_TYPE}" \
+    -H "Authorization: AWS ${{ secrets.key }}:${signature}" \
+    -L "http://${{ secrets.bucket }}.${{ secrest.endpoint }}/$2" --post301
+}
+
+upload "$ISOPATH" "$ISO" "application/octet-stream"
+upload "$SHAPATH" "$SHASUM" "text/plain"
+upload "$MD5PATH" "$MD5" "text/plain"
+
+
