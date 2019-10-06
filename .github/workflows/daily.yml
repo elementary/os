@@ -3,8 +3,8 @@ name: Daily Builder
 on:
   push:
     branches:
-      - add-build-system
-
+    # run daily builds whenever a branch is created with the "build" prefix
+      - build/*
   schedule:
     - cron:  '0 0 * * *'
 

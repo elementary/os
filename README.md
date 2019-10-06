@@ -47,8 +47,4 @@ To build an elementary OS image you'll need to:
     ./terraform.sh
     ```
 
- 5) When done, your images will be in the builds folder
-
-## Contributing
-
-## License
+ 5) When done, your images will be in the builds folder.
