@@ -67,11 +67,12 @@ pip install boto3
 
 # get the paths & filenames of the files to upload
 ISOPATH="$(find builds -name "*.iso")"
-ISO="$(basename "$ISOPATH")"
+ISO="$CHANNEL/$(basename "$ISOPATH")"
+ISOTAG="$(basename "$ISOPATH" .iso)"
 SHAPATH="$(find builds -name "*.sha256.txt")"
-SHASUM="$(basename "$SHAPATH")"
+SHASUM="$CHANNEL/$ISOTAG.sha256.txt"
 MD5PATH="$(find builds -name "*.md5.txt")"
-MD5="$(basename "$MD5PATH")"
+MD5="$CHANNEL/$ISOTAG.md5.txt"
 
 python upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO"
 python upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM"
