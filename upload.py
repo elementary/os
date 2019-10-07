@@ -18,6 +18,8 @@ client = session.client('s3',
                         aws_access_key_id = KEY,
                         aws_secret_access_key = SECRET)
 
+client.set_acl('public-read')
+
 client.upload_file(FILEPATH, # Path to local file
                    BUCKET,   # Name of Space
                    FILENAME) # Name for remote file

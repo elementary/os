@@ -4,7 +4,7 @@ on:
   push:
     branches:
     # run daily builds whenever a branch is created with the "build" prefix
-      - build/*
+      - add-build-system
   schedule:
     - cron:  '0 0 * * *'
 
