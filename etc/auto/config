@@ -28,7 +28,7 @@ sed -i "s/@BASECODENAME/$BASECODENAME/" config/archives/*.list
 
 mkdir -p config/includes.chroot/boot/efi
 if [ "$ARCH" = "amd64" ]; then
-    echo "fs0:\EFI\ubuntu\grubx64.efi﻿" > config/includes.chroot/boot/efi/startup.nsh
+    echo "fs0:\EFI\ubuntu\grubx64.efi" > config/includes.chroot/boot/efi/startup.nsh
 elif [ "$ARCH" = "i386" ]; then
-    echo "fs0:\EFI\ubuntu\grubx32.efi﻿" > config/includes.chroot/boot/efi/startup.nsh
+    echo "fs0:\EFI\ubuntu\grubx32.efi" > config/includes.chroot/boot/efi/startup.nsh
 fi

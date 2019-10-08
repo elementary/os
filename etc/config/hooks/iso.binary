@@ -35,6 +35,8 @@ rm -rf binary/casper/vmlinuz-*
 rm -rf binary/casper/initrd.*
 cp chroot/boot/$(ls -1 chroot/boot | grep ^vmlinuz | sort --version-sort | tail -n 1) binary/casper/vmlinuz
 cp chroot/boot/$(ls -1 chroot/boot | grep ^initrd | sort --version-sort | tail -n 1) binary/casper/initrd.lz
+# link initrd to initrd.lz for efi boot
+ln -sfn binary/casper/initrd.lz binary/casper/initrd
 
 # customization
 echo "https://elementary.io/$CODENAME" > binary/.disk/release_notes_url

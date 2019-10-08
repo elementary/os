@@ -9,5 +9,4 @@ xserver-xorg-core
 xserver-xorg-input-all
 xserver-xorg-input-evdev
 xserver-xorg-input-libinput
-#xserver-xorg-input-synaptics
 xserver-xorg-input-wacom
