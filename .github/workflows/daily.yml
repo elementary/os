@@ -1,10 +1,9 @@
-name: Daily Builder
+name: daily
 
 on:
   push:
     branches:
-    # run daily builds whenever a branch is created with the "build" prefix
-      - add-build-system
+      - master
   schedule:
     - cron:  '0 0 * * *'
 
