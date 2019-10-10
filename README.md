@@ -28,9 +28,11 @@ To build an elementary OS image you'll need to:
     * `dpkg-dev`
     * `genisoimage`
     * `gfxboot-theme-ubuntu`
+    * `isolinux`
     * `live-build`
     * `squashfs-tools`
     * `syslinux`
+    * `syslinux-utils`
     * `zsync`
 
  2) Clone this project & `cd` into it:
