@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "P: Begin executing iso binary hook..."
+
+source ./terraform.conf
+
+# mount ubuntu's iso
+mkdir -p mnt
+mount -o loop,ro ubuntu.iso mnt
+
+# copy everything over except the rootfs
+rsync \
+    -a \
+    --exclude=/.disk/info \
+    --exclude=/autorun.inf \
+    --exclude=/casper/* \
+    --exclude=/dists \
+    --exclude=/install \
+    --exclude=/isolinux \
+    --exclude=/md5sum.txt \
+    --exclude=/pics \
+    --exclude=/pool \
+    --exclude=/preseed \
+    --exclude=/ubuntu \
+    --exclude=/wubi.exe \
+    mnt/ \
+    binary
+
+# unmount ubuntu's iso and delete mount point dir
+umount mnt
+rm -rf mnt
+
+# replace their init with ours
+rm -rf binary/casper/vmlinuz-*
+rm -rf binary/casper/initrd.*
+cp chroot/boot/$(ls -1 chroot/boot | grep ^vmlinuz | sort --version-sort | tail -n 1) binary/casper/vmlinuz
+cp chroot/boot/$(ls -1 chroot/boot | grep ^initrd | sort --version-sort | tail -n 1) binary/casper/initrd.lz
+
+# customization
+echo "https://elementary.io/$CODENAME" > binary/.disk/release_notes_url
+sed -i "s/Ubuntu/$NAME/"                              binary/boot/grub/loopback.cfg
+sed -i "s/vmlinuz.efi/vmlinuz/"                       binary/boot/grub/loopback.cfg
+sed -i "s/\\/casper\\/initrd/\\/casper\\/initrd.lz/"  binary/boot/grub/grub.cfg
+sed -i "s/Ubuntu/$NAME/"                              binary/boot/grub/grub.cfg
+sed -i "s/vmlinuz.efi/vmlinuz/"                       binary/boot/grub/grub.cfg
+sed -i "s/Ubuntu/$NAME/g"                             binary/isolinux/*.tr # fix translations
+sed -i "s/Ubuntu/$NAME/"                              binary/README.diskdefines
+sed -i "s/$BASEVERSION/$VERSION/"                     binary/README.diskdefines
+sed -i "s/LTS//"                                      binary/README.diskdefines
+sed -i "s/\".*\"/\"$CODENAME\"/"                      binary/README.diskdefines

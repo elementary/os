@@ -1,0 +1,15 @@
+#if ARCHITECTURES amd64
+linux-signed-generic-hwe-18.04
+linux-signed-image-generic-hwe-18.04
+#endif
+
+bcmwl-kernel-source
+#distinst
+#libdistinst
+cifs-utils
+gparted
+lupin-casper
+ubiquity-frontend-gtk
+ubiquity-slideshow-elementary
+ubiquity-ubuntu-artwork
+xfsprogs

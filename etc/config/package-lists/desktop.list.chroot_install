@@ -1,0 +1,12 @@
+# elementary meta packages
+elementary-desktop
+elementary-minimal
+elementary-standard
+# delete the following someday maybe
+linux-generic
+xserver-xorg
+xserver-xorg-core
+xserver-xorg-input-all
+xserver-xorg-input-evdev
+xserver-xorg-input-libinput
+xserver-xorg-input-wacom

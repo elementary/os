@@ -1,0 +1,34 @@
+#! /bin/sh
+set -e
+
+. ./terraform.conf
+
+HOOKS="update-apt-file-cache update-apt-xapian-index update-mlocate-database remove-dbus-machine-id remove-openssh-server-host-keys remove-udev-persistent-rules"
+
+lb config noauto \
+    --architecture "$ARCH" \
+    --binary-images iso-hybrid \
+    --bootloader syslinux \
+    --keyring-packages ubuntu-keyring \
+    --build-with-chroot false \
+    --distribution "$BASECODENAME" \
+    --hooks "$HOOKS" \
+    --iso-application "$NAME" \
+    --iso-volume "$NAME" \
+    --memtest none \
+    --mode ubuntu \
+    --parent-archive-areas "main restricted universe multiverse" \
+    --source false \
+    --syslinux-theme elementary-@SYSLINUX \
+    --zsync false
+
+# replace channel and suite
+sed -i "s/@CHANNEL/$CHANNEL/" config/archives/*.list
+sed -i "s/@BASECODENAME/$BASECODENAME/" config/archives/*.list
+
+mkdir -p config/includes.chroot/boot/efi
+if [ "$ARCH" = "amd64" ]; then
+    echo "fs0:\EFI\ubuntu\grubx64.efi" > config/includes.chroot/boot/efi/startup.nsh
+elif [ "$ARCH" = "i386" ]; then
+    echo "fs0:\EFI\ubuntu\grubx32.efi" > config/includes.chroot/boot/efi/startup.nsh
+fi
