@@ -1,0 +1,24 @@
+name: daily
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run a multi-line script
+      run: |
+        mkdir artifacts
+        docker run --privileged -i -v /proc:/proc -v /artifacts:/artifacts -v ${PWD}:/working_dir -w /working_dir debian:latest sh < workflow.sh
+    - uses: actions/upload-artifact@master
+      with:
+        name: output
+        path: /artifacts

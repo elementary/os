@@ -1,0 +1,6 @@
+label live-@FLAVOUR@
+	menu label ^Try or install elementary OS
+	menu default
+	linux /casper/vmlinuz
+	initrd /casper/initrd.lz
+	append @APPEND_LIVE@

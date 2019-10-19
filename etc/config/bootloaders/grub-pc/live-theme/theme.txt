@@ -1,0 +1,56 @@
+desktop-image: "../splash.png"
+title-color: "#ffffff"
+title-font: "DejaVu Sans Bold 16"
+message-font: "Unifont Regular 16"
+
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
+#help bar at the bottom
++ label {
+        top = 100%-50
+        left = 0
+        width = 100%
+        height = 20
+        text = "@KEYMAP_SHORT@"
+        align = "center"
+        color = "#ffffff"
+	font = "DejaVu Sans Bold 14"
+}
+
+#boot menu
++ boot_menu {
+	left = 50%-150
+	width = 500
+	top = 50%+100
+	height = 300
+
+	item_font = "DejaVu Sans Bold 14"
+	item_color = "#999"
+	selected_item_font = "DejaVu Sans Bold 14"
+	selected_item_color= "#fff"
+
+	item_height = 26
+	item_padding = 0
+	item_icon_space = 0
+	item_spacing = 1
+	scrollbar = false
+}
+
+#progress bar
++ progress_bar {
+        id = "__timeout__"
+        left = 15%
+        top = 100%-80
+        height = 16
+        width = 70%
+        font = "DejaVu Sans Regular 14"
+        text_color = "#000000"
+        fg_color = "#ffffff"
+        bg_color = "#a8a8a8"
+        border_color = "#ffffff"
+        text = "@TIMEOUT_NOTIFICATION_LONG@"
+}

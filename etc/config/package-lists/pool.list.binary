@@ -1,0 +1,28 @@
+b43-fwcutter
+bcmwl-kernel-source
+dkms
+intel-microcode
+iucode-tool
+lupin-support
+mouseemu
+setserial
+user-setup
+
+efibootmgr
+grub-efi
+secureboot-db
+
+#if ARCHITECTURES amd64
+grub-efi-amd64
+grub-efi-amd64-bin
+grub-efi-amd64-signed
+shim
+shim-signed
+#endif
+
+#if ARCHITECTURES i386
+grub-efi-ia32
+grub-efi-ia32-bin
+sl-modem-daemon
+#endif
+

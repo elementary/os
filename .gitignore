@@ -1,5 +1,4 @@
-.vagrant
-ubuntu-*.log
 .DS_Store
 tmp
-builds
+artifacts
+*~
