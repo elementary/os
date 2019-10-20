@@ -37,11 +37,11 @@ The following example uses Docker and assumes you have Docker correctly installe
     mkdir artifacts
     docker run --privileged -i \
         -v /proc:/proc \
-        -v /artifacts:/artifacts \
+        -v ${PWD}/artifacts:/artifacts \
         -v ${PWD}:/working_dir \
         -w /working_dir \
         debian:latest \
-        /bin/bash -s etc/terraform.conf < workflows.sh
+        /bin/bash -s etc/terraform.conf < build.sh
     ```
 
  4) When done, your image will be in the `artifacts` folder.
