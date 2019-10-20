@@ -1,3 +1,4 @@
+title-text: ""
 desktop-image: "../splash.png"
 title-color: "#ffffff"
 title-font: "DejaVu Sans Bold 16"
