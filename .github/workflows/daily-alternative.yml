@@ -22,7 +22,7 @@ jobs:
         mkdir artifacts
         docker run --privileged -i \
             -v /proc:/proc \
-            -v /artifacts:/artifacts \
+            -v ${PWD}/artifacts:/artifacts \
             -v ${PWD}:/working_dir \
             -w /working_dir \
             debian:latest \
