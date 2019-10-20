@@ -6,6 +6,8 @@ SECRET="$3"
 ENDPOINT="$4"
 BUCKET="$5"
 
+source "$CONFIG_FILE"
+
 echo -e "
 #----------------------#
 # INSTALL DEPENDENCIES #
