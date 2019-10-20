@@ -17,6 +17,35 @@
 
 ---
 
+## Building Locally
+
+As elementary OS is built with the Debian version of `live-build`, not the Ubuntu patched version, it's easiest to build an elementary .iso in a Debian VM or container. This prevents messing up your host system too.
+
+The following example uses Docker and assumes you have Docker correctly installed and set up:
+
+ 1) Clone this project & `cd` into it:
+
+    ```
+    git clone https://github.com/elementary/os && cd os
+    ```
+
+ 2) Configure the channel in the `etc/terraform.conf` (stable, daily).
+
+ 3) Run the build:
+
+    ```
+    mkdir artifacts
+    docker run --privileged -i \
+        -v /proc:/proc \
+        -v /artifacts:/artifacts \
+        -v ${PWD}:/working_dir \
+        -w /working_dir \
+        debian:latest \
+        /bin/bash -s etc/terraform.conf < workflows.sh
+    ```
+
+ 4) When done, your image will be in the `artifacts` folder.
+
 ### The new way
 
 The most significant difference between these .iso build tools and the old tools (pre 5.1) is that pure, unadulterated Debian `live-build` is used instead of the Ubuntu fork. While the Ubuntu fork obviously worked, there have been a lot of nice additions to the upstream version that meant we could remove a lot of the hacky bits from the old scripts.
