@@ -1,5 +1,6 @@
 title-text: ""
-desktop-image: "../splash.png"
+desktop-image: "background.png"
+desktop-color: "#000000"
 title-color: "#ffffff"
 title-font: "DejaVu Sans Bold 16"
 message-font: "Unifont Regular 16"
@@ -9,6 +10,13 @@ terminal-top: "0"
 terminal-width: "100%"
 terminal-height: "100%"
 terminal-border: "0"
+
+# Logo image
++ image {
+	left = 50%-50
+	top = 50%-50
+    file = "logo.png"
+}
 
 #help bar at the bottom
 + label {
