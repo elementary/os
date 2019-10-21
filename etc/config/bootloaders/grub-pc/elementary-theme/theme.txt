@@ -49,17 +49,13 @@ terminal-border: "0"
 	scrollbar = false
 }
 
-#progress bar
-+ progress_bar {
-        id = "__timeout__"
-        left = 15%
-        top = 100%-80
-        height = 16
-        width = 70%
-        font = "DejaVu Sans Regular 14"
-        text_color = "#000000"
-        fg_color = "#ffffff"
-        bg_color = "#a8a8a8"
-        border_color = "#ffffff"
-        text = "@TIMEOUT_NOTIFICATION_LONG@"
+# Show a countdown message using the label component
++ label {
+  top = 82%
+  left = 35%
+  width = 30%
+  align = "center"
+  id = "__timeout__"
+  text = "Booting in %d seconds"
+  color = "#f6f6f6"
 }
