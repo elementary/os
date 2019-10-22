@@ -20,33 +20,33 @@
 
 ## Building Locally
 
-To build an elementary OS image you'll need to:
+As elementary OS is built with the Debian version of `live-build`, not the Ubuntu patched version, it's easiest to build an elementary .iso in a Debian VM or container. This prevents messing up your host system too.
 
- 1) Make sure you have the following dependencies installed:
+The following example uses Docker and assumes you have Docker correctly installed and set up:
 
-    * `dctrl-tools`
-    * `dpkg-dev`
-    * `genisoimage`
-    * `gfxboot-theme-ubuntu`
-    * `isolinux`
-    * `live-build`
-    * `squashfs-tools`
-    * `syslinux`
-    * `syslinux-utils`
-    * `zsync`
-
- 2) Clone this project & `cd` into it:
+ 1) Clone this project & `cd` into it:
 
     ```
     git clone https://github.com/elementary/os && cd os
     ```
 
- 3) Configure the channel in the `etc/terraform.conf` (stable, daily).
+ 2) Configure the channel in the `etc/terraform.conf` (stable, daily).
 
- 4) Run the build script as a root user:
+ 3) Run the build:
 
     ```
-    ./terraform.sh
+    mkdir artifacts
+    docker run --privileged -i \
+        -v /proc:/proc \
+        -v ${PWD}/artifacts:/artifacts \
+        -v ${PWD}:/working_dir \
+        -w /working_dir \
+        debian:latest \
+        /bin/bash -s etc/terraform.conf < build.sh
     ```
 
- 5) When done, your images will be in the builds folder.
+ 4) When done, your image will be in the `artifacts` folder.
+
+## Further Information
+
+More information about the concepts behind `live-build` and the technical decisions made to arrive at this set of tools to build an .iso can be found [on the wiki](https://github.com/elementary/os/wiki/Building-iso-Images).

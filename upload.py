@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import boto3
 import sys
@@ -22,3 +22,4 @@ client.upload_file(FILEPATH, # Path to local file
                    BUCKET,   # Name of Space
                    FILENAME, # Name for remote file
                    ExtraArgs={'ACL':'public-read'})
+

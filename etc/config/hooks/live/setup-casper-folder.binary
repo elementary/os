@@ -1,0 +1,12 @@
+#!/bin/sh
+
+mkdir casper || true
+mv boot/filesystem.squashfs casper/filesystem.squashfs
+mv boot/filesystem.size casper/filesystem.size
+mv boot/initrd.img-* casper/initrd.lz
+mv boot/vmlinuz-* casper/vmlinuz
+mv boot/filesystem.packages-remove casper/filesystem.manifest-remove
+mv boot/filesystem.packages casper/filesystem.manifest
+
+mkdir live || true
+cp casper/vmlinuz live/vmlinuz

@@ -10,9 +10,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
     steps:
-    - name: Clone
+    - name: Clone build scripts
       uses: actions/checkout@v1
 
-    - name: Build
-      run: sudo ./workflows.sh daily 5.0 "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+    - name: Build and upload daily .iso
+      run: |
+        mkdir /artifacts
+        ./workflows.sh etc/terraform-juno-daily-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"

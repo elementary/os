@@ -5,8 +5,6 @@ intel-microcode
 iucode-tool
 lupin-support
 mouseemu
-oem-config
-oem-config-gtk
 setserial
 user-setup
 
@@ -27,3 +25,4 @@ grub-efi-ia32
 grub-efi-ia32-bin
 sl-modem-daemon
 #endif
+

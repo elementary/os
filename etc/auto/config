@@ -1,34 +1,57 @@
-#! /bin/sh
+#!/bin/sh
+
 set -e
 
 . ./terraform.conf
 
-HOOKS="update-apt-file-cache update-apt-xapian-index update-mlocate-database remove-dbus-machine-id remove-openssh-server-host-keys remove-udev-persistent-rules"
+# HWE starts with y, Y or 1?
+if [ "$HWE" = "yes" ]; then
+    KERNEL_FLAVORS="generic-hwe-${BASEVERSION}"
+    XORG_HWE="xserver-xorg-hwe-${BASEVERSION}"
+else
+    KERNEL_FLAVORS="generic"
+fi
 
 lb config noauto \
-    --architecture "$ARCH" \
-    --binary-images iso-hybrid \
-    --bootloader syslinux \
-    --keyring-packages ubuntu-keyring \
-    --build-with-chroot false \
+    --architectures "$ARCH" \
+    --mode ubuntu \
+    --initramfs none \
     --distribution "$BASECODENAME" \
-    --hooks "$HOOKS" \
+    --parent-distribution "$BASECODENAME" \
+    --archive-areas "main restricted universe multiverse" \
+    --parent-archive-areas "main restricted universe multiverse" \
+    --linux-packages linux-image \
+    --linux-flavours "$KERNEL_FLAVORS" \
+    --bootappend-live "boot=casper maybe-ubiquity quiet splash" \
+    --mirror-bootstrap "$MIRROR_URL" \
+    --parent-mirror-bootstrap "$MIRROR_URL" \
+    --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
+    --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
+    --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
+    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --keyring-packages ubuntu-keyring \
+    --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
+    --uefi-secure-boot enable \
+    --binary-images iso-hybrid \
     --iso-application "$NAME" \
     --iso-volume "$NAME" \
-    --memtest none \
-    --mode ubuntu \
-    --parent-archive-areas "main restricted universe multiverse" \
-    --source false \
-    --syslinux-theme elementary-@SYSLINUX \
-    --zsync false
+    --firmware-binary false \
+    --firmware-chroot false \
+    --zsync false \
+    "${@}"
 
 # replace channel and suite
-sed -i "s/@CHANNEL/$CHANNEL/" config/archives/*.list
-sed -i "s/@BASECODENAME/$BASECODENAME/" config/archives/*.list
+sed -i "s/@CHANNEL/$CHANNEL/" config/archives/*.list*
+sed -i "s/@BASECODENAME/$BASECODENAME/" config/archives/*.list*
 
-mkdir -p config/includes.chroot/boot/efi
-if [ "$ARCH" = "amd64" ]; then
-    echo "fs0:\EFI\ubuntu\grubx64.efi" > config/includes.chroot/boot/efi/startup.nsh
-elif [ "$ARCH" = "i386" ]; then
-    echo "fs0:\EFI\ubuntu\grubx32.efi" > config/includes.chroot/boot/efi/startup.nsh
-fi
+DATE=$(date +%Y%m%d)
+sed -i "s/@CHANNEL/$CHANNEL/" config/includes.binary/.disk/info
+sed -i "s/@CODENAME/$CODENAME/" config/includes.binary/.disk/info
+sed -i "s/@ARCH/$ARCH/" config/includes.binary/.disk/info
+sed -i "s/@DISTRO_NAME/$NAME/" config/includes.binary/.disk/info
+sed -i "s/@VERSION/$VERSION/" config/includes.binary/.disk/info
+sed -i "s/@DATE/$DATE/" config/includes.binary/.disk/info
+
+sed -i "s/@XORG_HWE/$XORG_HWE/" config/package-lists/desktop.list.chroot_install
