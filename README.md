@@ -12,7 +12,8 @@
 </div>
 
 <p align="center">
-  <img src="https://github.com/elementary/os/workflows/daily-alternative/badge.svg" alt="Daily">
+  <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
+  <img src="https://github.com/elementary/os/workflows/daily/badge.svg" alt="Daily">
 </p>
 
 ---
