@@ -62,6 +62,9 @@ build () {
     # Make sure conffile specified as arg has correct name
     cp -f "$BASE_DIR"/"$CONFIG_PATH" terraform.conf
 
+    # Symlink chosen package lists to where live-build will find them
+    ln -s "package-lists.$PACKAGE_LISTS_SUFFIX" "config/package-lists"
+
     echo -e "
 #------------------#
 # LIVE-BUILD CLEAN #
