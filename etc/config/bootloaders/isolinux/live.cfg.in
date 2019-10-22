@@ -1,6 +1,15 @@
+prompt 0
+
+MENU AUTOBOOT Booting in # seconds
+timeout 100
+
 label live-@FLAVOUR@
 	menu label ^Try or install elementary OS
 	menu default
 	linux /casper/vmlinuz
 	initrd /casper/initrd.lz
 	append @APPEND_LIVE@
+
+label disk0
+	localboot 0
+	menu label ^Continue normal boot
