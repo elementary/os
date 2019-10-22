@@ -14,7 +14,7 @@ jobs:
       image: debian:latest
       volumes:
         - /proc:/proc
-      options: --privileged -i
+      options: --privileged
 
     steps:
     - name: Clone build scripts
