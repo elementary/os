@@ -1,7 +1,8 @@
 prompt 0
 
-MENU AUTOBOOT Booting in # seconds
-timeout 100
+MENU HIDDEN
+MENU AUTOBOOT Booting elementary live disk in # seconds
+timeout 50
 
 label live-@FLAVOUR@
 	menu label ^Try or install elementary OS
@@ -11,7 +12,7 @@ label live-@FLAVOUR@
 	append @APPEND_LIVE@
 
 label check
-	menu label ^Check disc for defects
+	menu label ^Check disk for defects
 	linux /casper/vmlinuz
 	append boot=casper integrity-check initrd=/casper/initrd.lz quiet splash --
 
