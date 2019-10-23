@@ -1,0 +1,23 @@
+name: distinst-weekly
+
+on:
+  schedule:
+    - cron:  '0 0 * * 3'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
+    steps:
+    - name: Clone build scripts
+      uses: actions/checkout@v1
+
+    - name: Build and upload distinst .iso
+      run: |
+        mkdir /artifacts
+        ./workflows.sh etc/terraform-juno-daily-distinst-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
