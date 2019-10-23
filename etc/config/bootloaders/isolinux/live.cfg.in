@@ -10,6 +10,11 @@ label live-@FLAVOUR@
 	initrd /casper/initrd.lz
 	append @APPEND_LIVE@
 
-label disk0
-	localboot 0
-	menu label ^Continue normal boot
+label check
+	menu label ^Check disc for defects
+	linux /casper/vmlinuz
+	append boot=casper integrity-check initrd=/casper/initrd.lz quiet splash --
+
+label hd
+	menu label ^Boot from first hard disk
+	localboot 0x80
