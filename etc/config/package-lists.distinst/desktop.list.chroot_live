@@ -1,13 +1,5 @@
 casper
-cifs-utils
-discover
 distinst
-dmraid
-fwupdate-signed
+expect
 gparted
 io.elementary.installer
-mokutil
-os-prober
-reiserfsprogs
-wamerican
-xfsprogs
