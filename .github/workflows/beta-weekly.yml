@@ -20,7 +20,7 @@ jobs:
     - name: Clone build scripts
       uses: actions/checkout@v1
 
-    - name: Build and upload daily .iso
+    - name: Build and upload weekly beta .iso
       run: |
         mkdir /artifacts
         ./workflows.sh etc/terraform-stable-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
