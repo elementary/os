@@ -23,4 +23,4 @@ jobs:
     - name: Build and upload daily .iso
       run: |
         mkdir /artifacts
-        ./workflows.sh etc/terraform-juno-daily-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-daily-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"

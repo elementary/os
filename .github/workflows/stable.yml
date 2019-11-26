@@ -21,4 +21,4 @@ jobs:
     - name: Build and upload stable .iso
       run: |
         mkdir /artifacts
-        ./workflows.sh etc/terraform-juno-stable-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-stable-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"

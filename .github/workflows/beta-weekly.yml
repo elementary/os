@@ -1,6 +1,9 @@
-name: distinst-weekly
+name: daily
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron:  '0 0 * * 3'
 
@@ -17,7 +20,7 @@ jobs:
     - name: Clone build scripts
       uses: actions/checkout@v1
 
-    - name: Build and upload distinst .iso
+    - name: Build and upload daily .iso
       run: |
         mkdir /artifacts
-        ./workflows.sh etc/terraform-daily-distinst-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-stable-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
