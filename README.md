@@ -13,7 +13,8 @@
 
 <p align="center">
   <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
-  <img src="https://github.com/elementary/os/workflows/daily/badge.svg" alt="Daily">
+  <img src="https://github.com/elementary/os/workflows/daily-5.1/badge.svg" alt="Daily 5.1">
+  <img src="https://github.com/elementary/os/workflows/daily-6.0/badge.svg" alt="Daily 6.0">
 </p>
 
 ---
