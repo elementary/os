@@ -1,0 +1,26 @@
+name: daily-5.1
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
+    steps:
+    - name: Clone build scripts
+      uses: actions/checkout@v1
+
+    - name: Build and upload daily .iso
+      run: |
+        mkdir /artifacts
+        ./workflows.sh etc/terraform-daily-5.1-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
