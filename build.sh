@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # check for root permissions
 if [[ "$(id -u)" != 0 ]]; then
   echo "E: Requires root permissions" > /dev/stderr
@@ -7,7 +9,7 @@ if [[ "$(id -u)" != 0 ]]; then
 fi
 
 # get config
-if [ -z "$1" ]; then
+if [ -n "$1" ]; then
   CONFIG_FILE="$1"
 else
   CONFIG_FILE="etc/terraform.conf"
@@ -95,6 +97,3 @@ if [[ "$ARCH" == "all" ]]; then
 else
     build "$ARCH"
 fi
-
-# copy results to artifacts directory
-cp builds/amd64/* /artifacts/
