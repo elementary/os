@@ -33,12 +33,10 @@ patch -d /usr/lib/live/build/ < live-build-fix-syslinux.patch
 ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/focal
 
 echo -e "
-#----------------------#
-# RUN TERRAFORM SCRIPT #
-#----------------------#
+#-----------#
+# Build ISO #
+#-----------#
 "
-
-# ./terraform.sh --config-path "$CONFIG_FILE"
 
 build () {
   BUILD_ARCH="$1"
