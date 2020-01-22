@@ -34,12 +34,6 @@ patch -d /usr/lib/live/build/ < live-build-fix-syslinux.patch
 # https://salsa.debian.org/installer-team/debootstrap/blob/master/debian/changelog
 ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/focal
 
-echo -e "
-#-----------#
-# Build ISO #
-#-----------#
-"
-
 build () {
   BUILD_ARCH="$1"
 
@@ -80,6 +74,12 @@ build () {
 #------------------#
 "
   lb build
+
+  echo -e "
+#---------------------------#
+# MOVE OUTPUT TO BUILDS DIR #
+#---------------------------#
+"
 
   YYYYMMDD="$(date +%Y%m%d)"
   OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
