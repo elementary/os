@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CONFIG_FILE="$1"
 KEY="$2"
 SECRET="$3"
@@ -36,6 +38,6 @@ SHASUM="$CHANNEL/$ISOTAG.sha256.txt"
 MD5PATH="$(find /artifacts -name "*.md5.txt")"
 MD5="$CHANNEL/$ISOTAG.md5.txt"
 
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO"
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM"
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5"
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO" || exit 1
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM" || exit 1
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5" || exit 1
