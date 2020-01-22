@@ -43,7 +43,7 @@ The following example uses Docker and assumes you have Docker correctly installe
         /bin/bash -s etc/terraform.conf < build.sh
     ```
 
- 4) When done, your image will be in the `builds/amd64` folder.
+ 4) When done, your image will be in the `builds` folder.
 
 ## Further Information
 
