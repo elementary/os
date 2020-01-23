@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CONFIG_FILE="$1"
 KEY="$2"
 SECRET="$3"

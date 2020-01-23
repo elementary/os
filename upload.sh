@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CONFIG_FILE="$1"
 KEY="$2"
 SECRET="$3"
@@ -28,14 +30,17 @@ python3 get-pip.py
 pip install boto3
 
 # get the paths & filenames of the files to upload
-ISOPATH="$(find /artifacts -name "*.iso")"
-ISO="$CHANNEL/$(basename "$ISOPATH")"
-ISOTAG="$(basename "$ISOPATH" .iso)"
-SHAPATH="$(find /artifacts -name "*.sha256.txt")"
-SHASUM="$CHANNEL/$ISOTAG.sha256.txt"
-MD5PATH="$(find /artifacts -name "*.md5.txt")"
-MD5="$CHANNEL/$ISOTAG.md5.txt"
-
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO"
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM"
-python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5"
+ISOPATHS="$(find builds -name "*.iso")"
+while IFS= read -r ISOPATH; do
+  SHAPATH="${ISOPATH%.*}.sha256.txt"
+  MD5PATH="${ISOPATH%.*}.md5.txt"
+  ISO="$CHANNEL/$(basename "$ISOPATH")"
+  SHASUM="$CHANNEL/$(basename "$SHAPATH")"
+  MD5="$CHANNEL/$(basename "$MD5PATH")"
+  echo "uploading $ISO..."
+  python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO" || exit 1
+  echo "uploading $SHASUM..."
+  python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM" || exit 1
+  echo "uploading $MD5..."
+  python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5" || exit 1
+done <<< "$ISOPATHS"

@@ -36,17 +36,14 @@ The following example uses Docker and assumes you have Docker correctly installe
  3) Run the build:
 
     ```
-    mkdir artifacts
-    docker run --privileged -i \
-        -v /proc:/proc \
-        -v ${PWD}/artifacts:/artifacts \
+    docker run --privileged -i -v /proc:/proc \
         -v ${PWD}:/working_dir \
         -w /working_dir \
         debian:latest \
         /bin/bash -s etc/terraform.conf < build.sh
     ```
 
- 4) When done, your image will be in the `artifacts` folder.
+ 4) When done, your image will be in the `builds` folder.
 
 ## Further Information
 

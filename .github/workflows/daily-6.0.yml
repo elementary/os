@@ -22,5 +22,4 @@ jobs:
 
     - name: Build and upload daily .iso
       run: |
-        mkdir /artifacts
         ./workflows.sh etc/terraform-daily-6.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
