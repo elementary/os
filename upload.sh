@@ -30,7 +30,7 @@ python3 get-pip.py
 pip install boto3
 
 # get the paths & filenames of the files to upload
-ISOPATHS="$(find /builds -name "*.iso")"
+ISOPATHS="$(find builds -name "*.iso")"
 while IFS= read -r ISOPATH; do
   SHAPATH="${ISOPATH%.*}.sha256.txt"
   MD5PATH="${ISOPATH%.*}.md5.txt"

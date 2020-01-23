@@ -83,8 +83,6 @@ build () {
 
   YYYYMMDD="$(date +%Y%m%d)"
   OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
-  # remove old builds and move in new
-  rm -rf "$BASE_DIR"/builds
   mkdir -p "$OUTPUT_DIR"
   FNAME="elementaryos-$VERSION-$CHANNEL.$YYYYMMDD$OUTPUT_SUFFIX"
   mv "$BASE_DIR/tmp/$BUILD_ARCH/live-image-$BUILD_ARCH.hybrid.iso" "$OUTPUT_DIR/${FNAME}.iso"
@@ -92,6 +90,9 @@ build () {
   md5sum "$OUTPUT_DIR/${FNAME}.iso" > "$OUTPUT_DIR/${FNAME}.md5.txt"
   sha256sum "$OUTPUT_DIR/${FNAME}.iso" > "$OUTPUT_DIR/${FNAME}.sha256.txt"
 }
+
+# remove old builds before creating new ones
+rm -rf "$BASE_DIR"/builds
 
 if [[ "$ARCH" == "all" ]]; then
     build amd64
