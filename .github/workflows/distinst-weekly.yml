@@ -19,4 +19,4 @@ jobs:
 
     - name: Build and upload distinst .iso
       run: |
-        ./workflows.sh etc/terraform-daily-distinst-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-daily-5.1-distinst-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
