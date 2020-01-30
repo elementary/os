@@ -43,4 +43,21 @@ while IFS= read -r ISOPATH; do
   python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$SHAPATH" "$SHASUM" || exit 1
   echo "uploading $MD5..."
   python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$MD5PATH" "$MD5" || exit 1
+
+  if [ "$CHANNEL" == "stable" ]; then
+    cd "$(dirname "$ISOPATH")" || exit 1
+    # install transmission
+    apt-get install -y transmission-cli
+    # create torrent file
+    transmission-create "$ISOPATH" \
+      -t https://ashrise.com:443/phoenix/announce \
+      -t udp://open.demonii.com:1337/announce \
+      -t udp://tracker.ccc.de:80/announce \
+      -t udp://tracker.istole.it:80/announce \
+      -t udp://tracker.openbittorrent.com:80/announce \
+      -t udp://tracker.publicbt.com:80/announce
+    echo "uploading $ISO.torrent..."
+    python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH.torrent" "$ISO.torrent" || exit 1
+    cd ~- || exit 1
+  fi
 done <<< "$ISOPATHS"
