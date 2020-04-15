@@ -29,8 +29,8 @@ lb config noauto \
     --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
     --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
     --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
-    --parent-mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
+    --parent-mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
     --uefi-secure-boot enable \
