@@ -33,6 +33,8 @@ lb config noauto \
     --parent-mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
+    --cache-packages false \
+    --cache-stages false \
     --uefi-secure-boot enable \
     --binary-images iso-hybrid \
     --iso-application "$NAME" \
