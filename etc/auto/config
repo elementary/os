@@ -36,16 +36,16 @@ lb config noauto \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
     --cache-packages false \
     --cache-stages false \
-    --uefi-secure-boot enable \
+    --uefi-secure-boot "$UEFI_SECURE_BOOT" \
     --iso-application "$NAME" \
     --iso-volume "$NAME" \
     --hdd-label "$NAME" \
     --firmware-binary false \
     --firmware-chroot false \
     --zsync false \
-	  --binary-images "$BINARY_IMAGE_FORMAT" \
-	  --binary-filesystem "$BINARY_FILESYSTEM" \
-	  --compression "$COMPRESSION" \
+	--binary-images "$BINARY_IMAGE_FORMAT" \
+	--binary-filesystem "$BINARY_FILESYSTEM" \
+	--compression "$COMPRESSION" \
     "${@}"
 
 # replace channel and suite
