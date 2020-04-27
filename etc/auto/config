@@ -24,7 +24,7 @@ lb config noauto \
     --parent-archive-areas "main restricted universe multiverse" \
     --linux-packages linux-image \
     --linux-flavours "$KERNEL_FLAVORS" \
-    --bootappend-live "boot=live" \
+    --bootappend-live "$BOOT_APPEND" \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
     --mirror-binary "$MIRROR_BINARY" \
