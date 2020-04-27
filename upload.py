@@ -3,13 +3,7 @@
 import boto3
 import sys
 
-KEY = sys.argv[1]
-SECRET = sys.argv[2]
-ENDPOINT = sys.argv[3]
-BUCKET = sys.argv[4]
-FILEPATH = sys.argv[5]
-FILENAME = sys.argv[6]
-
+KEY, SECRET, ENDPOINT, BUCKET, FILEPATH, FILENAME = [sys.argv[i+1] for i in range(6)]
 
 session = boto3.session.Session()
 client = session.client('s3',
@@ -22,4 +16,3 @@ client.upload_file(FILEPATH, # Path to local file
                    BUCKET,   # Name of Space
                    FILENAME, # Name for remote file
                    ExtraArgs={'ACL':'public-read'})
-

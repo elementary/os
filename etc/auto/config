@@ -13,7 +13,6 @@ else
 fi
 
 lb config noauto \
-    --cache false \
     --bootstrap-qemu-arch "$ARCH" \
     --bootstrap-qemu-static "$QEMU_BINARY_PATH" \
     --architectures "$ARCH" \
@@ -35,15 +34,18 @@ lb config noauto \
     --parent-mirror-binary-security "$SECURITY_MIRROR_URL" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
+    --cache-packages false \
+    --cache-stages false \
+    --uefi-secure-boot enable \
     --iso-application "$NAME" \
     --iso-volume "$NAME" \
     --hdd-label "$NAME" \
     --firmware-binary false \
     --firmware-chroot false \
     --zsync false \
-	--binary-images "$BINARY_IMAGE_FORMAT" \
-	--binary-filesystem "$BINARY_FILESYSTEM" \
-	--compression "$COMPRESSION" \
+	  --binary-images "$BINARY_IMAGE_FORMAT" \
+	  --binary-filesystem "$BINARY_FILESYSTEM" \
+	  --compression "$COMPRESSION" \
     "${@}"
 
 # replace channel and suite
