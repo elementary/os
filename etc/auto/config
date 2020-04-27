@@ -27,12 +27,12 @@ lb config noauto \
     --bootappend-live "boot=live" \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
-    --mirror-binary "$MIRROR_URL" \
-    --parent-mirror-binary "$MIRROR_URL" \
-    --mirror-chroot-security "$MIRROR_URL" \
-    --parent-mirror-chroot-security "$MIRROR_URL" \
-    --mirror-binary-security "$MIRROR_URL" \
-    --parent-mirror-binary-security "$MIRROR_URL" \
+    --mirror-binary "$MIRROR_BINARY" \
+    --parent-mirror-binary "$MIRROR_BINARY" \
+    --mirror-chroot-security "$SECURITY_MIRROR_URL" \
+    --parent-mirror-chroot-security "$SECURITY_MIRROR_URL" \
+    --mirror-binary-security "$SECURITY_MIRROR_URL" \
+    --parent-mirror-binary-security "$SECURITY_MIRROR_URL" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
     --iso-application "$NAME" \
