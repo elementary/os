@@ -1,0 +1,10 @@
+b43-fwcutter
+dkms
+mouseemu
+setserial
+user-setup
+
+efibootmgr
+
+grub-efi-arm
+grub-efi-arm-bin

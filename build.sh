@@ -24,7 +24,7 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y live-build patch ubuntu-keyring
+apt-get install -y live-build patch ubuntu-keyring qemu-user-static qemu-utils qemu-system-arm
 
 # TODO: Remove once live-build is able to acommodate for cases where LB_INITRAMFS is not live-boot:
 # https://salsa.debian.org/live-team/live-build/merge_requests/31

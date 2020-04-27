@@ -13,33 +13,37 @@ else
 fi
 
 lb config noauto \
+    --cache false \
+    --bootstrap-qemu-arch "$ARCH" \
+    --bootstrap-qemu-static "$QEMU_BINARY_PATH" \
     --architectures "$ARCH" \
     --mode ubuntu \
-    --initramfs none \
     --distribution "$BASECODENAME" \
     --parent-distribution "$BASECODENAME" \
     --archive-areas "main restricted universe multiverse" \
     --parent-archive-areas "main restricted universe multiverse" \
     --linux-packages linux-image \
     --linux-flavours "$KERNEL_FLAVORS" \
-    --bootappend-live "boot=casper maybe-ubiquity quiet splash" \
+    --bootappend-live "boot=live" \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
-    --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
-    --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
-    --parent-mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
+    --mirror-binary "$MIRROR_URL" \
+    --parent-mirror-binary "$MIRROR_URL" \
+    --mirror-chroot-security "$MIRROR_URL" \
+    --parent-mirror-chroot-security "$MIRROR_URL" \
+    --mirror-binary-security "$MIRROR_URL" \
+    --parent-mirror-binary-security "$MIRROR_URL" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=5 --option Acquire::http::Timeout=100" \
-    --uefi-secure-boot enable \
-    --binary-images iso-hybrid \
     --iso-application "$NAME" \
     --iso-volume "$NAME" \
+    --hdd-label "$NAME" \
     --firmware-binary false \
     --firmware-chroot false \
     --zsync false \
+	--binary-images "$BINARY_IMAGE_FORMAT" \
+	--binary-filesystem "$BINARY_FILESYSTEM" \
+	--compression "$COMPRESSION" \
     "${@}"
 
 # replace channel and suite
