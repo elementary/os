@@ -59,6 +59,8 @@ while IFS= read -r ISOPATH; do
     cd ~- || exit 1
     echo "uploading $ISO.torrent..."
     python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH.torrent" "$ISO.torrent" || exit 1
-
+    # create and upload shasum of torrentfile
+    sha256sum "$ISOPATH.torrent" > "$ISOPATH.torrent.sha256.txt"
+    python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH.torrent.sha256.txt" "$ISO.torrent.sha256.txt" || exit 1
   fi
 done <<< "$ISOPATHS"
