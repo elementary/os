@@ -1,3 +1,12 @@
+---
+name: Bug Report
+about: Report an unexpected behavior or failure
+title: ''
+labels: 'Status: Incomplete'
+assignees: ''
+
+---
+
 This repository is for the elementary OS build system and **not a catch-all for the OS itself**. Please do not file issues for the operating system itself or apps here, as they will be closed or need to be manually transferred.
 
 If you are on elementary OS and trying to report an issue:
