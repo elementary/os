@@ -23,3 +23,10 @@ jobs:
     - name: Build and upload daily .iso
       run: |
         ./workflows.sh etc/terraform-daily-5.1-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+    
+    - name: Update Website
+      uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GIT_USER_TOKEN }}
+          repository: elementary/builds
+          event-type: update
