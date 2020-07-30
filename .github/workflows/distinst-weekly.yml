@@ -26,4 +26,4 @@ jobs:
         with:
           token: ${{ secrets.GIT_USER_TOKEN }}
           repository: elementary/builds
-          event-type: update
+          event-type: Update
