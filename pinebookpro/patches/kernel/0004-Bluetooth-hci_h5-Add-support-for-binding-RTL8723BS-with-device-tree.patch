@@ -1,0 +1,52 @@
+From ade1fa09555a45eee2b72d302c15d26a4701713b Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick
+Date: Wed, 31 Oct 2018 20:07:41 -0700
+Subject: Bluetooth: hci_h5: Add support for binding RTL8723BS with device tree
+
+RTL8723BS is often used in ARM boards, so add ability to bind it
+using device tree.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ drivers/bluetooth/hci_h5.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
+index 82251124cd9b..be8235258457 100644
+--- a/drivers/bluetooth/hci_h5.c
++++ b/drivers/bluetooth/hci_h5.c
+@@ -821,6 +821,9 @@ static int h5_serdev_probe(struct serdev_device *serdev)
+ 			return -ENODEV;
+ 
+ 		h5->vnd = (const struct h5_vnd *)data;
++
++		of_property_read_string(dev->of_node,
++					"firmware-postfix", &h5->id);
+ 	}
+ 
+ 
+@@ -1007,6 +1010,12 @@ static struct h5_vnd rtl_vnd = {
+ 	.resume		= h5_btrtl_resume,
+ 	.acpi_gpio_map	= acpi_btrtl_gpios,
+ };
++
++static struct h5_vnd rtl_vnd_nosuspend = {
++	.setup		= h5_btrtl_setup,
++	.open		= h5_btrtl_open,
++	.close		= h5_btrtl_close,
++};
+ #endif
+ 
+ #ifdef CONFIG_ACPI
+@@ -1029,6 +1038,8 @@ static const struct of_device_id rtl_bluetooth_of_match[] = {
+ 	  .data = (const void *)&rtl_vnd },
+ 	{ .compatible = "realtek,rtl8723bs-bt",
+ 	  .data = (const void *)&rtl_vnd },
++	{ .compatible = "realtek,rtl8723cs-bt",
++	  .data = (const void *)&rtl_vnd_nosuspend },
+ #endif
+ 	{ },
+ };
+-- 
+cgit v1.2.3
+
