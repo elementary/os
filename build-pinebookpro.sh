@@ -148,7 +148,6 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-net-smsc95xx-Allow-mac
 
 # Manjaro ARM Patches
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0009-drivers-power-supply-Add-support-for-cw2015.patch"              #Pinebook Pro (added in 5.8)
-#patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0008-rk-hwacc-drm.patch"                                             #RK VDEC HW Acceleration
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0010-arm64-dts-rockchip-add-cw2015-node-to-PBP.patch"                #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0011-fix-wonky-wifi-bt-on-PBP.patch"                                 #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0012-add-suspend-to-rk3399-PBP.patch"                                #Pinebook Pro
@@ -162,6 +161,10 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0003-dt-bindings-net-blueto
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0004-Bluetooth-hci_h5-Add-support-for-binding-RTL8723BS-with-device-tree.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0005-Bluetooth-btrtl-add-support-for-the-RTL8723CS.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0006-bluetooth-btrtl-Make-more-space-for-config-firmware-file-name.patch"
+
+# ROCKCHIP_VDEC patches
+patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-Add-rkvdec-driver.patch"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0002-Add-rkvdec-to-dtsi.patch"
 
 cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.7.config .config
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
