@@ -148,7 +148,7 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-net-smsc95xx-Allow-mac
 
 # Manjaro ARM Patches
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0009-drivers-power-supply-Add-support-for-cw2015.patch"              #Pinebook Pro (added in 5.8)
-patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0008-rk-hwacc-drm.patch"                                             #RK VDEC HW Acceleration
+#patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0008-rk-hwacc-drm.patch"                                             #RK VDEC HW Acceleration
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0010-arm64-dts-rockchip-add-cw2015-node-to-PBP.patch"                #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0011-fix-wonky-wifi-bt-on-PBP.patch"                                 #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0012-add-suspend-to-rk3399-PBP.patch"                                #Pinebook Pro
