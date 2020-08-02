@@ -165,6 +165,7 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0006-bluetooth-btrtl-Make-m
 # ROCKCHIP_VDEC patches
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-Add-rkvdec-driver.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0002-Add-rkvdec-to-dtsi.patch"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0003-Add-v4l2-h264.patch"
 
 cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.7.config .config
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
@@ -208,7 +209,13 @@ raw_size=$(($((${free_space}*1024))+${root_size}))
 
 # Create the disk and partition it
 echo "Creating image file"
-fallocate -l $(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f) ${basedir}/${imagename}.img
+
+# Sometimes fallocate fails if the filesystem or location doesn't support it, fallback to slower dd in this case
+if ! fallocate -l $(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f) ${basedir}/${imagename}.img
+then
+    dd if=/dev/zero of=${basedir}/${imagename}.img bs=1024 count=${raw_size}
+fi
+
 parted ${imagename}.img --script -- mklabel msdos
 parted ${imagename}.img --script -- mkpart primary ext4 32M 100%
 
