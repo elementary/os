@@ -346,6 +346,9 @@ losetup -d ${loopdevice}
 echo "Compressing ${imagename}.img"
 xz -z "${basedir}"/${imagename}.img
 
+md5sum "${basedir}"/${imagename}.img.xz > "${basedir}"/${imagename}.md5.txt
+sha256sum "${basedir}"/${imagename}.img.xz > "${basedir}"/${imagename}.sha256.txt
+
 cd "${rootdir}"
 
 KEY="$1"
@@ -363,3 +366,12 @@ pip install boto3
 
 python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$IMGPATH" "$IMGNAME" || exit 1
 
+CHECKSUMPATH="${basedir}"/${imagename}.md5.txt
+CHECKSUMNAME=${channel}/$(basename "$CHECKSUMPATH")
+
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
+
+CHECKSUMPATH="${basedir}"/${imagename}.sha256.txt
+CHECKSUMNAME=${channel}/$(basename "$CHECKSUMPATH")
+
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
