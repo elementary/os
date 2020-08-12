@@ -3,14 +3,11 @@ name: stable
 on:
   push:
     tags:
-      - "*"
-  workflow_dispatch:
-    inputs: []
+      - '*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     container:
       image: debian:latest
       volumes:
