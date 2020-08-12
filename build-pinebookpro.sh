@@ -358,7 +358,7 @@ SECRET="$2"
 ENDPOINT="$3"
 BUCKET="$4"
 IMGPATH="${basedir}"/${imagename}.img.xz
-IMGNAME=${channel}/$(basename "$IMGPATH")
+IMGNAME=${channel}-pinebookpro/$(basename "$IMGPATH")
 
 apt-get install -y curl python3 python3-distutils
 
