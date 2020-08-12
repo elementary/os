@@ -1,0 +1,17 @@
+name: daily-6.0-pinebookpro
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Clone build scripts
+      uses: actions/checkout@v1
+
+    - name: Build and upload image
+      run: |
+        ./build-pinebookpro.sh "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
