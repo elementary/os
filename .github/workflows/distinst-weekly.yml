@@ -2,11 +2,13 @@ name: distinst-weekly
 
 on:
   schedule:
-    - cron:  '0 0 * * 3'
+    - cron: "0 0 * * 3"
+  workflow_dispatch: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     container:
       image: debian:latest
       volumes:
