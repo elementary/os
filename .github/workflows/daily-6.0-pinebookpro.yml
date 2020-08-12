@@ -11,7 +11,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
 
     steps:
     - name: Clone build scripts
