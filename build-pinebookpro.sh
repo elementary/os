@@ -244,7 +244,7 @@ cat << EOF > ${work_dir}/boot/extlinux/extlinux.conf
 LABEL elementary ARM
 KERNEL /boot/Image
 FDT /boot/dtbs/rockchip/rk3399-pinebook-pro.dtb
-APPEND initrd=/boot/initrd.img-${kernver} console=tty1 console=ttyS2,1500000 root=UUID=${UUID} rw rootwait video=eDP-1:1920x1080@60 video=HDMI-A-1:1920x1080@60
+APPEND initrd=/boot/initrd.img-${kernver} console=ttyS2,1500000 console=tty1 root=UUID=${UUID} rw rootwait video=eDP-1:1920x1080@60 video=HDMI-A-1:1920x1080@60 quiet splash plymouth.ignore-serial-consoles
 EOF
 cd ${basedir}
 
