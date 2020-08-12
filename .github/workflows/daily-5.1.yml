@@ -5,11 +5,14 @@ on:
     branches:
       - master
   schedule:
-    - cron:  '0 0 * * *'
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs: []
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     container:
       image: debian:latest
       volumes:
