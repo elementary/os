@@ -4,19 +4,14 @@ on:
   push:
     branches:
       - master
+      - github-update
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch: {}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    container:
-      image: debian:latest
-      volumes:
-        - /proc:/proc
-      options: --privileged
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Clone build scripts
@@ -24,4 +19,4 @@ jobs:
 
     - name: Build and upload image
       run: |
-        ./build-pinebookpro.sh "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        sudo ./build-pinebookpro.sh "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
