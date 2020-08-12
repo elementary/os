@@ -374,6 +374,6 @@ CHECKSUMNAME=${channel}-pinebookpro/$(basename "$CHECKSUMPATH")
 python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
 
 CHECKSUMPATH="${basedir}"/${imagename}.sha256.txt
-CHECKSUMNAME=${channel}/$(basename "$CHECKSUMPATH")
+CHECKSUMNAME=${channel}-pinebookpro/$(basename "$CHECKSUMPATH")
 
 python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
