@@ -13,8 +13,8 @@ imagename=elementaryos-$version-$channel-pinebookpro-$YYYYMMDD
 
 tfaver=2.3
 ubootver=2020.07
-linuxver=5.7.11
-kernsha256="93293032aa13c3998eeb2afd910f11c0f2e8a76ffec46f74ce3fcfac53ed60f1  linux-${linuxver}.tar.xz"
+linuxver=5.8.1
+kernsha256="f8d2a4fe938ff7faa565765a52e347e518a0712ca6ddd41b198bd9cc1626a724  linux-${linuxver}.tar.xz"
 
 # Free space on rootfs in MiB
 free_space="500"
@@ -147,7 +147,6 @@ touch .scmversion
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch"     #All
 
 # Manjaro ARM Patches
-patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0009-drivers-power-supply-Add-support-for-cw2015.patch"              #Pinebook Pro (added in 5.8)
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0010-arm64-dts-rockchip-add-cw2015-node-to-PBP.patch"                #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0011-fix-wonky-wifi-bt-on-PBP.patch"                                 #Pinebook Pro
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0012-add-suspend-to-rk3399-PBP.patch"                                #Pinebook Pro
@@ -162,12 +161,7 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0004-Bluetooth-hci_h5-Add-s
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0005-Bluetooth-btrtl-add-support-for-the-RTL8723CS.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0006-bluetooth-btrtl-Make-more-space-for-config-firmware-file-name.patch"
 
-# ROCKCHIP_VDEC patches
-patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0001-Add-rkvdec-driver.patch"
-patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0002-Add-rkvdec-to-dtsi.patch"
-patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0003-Add-v4l2-h264.patch"
-
-cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.7.config .config
+cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config .config
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) Image modules
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- DTC_FLAGS="-@" dtbs
@@ -180,7 +174,7 @@ cp arch/arm64/boot/Image ${work_dir}/boot
 # clean up because otherwise we leave stuff around that causes external modules
 # to fail to build.
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- mrproper
-cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.7.config .config
+cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config .config
 
 # Fix up the symlink for building external modules
 # kernver is used to we don't need to keep track of what the current compiled
