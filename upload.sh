@@ -24,7 +24,7 @@ echo -e "
 # UPLOAD ISO #
 #------------#
 "
-# install boto, which can  be fetched via pip
+# install boto, which can be fetched via pip
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python3 get-pip.py
 pip install boto3
