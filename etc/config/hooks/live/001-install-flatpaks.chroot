@@ -1,0 +1,6 @@
+#!/bin/sh
+# Description: Add flatpak remote and install systemwide flatpaks
+
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+flatpak install -y flathub org.gnome.Epiphany
