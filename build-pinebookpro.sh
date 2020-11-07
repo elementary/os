@@ -206,6 +206,8 @@ do
     LANG=C chroot ${work_dir} "/hooks/${base}"
 done
 
+rm -r "${work_dir}/hooks"
+
 # Calculate the space to create the image.
 root_size=$(du -s -B1K ${work_dir} | cut -f1)
 raw_size=$(($((${free_space}*1024))+${root_size}))
