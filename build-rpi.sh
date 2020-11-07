@@ -11,10 +11,10 @@ rootdir=`pwd`
 basedir=`pwd`/artifacts/elementary-rpi
 
 # Size of .img file to build in MB. Approx 4GB required at this time, the rest is free space on /
-size=5000
+size=8000
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
-export architecture="armhf"
+export architecture="arm64"
 export codename="focal"
 export channel="daily"
 
