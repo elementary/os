@@ -62,8 +62,8 @@ EOF
 cat << EOF > elementary-${architecture}/etc/fstab
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 proc /proc proc nodev,noexec,nosuid 0  0
-/dev/mmcblk0p2  / ext4 errors=remount-ro 0 1
-/dev/mmcblk0p1 /boot/firmware vfat noauto 0 0
+LABEL=writable    /     ext4    defaults,x-systemd.growfs    0 0
+LABEL=system-boot       /boot/firmware  vfat    defaults        0       1
 EOF
 
 export LC_ALL=C
@@ -92,8 +92,8 @@ LANG=C chroot elementary-$architecture /third-stage
 echo "Creating image file for Raspberry Pi"
 dd if=/dev/zero of=${basedir}/elementary-rpi.img bs=1M count=$size
 parted elementary-rpi.img --script -- mklabel msdos
-parted elementary-rpi.img --script -- mkpart primary fat32 0 128
-parted elementary-rpi.img --script -- mkpart primary ext4 128 -1
+parted elementary-rpi.img --script -- mkpart primary fat32 0 256
+parted elementary-rpi.img --script -- mkpart primary ext4 256 -1
 
 # Set the partition variables
 loopdevice=`losetup -f --show ${basedir}/elementary-rpi.img`
@@ -103,8 +103,8 @@ bootp=${device}p1
 rootp=${device}p2
 
 # Create file systems
-mkfs.vfat $bootp
-mkfs.ext4 $rootp
+mkfs.vfat -n system-boot $bootp
+mkfs.ext4 -L writable $rootp
 
 # Create the dirs for the partitions and mount them
 mkdir -p ${basedir}/bootp ${basedir}/root
@@ -125,7 +125,7 @@ dtparam=spi=on
 EOF
 
 cat << EOF > elementary-$architecture/boot/firmware/cmdline.txt
-net.ifnames=0 dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait fixrtc
+net.ifnames=0 dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 EOF
 
 # Install an RPi kernel and firmware
