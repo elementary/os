@@ -197,6 +197,15 @@ EOF
 chmod +x ${work_dir}/build-initramfs
 LANG=C chroot ${work_dir} /build-initramfs
 
+mkdir ${work_dir}/hooks
+cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
+
+for f in ${work_dir}/hooks/*
+do
+    base=`basename ${f}`
+    LANG=C chroot ${work_dir} "/hooks/${base}"
+done
+
 # Calculate the space to create the image.
 root_size=$(du -s -B1K ${work_dir} | cut -f1)
 raw_size=$(($((${free_space}*1024))+${root_size}))
@@ -292,15 +301,6 @@ w- /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq - - - - 1200000
 w- /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq - - - - 1008000
 w- /sys/class/devfreq/ff9a0000.gpu/min_freq - - - - 600000000
 EOF
-
-mkdir ${work_dir}/hooks
-cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
-
-for f in ${work_dir}/hooks/*
-do
-    base=`basename ${f}`
-    LANG=C chroot ${work_dir} "/hooks/${base}"
-done
 
 umount ${work_dir}/dev/pts
 umount ${work_dir}/dev/
