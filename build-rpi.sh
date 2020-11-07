@@ -116,6 +116,7 @@ mount -o bind ${basedir}/bootp/ elementary-$architecture/boot/firmware
 
 # RPi specific config files to configure bootloader
 cat << EOF > elementary-$architecture/boot/firmware/config.txt
+arm_64bit=1
 kernel=vmlinuz
 initramfs initrd.img followkernel
 
