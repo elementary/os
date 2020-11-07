@@ -2,7 +2,7 @@
 
 # Install dependencies in host system
 apt-get update
-apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools
+apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
 
 # Make sure cross-running ARM ELF executables is enabled
 update-binfmts --enable
@@ -20,6 +20,8 @@ export channel="daily"
 
 mkdir -p ${basedir}
 cd ${basedir}
+
+rm -rf elementary-rpi.img*
 
 # Bootstrap an ubuntu minimal system
 debootstrap --foreign --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
@@ -194,3 +196,4 @@ umount $rootp
 kpartx -dv $loopdevice
 losetup -d $loopdevice
 
+xz -0 ${basedir}/elementary-rpi.img
