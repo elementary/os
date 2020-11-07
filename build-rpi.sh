@@ -8,7 +8,7 @@ apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-
 update-binfmts --enable
 
 rootdir=`pwd`
-basedir=`pwd`/elementary-rpi
+basedir=`pwd`/artifacts/elementary-rpi
 
 # Size of .img file to build in MB. Approx 4GB required at this time, the rest is free space on /
 size=5000
