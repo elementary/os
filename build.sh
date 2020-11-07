@@ -89,7 +89,13 @@ build () {
   mv "$BASE_DIR/tmp/$BUILD_ARCH/live-image-$BUILD_ARCH.hybrid.iso" "$OUTPUT_DIR/${FNAME}.iso"
 
   md5sum "$OUTPUT_DIR/${FNAME}.iso" > "$OUTPUT_DIR/${FNAME}.md5.txt"
-  sha256sum "$OUTPUT_DIR/${FNAME}.iso" > "$OUTPUT_DIR/${FNAME}.sha256.txt"
+
+  # cd into output to so {FNAME}.sha256.txt only
+  # includes the filename and not the path to
+  # our file.
+  cd $OUTPUT_DIR
+  sha256sum "${FNAME}.iso" > "${FNAME}.sha256.txt"
+  cd $BASE_DIR
 }
 
 # remove old builds before creating new ones
