@@ -299,7 +299,7 @@ cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
 for f in ${work_dir}/hooks/*
 do
     base=`basename ${f}`
-    LANG=C chroot ${workdir} /hooks/${base}
+    LANG=C chroot ${work_dir} "/hooks/${base}"
 done
 
 umount ${work_dir}/dev/pts
