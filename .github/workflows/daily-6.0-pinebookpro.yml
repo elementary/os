@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - pinebookpro-hooks
       - github-update
   schedule:
     - cron: "0 0 * * *"
