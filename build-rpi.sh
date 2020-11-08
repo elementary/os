@@ -292,3 +292,8 @@ losetup -d $loopdevice
 
 echo "Compressing ${imagename}.img"
 xz -z ${basedir}/${imagename}.img
+
+cd "${basedir}"
+
+md5sum ${imagename}.img.xz > ${imagename}.md5.txt
+sha256sum ${imagename}.img.xz > ${imagename}.sha256.txt
