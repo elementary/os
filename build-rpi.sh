@@ -16,6 +16,7 @@ size=8000
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
 export codename="focal"
+export codename_latest="groovy"
 export channel="daily"
 
 mkdir -p ${basedir}
@@ -43,9 +44,59 @@ for f in ${rootdir}/etc/config/archives/*.list; do cp -- "$f" "elementary-$archi
 for f in ${rootdir}/etc/config/archives/*.key; do cp -- "$f" "elementary-$architecture/etc/apt/trusted.gpg.d/$(basename -- $f).asc"; done
 for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "elementary-$architecture/etc/apt/preferences.d/$(basename -- $f)"; done
 
+# Add ubuntu latest repos to get the newest packages to support Raspberry Pi 4
+cat << EOF > elementary-$architecture/etc/apt/sources.list.d/latest.list
+deb http://ports.ubuntu.com/ubuntu-ports $codename_latest main restricted universe multiverse
+deb http://ports.ubuntu.com/ubuntu-ports $codename_latest-updates main restricted universe multiverse
+EOF
+
+cat << EOF > elementary-$architecture/etc/apt/preferences.d/raspi.pref
+Package: linux-firmware-raspi2
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: linux*-raspi*
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: ubuntu-raspi-settings
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: rpi-eeprom
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: libraspberrypi*
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: u-boot-rpi
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Package: grub*
+Pin: release n=@LATESTCODENAME
+Pin-Priority: 990
+
+Explanation: Uninstall or do not install any Ubuntu-originated
+Explanation: package versions other than those in the @BASECODENAME release
+Package: *
+Pin: release n=@BASECODENAME
+Pin-Priority: 900
+
+Package: *
+Pin: release o=Ubuntu
+Pin-Priority: -10
+EOF
+
 # Set codename/channel in added repos
 sed -i "s/@CHANNEL/$channel/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/sources.list.d/*.list*
+
+# Set codename in added preferences
+sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/preferences.d/*.pref*
+sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/preferences.d/*.pref*
 
 echo "elementary" > elementary-$architecture/etc/hostname
 
@@ -129,22 +180,24 @@ cat << EOF > elementary-$architecture/boot/firmware/cmdline.txt
 net.ifnames=0 dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
 EOF
 
-# Install an RPi kernel and firmware
-cat << EOF > elementary-$architecture/kernel
+# Install Raspberry Pi specific packages
+cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
-apt-get --yes install linux-image-raspi linux-firmware-raspi2 u-boot-rpi
+apt-get --yes install linux-image-raspi linux-firmware-raspi2 u-boot-rpi grub-efi-arm64 rpi-eeprom ubuntu-raspi-settings
 
 cp /boot/vmlinuz /boot/firmware/vmlinuz
 cp /boot/initrd.img /boot/firmware/initrd.img
 
 # Copy device-tree blobs to fat32 partition
-cp -r /lib/firmware/*-raspi/device-tree/* /boot/firmware/
+cp -r /lib/firmware/*-raspi/device-tree/broadcom/* /boot/firmware/
+cp -r /lib/firmware/*-raspi/device-tree/overlays /boot/firmware/
+cp -r /usr/lib/*-raspi2/* /boot/firmware/
 
-rm -f kernel
+rm -f hardware
 EOF
 
-chmod +x elementary-$architecture/kernel
-LANG=C chroot elementary-$architecture /kernel
+chmod +x elementary-$architecture/hardware
+LANG=C chroot elementary-$architecture /hardware
 
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
