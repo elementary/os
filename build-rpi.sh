@@ -2,7 +2,7 @@
 
 # Install dependencies in host system
 apt-get update
-apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
+apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils wget
 
 # Make sure cross-running ARM ELF executables is enabled
 update-binfmts --enable
@@ -107,6 +107,19 @@ fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
+EOF
+
+mkdir -p elementary-$architecture/etc/oem
+
+wget https://www.raspberrypi.org/app/uploads/2018/03/RPi-Logo-Reg-SCREEN.png \
+  -O elementary-$architecture/etc/oem/logo.png
+
+cat > elementary-$architecture/etc/oem.conf << EOF
+[OEM]
+Manufacturer=Raspberry Pi Foundation
+Product=Raspberry Pi
+Logo=/etc/oem/logo.png
+URL=https://www.raspberrypi.org/
 EOF
 
 # Configure mount points
