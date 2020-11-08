@@ -19,10 +19,12 @@ export codename="focal"
 export codename_latest="groovy"
 export channel="daily"
 
+version=6.0
+YYYYMMDD="$(date +%Y%m%d)"
+imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
+
 mkdir -p ${basedir}
 cd ${basedir}
-
-rm -rf elementary-rpi.img*
 
 # Bootstrap an ubuntu minimal system
 debootstrap --foreign --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
@@ -154,13 +156,13 @@ LANG=C chroot elementary-$architecture /third-stage
 
 # Create the disk and partition it
 echo "Creating image file for Raspberry Pi"
-dd if=/dev/zero of=${basedir}/elementary-rpi.img bs=1M count=$size
-parted elementary-rpi.img --script -- mklabel msdos
-parted elementary-rpi.img --script -- mkpart primary fat32 0 256
-parted elementary-rpi.img --script -- mkpart primary ext4 256 -1
+dd if=/dev/zero of=${basedir}/${imagename}.img bs=1M count=$size
+parted ${imagename}.img --script -- mklabel msdos
+parted ${imagename}.img --script -- mkpart primary fat32 0 256
+parted ${imagename}.img --script -- mkpart primary ext4 256 -1
 
 # Set the partition variables
-loopdevice=`losetup -f --show ${basedir}/elementary-rpi.img`
+loopdevice=`losetup -f --show ${basedir}/${imagename}.img`
 device=`kpartx -va $loopdevice| sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
 device="/dev/mapper/${device}"
 bootp=${device}p1
@@ -263,4 +265,5 @@ umount $rootp
 kpartx -dv $loopdevice
 losetup -d $loopdevice
 
-xz -0 ${basedir}/elementary-rpi.img
+echo "Compressing ${imagename}.img"
+xz -z ${basedir}/${imagename}.img
