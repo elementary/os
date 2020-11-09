@@ -36,7 +36,7 @@ cp /usr/bin/qemu-arm-static elementary-$architecture/usr/bin/
 LANG=C chroot elementary-$architecture /debootstrap/debootstrap --second-stage
 
 # Copy Raspberry Pi specific files
-rsync -HPavz -q ${rootdir}/rpi/rootfs/* elementary-${architecture}/
+cp -r ${rootdir}/rpi/rootfs/writable/* elementary-${architecture}/
 
 # Add the rest of the ubuntu repos
 cat << EOF > elementary-$architecture/etc/apt/sources.list
@@ -52,7 +52,7 @@ for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "elementary-$archi
 # Set codename/channel in added repos
 sed -i "s/@CHANNEL/$channel/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/sources.list.d/*.list*
-sed -i "s/@LATESTCODENAME/$codename/" elementary-$architecture/etc/apt/sources.list.d/*.list*
+sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 
 # Set codename in added preferences
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/preferences.d/*.pref*
@@ -124,6 +124,9 @@ mount $rootp ${basedir}/root
 
 mkdir -p elementary-$architecture/boot/firmware
 mount -o bind ${basedir}/bootp/ elementary-$architecture/boot/firmware
+
+# Copy Raspberry Pi specific files
+cp -r ${rootdir}/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
 
 # Install Raspberry Pi specific packages
 cat << EOF > elementary-$architecture/hardware
