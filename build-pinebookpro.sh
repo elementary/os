@@ -197,6 +197,17 @@ EOF
 chmod +x ${work_dir}/build-initramfs
 LANG=C chroot ${work_dir} /build-initramfs
 
+mkdir ${work_dir}/hooks
+cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
+
+for f in ${work_dir}/hooks/*
+do
+    base=`basename ${f}`
+    LANG=C chroot ${work_dir} "/hooks/${base}"
+done
+
+rm -r "${work_dir}/hooks"
+
 # Calculate the space to create the image.
 root_size=$(du -s -B1K ${work_dir} | cut -f1)
 raw_size=$(($((${free_space}*1024))+${root_size}))
@@ -292,31 +303,6 @@ w- /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq - - - - 1200000
 w- /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq - - - - 1008000
 w- /sys/class/devfreq/ff9a0000.gpu/min_freq - - - - 600000000
 EOF
-
-cat << EOF > ${work_dir}/cleanup
-#!/bin/bash
-
-apt-get install --no-install-recommends -f -q -y git
-git clone --depth 1 https://github.com/elementary/seeds.git --single-branch --branch $codename
-git clone --depth 1 https://github.com/elementary/platform.git --single-branch --branch $codename
-for package in \$(cat 'platform/blacklist' 'seeds/blacklist' | grep -v '#'); do
-    apt-get autoremove --purge -f -q -y "\$package"
-done
-apt-get autoremove --purge -f -q -y git
-rm -R ../seeds ../platform
-rm -rf /root/.bash_history
-apt-get clean
-rm -f /0
-rm -f /hs_err*
-rm -f /cleanup
-rm -f /usr/bin/qemu*
-rm -f /var/lib/apt/lists/*_Packages
-rm -f /var/lib/apt/lists/*_Sources
-rm -f /var/lib/apt/lists/*_Translation-*
-EOF
-
-chmod +x ${work_dir}/cleanup
-LANG=C chroot ${work_dir} /cleanup
 
 umount ${work_dir}/dev/pts
 umount ${work_dir}/dev/
