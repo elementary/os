@@ -1,0 +1,2 @@
+deb http://ports.ubuntu.com/ubuntu-ports @LATESTCODENAME main restricted universe multiverse
+deb http://ports.ubuntu.com/ubuntu-ports @LATESTCODENAME-updates main restricted universe multiverse

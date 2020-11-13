@@ -45,6 +45,16 @@ The following example uses Docker and assumes you have Docker correctly installe
 
  4) When done, your image will be in the `builds` folder.
 
+## Raspberry Pi 4
+
+```
+docker run --privileged -i -v /proc:/proc \
+    -v ${PWD}:/working_dir \
+    -w /working_dir \
+    debian:unstable \
+    ./build-rpi.sh
+```
+
 ## Further Information
 
 More information about the concepts behind `live-build` and the technical decisions made to arrive at this set of tools to build an .iso can be found [on the wiki](https://github.com/elementary/os/wiki/Building-iso-Images).

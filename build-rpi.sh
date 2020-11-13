@@ -2,21 +2,26 @@
 
 # Install dependencies in host system
 apt-get update
-apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools
+apt-get install -y --no-install-recommends ubuntu-keyring debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
 
 # Make sure cross-running ARM ELF executables is enabled
 update-binfmts --enable
 
 rootdir=`pwd`
-basedir=`pwd`/elementary-rpi
+basedir=`pwd`/artifacts/elementary-rpi
 
 # Size of .img file to build in MB. Approx 4GB required at this time, the rest is free space on /
-size=5000
+size=8000
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
-export architecture="armhf"
+export architecture="arm64"
 export codename="focal"
+export codename_latest="groovy"
 export channel="daily"
+
+version=6.0
+YYYYMMDD="$(date +%Y%m%d)"
+imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
 mkdir -p ${basedir}
 cd ${basedir}
@@ -29,6 +34,9 @@ cp /usr/bin/qemu-arm-static elementary-$architecture/usr/bin/
 
 # Run the second stage of the bootstrap in QEMU
 LANG=C chroot elementary-$architecture /debootstrap/debootstrap --second-stage
+
+# Copy Raspberry Pi specific files
+cp -r ${rootdir}/rpi/rootfs/writable/* elementary-${architecture}/
 
 # Add the rest of the ubuntu repos
 cat << EOF > elementary-$architecture/etc/apt/sources.list
@@ -44,6 +52,11 @@ for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "elementary-$archi
 # Set codename/channel in added repos
 sed -i "s/@CHANNEL/$channel/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/sources.list.d/*.list*
+sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/sources.list.d/*.list*
+
+# Set codename in added preferences
+sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/preferences.d/*.pref*
+sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/preferences.d/*.pref*
 
 echo "elementary" > elementary-$architecture/etc/hostname
 
@@ -60,8 +73,8 @@ EOF
 cat << EOF > elementary-${architecture}/etc/fstab
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 proc /proc proc nodev,noexec,nosuid 0  0
-/dev/mmcblk0p2  / ext4 errors=remount-ro 0 1
-/dev/mmcblk0p1 /boot/firmware vfat noauto 0 0
+LABEL=writable    /     ext4    defaults,x-systemd.growfs    0 0
+LABEL=system-boot       /boot/firmware  vfat    defaults        0       1
 EOF
 
 export LC_ALL=C
@@ -88,21 +101,21 @@ LANG=C chroot elementary-$architecture /third-stage
 
 # Create the disk and partition it
 echo "Creating image file for Raspberry Pi"
-dd if=/dev/zero of=${basedir}/elementary-rpi.img bs=1M count=$size
-parted elementary-rpi.img --script -- mklabel msdos
-parted elementary-rpi.img --script -- mkpart primary fat32 0 128
-parted elementary-rpi.img --script -- mkpart primary ext4 128 -1
+dd if=/dev/zero of=${basedir}/${imagename}.img bs=1M count=$size
+parted ${imagename}.img --script -- mklabel msdos
+parted ${imagename}.img --script -- mkpart primary fat32 0 256
+parted ${imagename}.img --script -- mkpart primary ext4 256 -1
 
 # Set the partition variables
-loopdevice=`losetup -f --show ${basedir}/elementary-rpi.img`
+loopdevice=`losetup -f --show ${basedir}/${imagename}.img`
 device=`kpartx -va $loopdevice| sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
 device="/dev/mapper/${device}"
 bootp=${device}p1
 rootp=${device}p2
 
 # Create file systems
-mkfs.vfat $bootp
-mkfs.ext4 $rootp
+mkfs.vfat -n system-boot $bootp
+mkfs.ext4 -L writable $rootp
 
 # Create the dirs for the partitions and mount them
 mkdir -p ${basedir}/bootp ${basedir}/root
@@ -112,36 +125,27 @@ mount $rootp ${basedir}/root
 mkdir -p elementary-$architecture/boot/firmware
 mount -o bind ${basedir}/bootp/ elementary-$architecture/boot/firmware
 
-# RPi specific config files to configure bootloader
-cat << EOF > elementary-$architecture/boot/firmware/config.txt
-kernel=vmlinuz
-initramfs initrd.img followkernel
+# Copy Raspberry Pi specific files
+cp -r ${rootdir}/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
 
-enable_uart=1
-dtparam=i2c_arm=on
-dtparam=spi=on
-EOF
-
-cat << EOF > elementary-$architecture/boot/firmware/cmdline.txt
-net.ifnames=0 dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait fixrtc
-EOF
-
-# Install an RPi kernel and firmware
-cat << EOF > elementary-$architecture/kernel
+# Install Raspberry Pi specific packages
+cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
-apt-get --yes install linux-image-raspi linux-firmware-raspi2 u-boot-rpi
+apt-get --yes install linux-image-raspi linux-firmware-raspi2 u-boot-rpi grub-efi-arm64 rpi-eeprom ubuntu-raspi-settings
 
 cp /boot/vmlinuz /boot/firmware/vmlinuz
 cp /boot/initrd.img /boot/firmware/initrd.img
 
 # Copy device-tree blobs to fat32 partition
-cp -r /lib/firmware/*-raspi/device-tree/* /boot/firmware/
+cp -r /lib/firmware/*-raspi/device-tree/broadcom/* /boot/firmware/
+cp -r /lib/firmware/*-raspi/device-tree/overlays /boot/firmware/
+cp -r /usr/lib/*-raspi2/* /boot/firmware/
 
-rm -f kernel
+rm -f hardware
 EOF
 
-chmod +x elementary-$architecture/kernel
-LANG=C chroot elementary-$architecture /kernel
+chmod +x elementary-$architecture/hardware
+LANG=C chroot elementary-$architecture /hardware
 
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
@@ -194,3 +198,10 @@ umount $rootp
 kpartx -dv $loopdevice
 losetup -d $loopdevice
 
+echo "Compressing ${imagename}.img"
+xz -z ${basedir}/${imagename}.img
+
+cd "${basedir}"
+
+md5sum ${imagename}.img.xz > ${imagename}.md5.txt
+sha256sum ${imagename}.img.xz > ${imagename}.sha256.txt
