@@ -1,0 +1,17 @@
+#!/bin/sh
+# Description: Add flatpak remote and install systemwide flatpaks
+
+mkdir -p /etc/flatpak
+
+cat << EOF > /etc/flatpak/epiphany.filter
+# Only allow Epiphany and its dependencies
+deny *
+allow runtime/org.freedesktop.*
+allow runtime/org.gnome.*
+allow org.gnome.Epiphany/*/stable
+allow org.gnome.Epiphany.*/*/stable
+EOF
+
+flatpak remote-add --if-not-exists --filter=/etc/flatpak/epiphany.filter flathub https://flathub.org/repo/flathub.flatpakrepo
+
+flatpak install -y flathub org.gnome.Epiphany

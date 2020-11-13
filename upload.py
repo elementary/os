@@ -15,4 +15,4 @@ client = session.client('s3',
 client.upload_file(FILEPATH, # Path to local file
                    BUCKET,   # Name of Space
                    FILENAME, # Name for remote file
-                   ExtraArgs={'ACL':'public-read'})
+                   ExtraArgs={'ACL':'private'})
