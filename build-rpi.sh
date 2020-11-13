@@ -185,10 +185,10 @@ chmod +x elementary-$architecture/cleanup
 LANG=C chroot elementary-$architecture /cleanup
 
 # Add a oneshot service to grow the rootfs on first boot
-install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "${work_dir}/usr/sbin/resizerootfs"
-install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "${work_dir}/etc/systemd/system"
-mkdir -p "${work_dir}/etc/systemd/system/systemd-remount-fs.service.requires/"
-ln -s /etc/systemd/system/resizerootfs.service "${work_dir}/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
+install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
+install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "elementary-$architecture/etc/systemd/system"
+mkdir -p "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/"
+ln -s /etc/systemd/system/resizerootfs.service "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
 
 umount elementary-$architecture/dev/pts
 umount elementary-$architecture/dev/
