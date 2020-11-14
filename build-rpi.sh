@@ -153,39 +153,16 @@ cp raspi-firmware/bootcode.bin ${basedir}/bootp/
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
 
-cat << EOF > elementary-$architecture/cleanup
-#!/bin/bash
-echo "P: Begin executing remove-blacklisted-packages chroot hook..."
+mkdir ${work_dir}/hooks
+cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
 
-dist="\$(lsb_release -c -s -u 2>&1)"||dist="\$(lsb_release -c -s)"
-
-apt-get install --no-install-recommends -f -q -y git
-
-git clone --depth 1 https://github.com/elementary/seeds.git --single-branch --branch $codename
-git clone --depth 1 https://github.com/elementary/platform.git --single-branch --branch $codename
-
-for package in \$(cat 'platform/blacklist' 'seeds/blacklist' | grep -v '#'); do
-    apt-get autoremove --purge -f -q -y "\$package"
+for f in ${work_dir}/hooks/*
+do
+    base=`basename ${f}`
+    LANG=C chroot ${work_dir} "/hooks/${base}"
 done
 
-apt-get autoremove --purge -f -q -y git
-
-rm -R ../seeds ../platform
-
-rm -rf /root/.bash_history
-apt-get clean
-rm -f /0
-rm -f /hs_err*
-rm -f cleanup
-rm -f /usr/bin/qemu*
-
-rm -f /var/lib/apt/lists/*_Packages
-rm -f /var/lib/apt/lists/*_Sources
-rm -f /var/lib/apt/lists/*_Translation-*
-EOF
-
-chmod +x elementary-$architecture/cleanup
-LANG=C chroot elementary-$architecture /cleanup
+rm -r "${work_dir}/hooks"
 
 # Add a oneshot service to grow the rootfs on first boot
 install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
