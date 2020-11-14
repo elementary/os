@@ -16,7 +16,6 @@ size=8000
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
 export codename="focal"
-export codename_latest="groovy"
 export channel="daily"
 
 version=6.0
@@ -52,11 +51,9 @@ for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "elementary-$archi
 # Set codename/channel in added repos
 sed -i "s/@CHANNEL/$channel/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/sources.list.d/*.list*
-sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/sources.list.d/*.list*
 
 # Set codename in added preferences
 sed -i "s/@BASECODENAME/$codename/" elementary-$architecture/etc/apt/preferences.d/*.pref*
-sed -i "s/@LATESTCODENAME/$codename_latest/" elementary-$architecture/etc/apt/preferences.d/*.pref*
 
 echo "elementary" > elementary-$architecture/etc/hostname
 
@@ -131,7 +128,7 @@ cp -r ${rootdir}/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmwa
 # Install Raspberry Pi specific packages
 cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
-apt-get --yes install linux-image-raspi linux-firmware-raspi2 u-boot-rpi grub-efi-arm64 rpi-eeprom ubuntu-raspi-settings
+apt-get --yes install linux-image-raspi linux-firmware-raspi2
 
 cp /boot/vmlinuz /boot/firmware/vmlinuz
 cp /boot/initrd.img /boot/firmware/initrd.img
@@ -146,6 +143,12 @@ EOF
 
 chmod +x elementary-$architecture/hardware
 LANG=C chroot elementary-$architecture /hardware
+
+# Grab some updated firmware from the Raspberry Pi foundation
+git clone -b '1.20201022' --single-branch --depth 1 https://github.com/raspberrypi/firmware raspi-firmware
+cp raspi-firmware/*.elf ${basedir}/bootp/
+cp raspi-firmware/*.dat ${basedir}/bootp/
+cp raspi-firmware/bootcode.bin ${basedir}/bootp/
 
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
