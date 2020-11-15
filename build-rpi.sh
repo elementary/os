@@ -185,7 +185,7 @@ kpartx -dv $loopdevice
 losetup -d $loopdevice
 
 echo "Compressing ${imagename}.img"
-xz -z ${basedir}/${imagename}.img
+xz -T0 -z ${basedir}/${imagename}.img
 
 cd "${basedir}"
 
