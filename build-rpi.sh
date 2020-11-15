@@ -146,9 +146,9 @@ LANG=C chroot elementary-$architecture /hardware
 
 # Grab some updated firmware from the Raspberry Pi foundation
 git clone -b '1.20201022' --single-branch --depth 1 https://github.com/raspberrypi/firmware raspi-firmware
-cp raspi-firmware/*.elf ${basedir}/bootp/
-cp raspi-firmware/*.dat ${basedir}/bootp/
-cp raspi-firmware/bootcode.bin ${basedir}/bootp/
+cp raspi-firmware/boot/*.elf ${basedir}/bootp/
+cp raspi-firmware/boot/*.dat ${basedir}/bootp/
+cp raspi-firmware/boot/bootcode.bin ${basedir}/bootp/
 
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
