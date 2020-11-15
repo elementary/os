@@ -72,7 +72,7 @@ EOF
 cat << EOF > elementary-${architecture}/etc/fstab
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 proc /proc proc nodev,noexec,nosuid 0  0
-LABEL=writable    /     ext4    defaults,x-systemd.growfs    0 0
+LABEL=writable    /     ext4    defaults    0 0
 LABEL=system-boot       /boot/firmware  vfat    defaults        0       1
 EOF
 
