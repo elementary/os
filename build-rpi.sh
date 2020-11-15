@@ -98,10 +98,18 @@ EOF
 chmod +x elementary-$architecture/third-stage
 LANG=C chroot elementary-$architecture /third-stage
 
+
 # Install Raspberry Pi specific packages
 cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
+
+# Make a dummy folder for the boot partition so packages install properly,
+# we'll recreate it on the actual partition later
+mkdir -p /boot/firmware
+
 apt-get --yes install linux-image-raspi linux-firmware-raspi2
+
+rm -rf /boot/firmware
 
 rm -f hardware
 EOF
