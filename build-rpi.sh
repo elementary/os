@@ -4,7 +4,7 @@ set -e
 
 # Install dependencies in host system
 apt-get update
-apt-get install -y --no-install-recommends ubuntu-keyring debootstrap git qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
+apt-get install -y --no-install-recommends ubuntu-keyring ca-certificates debootstrap git qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
 
 # Make sure cross-running ARM ELF executables is enabled
 update-binfmts --enable
