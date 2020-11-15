@@ -153,16 +153,16 @@ cp raspi-firmware/boot/bootcode.bin ${basedir}/bootp/
 # Copy in any file overrides
 cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
 
-mkdir ${work_dir}/hooks
-cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
+mkdir elementary-$architecture/hooks
+cp ${rootdir}/etc/config/hooks/live/*.chroot elementary-$architecture/hooks
 
-for f in ${work_dir}/hooks/*
+for f in elementary-$architecture/hooks/*
 do
     base=`basename ${f}`
-    LANG=C chroot ${work_dir} "/hooks/${base}"
+    LANG=C chroot elementary-$architecture "/hooks/${base}"
 done
 
-rm -r "${work_dir}/hooks"
+rm -r "elementary-$architecture/hooks"
 
 # Add a oneshot service to grow the rootfs on first boot
 install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
