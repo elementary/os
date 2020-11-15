@@ -186,7 +186,6 @@ cp /boot/initrd.img /boot/firmware/initrd.img
 # Copy device-tree blobs to fat32 partition
 cp -r /lib/firmware/*-raspi/device-tree/broadcom/* /boot/firmware/
 cp -r /lib/firmware/*-raspi/device-tree/overlays /boot/firmware/
-cp -r /usr/lib/*-raspi2/* /boot/firmware/
 
 rm -f hardware
 EOF
