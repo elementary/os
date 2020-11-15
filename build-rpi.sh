@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Install dependencies in host system
 apt-get update
 apt-get install -y --no-install-recommends ubuntu-keyring debootstrap git qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync dosfstools xz-utils
@@ -10,8 +12,8 @@ update-binfmts --enable
 rootdir=`pwd`
 basedir=`pwd`/artifacts/elementary-rpi
 
-# Size of .img file to build in MB. Approx 4GB required at this time, the rest is free space on /
-size=8000
+# Free space on rootfs in MiB
+free_space="500"
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
@@ -96,9 +98,50 @@ EOF
 chmod +x elementary-$architecture/third-stage
 LANG=C chroot elementary-$architecture /third-stage
 
+# Install Raspberry Pi specific packages
+cat << EOF > elementary-$architecture/hardware
+#!/bin/bash
+apt-get --yes install linux-image-raspi linux-firmware-raspi2
+
+rm -f hardware
+EOF
+
+chmod +x elementary-$architecture/hardware
+LANG=C chroot elementary-$architecture /hardware
+
+# Copy in any file overrides
+cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
+
+mkdir elementary-$architecture/hooks
+cp ${rootdir}/etc/config/hooks/live/*.chroot elementary-$architecture/hooks
+
+for f in elementary-$architecture/hooks/*
+do
+    base=`basename ${f}`
+    LANG=C chroot elementary-$architecture "/hooks/${base}"
+done
+
+rm -r "elementary-$architecture/hooks"
+
+# Add a oneshot service to grow the rootfs on first boot
+install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
+install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "elementary-$architecture/etc/systemd/system"
+mkdir -p "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/"
+ln -s /etc/systemd/system/resizerootfs.service "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
+
+# Calculate the space to create the image.
+root_size=$(du -s -B1K elementary-$architecture | cut -f1)
+raw_size=$(($((${free_space}*1024))+${root_size}))
+
 # Create the disk and partition it
-echo "Creating image file for Raspberry Pi"
-dd if=/dev/zero of=${basedir}/${imagename}.img bs=1M count=$size
+echo "Creating image file"
+
+# Sometimes fallocate fails if the filesystem or location doesn't support it, fallback to slower dd in this case
+if ! fallocate -l $(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f) ${basedir}/${imagename}.img
+then
+    dd if=/dev/zero of=${basedir}/${imagename}.img bs=1024 count=${raw_size}
+fi
+
 parted ${imagename}.img --script -- mklabel msdos
 parted ${imagename}.img --script -- mkpart primary fat32 0 256
 parted ${imagename}.img --script -- mkpart primary ext4 256 -1
@@ -125,10 +168,9 @@ mount -o bind ${basedir}/bootp/ elementary-$architecture/boot/firmware
 # Copy Raspberry Pi specific files
 cp -r ${rootdir}/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
 
-# Install Raspberry Pi specific packages
+# Copy kernels and firemware to boot partition
 cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
-apt-get --yes install linux-image-raspi linux-firmware-raspi2
 
 cp /boot/vmlinuz /boot/firmware/vmlinuz
 cp /boot/initrd.img /boot/firmware/initrd.img
@@ -149,26 +191,6 @@ git clone -b '1.20201022' --single-branch --depth 1 https://github.com/raspberry
 cp raspi-firmware/boot/*.elf ${basedir}/bootp/
 cp raspi-firmware/boot/*.dat ${basedir}/bootp/
 cp raspi-firmware/boot/bootcode.bin ${basedir}/bootp/
-
-# Copy in any file overrides
-cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
-
-mkdir elementary-$architecture/hooks
-cp ${rootdir}/etc/config/hooks/live/*.chroot elementary-$architecture/hooks
-
-for f in elementary-$architecture/hooks/*
-do
-    base=`basename ${f}`
-    LANG=C chroot elementary-$architecture "/hooks/${base}"
-done
-
-rm -r "elementary-$architecture/hooks"
-
-# Add a oneshot service to grow the rootfs on first boot
-install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
-install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "elementary-$architecture/etc/systemd/system"
-mkdir -p "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/"
-ln -s /etc/systemd/system/resizerootfs.service "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
 
 umount elementary-$architecture/dev/pts
 umount elementary-$architecture/dev/
