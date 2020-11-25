@@ -232,3 +232,30 @@ cd "${basedir}"
 
 md5sum ${imagename}.img.xz > ${imagename}.md5.txt
 sha256sum ${imagename}.img.xz > ${imagename}.sha256.txt
+
+cd "${rootdir}"
+
+KEY="$1"
+SECRET="$2"
+ENDPOINT="$3"
+BUCKET="$4"
+IMGPATH="${basedir}"/${imagename}.img.xz
+IMGNAME=${channel}-rpi/$(basename "$IMGPATH")
+
+apt-get install -y curl python3 python3-distutils
+
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+pip install boto3
+
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$IMGPATH" "$IMGNAME" || exit 1
+
+CHECKSUMPATH="${basedir}"/${imagename}.md5.txt
+CHECKSUMNAME=${channel}-rpi/$(basename "$CHECKSUMPATH")
+
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
+
+CHECKSUMPATH="${basedir}"/${imagename}.sha256.txt
+CHECKSUMNAME=${channel}-rpi/$(basename "$CHECKSUMPATH")
+
+python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$CHECKSUMPATH" "$CHECKSUMNAME" || exit 1
