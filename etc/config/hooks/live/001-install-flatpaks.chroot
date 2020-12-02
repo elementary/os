@@ -1,6 +1,12 @@
 #!/bin/sh
 # Description: Add flatpak remote and install systemwide flatpaks
 
+dist="$(lsb_release -c -s -u 2>&1)"||dist="$(lsb_release -c -s)"
+
+if [ "$dist" = "bionic" ] ; then
+    exit 0
+fi
+
 mkdir -p /etc/flatpak
 
 cat << EOF > /etc/flatpak/epiphany.filter
