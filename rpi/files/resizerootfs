@@ -1,0 +1,22 @@
+#!/bin/sh
+
+rootpart="$(findmnt -n -o SOURCE /)"
+rootdev="/dev/$(lsblk -no pkname "$rootpart")"
+
+flock $rootdev sfdisk -f $rootdev -N 2 <<EOF
+,+
+EOF
+
+sleep 5
+
+udevadm settle
+
+sleep 5
+
+flock $rootdev partprobe $rootdev
+
+mount -o remount,rw $rootpart
+
+resize2fs $rootpart
+
+exit 0
