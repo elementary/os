@@ -4,12 +4,14 @@ set -e
 
 . ./terraform.conf
 
-# HWE starts with y, Y or 1?
-if [ "$HWE" = "yes" ]; then
+if [ "$HWE_KERNEL" = "yes" ]; then
     KERNEL_FLAVORS="generic-hwe-${BASEVERSION}"
-    XORG_HWE="xserver-xorg-hwe-${BASEVERSION}"
 else
     KERNEL_FLAVORS="generic"
+fi
+
+if [ "$HWE_X11" = "yes" ]; then
+    XORG_HWE="xserver-xorg-hwe-${BASEVERSION}"
 fi
 
 lb config noauto \
