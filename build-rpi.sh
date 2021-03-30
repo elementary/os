@@ -110,7 +110,7 @@ mkdir -p /boot/firmware
 apt-get --yes install linux-image-raspi linux-firmware-raspi2 pi-bluetooth
 
 # Symlink to workaround bug with Bluetooth driver looking in the wrong place for firmware
-sudo ln -s /lib/firmware /etc/firmware
+ln -s /lib/firmware /etc/firmware
 
 rm -rf /boot/firmware
 
