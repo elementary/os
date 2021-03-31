@@ -107,7 +107,10 @@ cat << EOF > elementary-$architecture/hardware
 # we'll recreate it on the actual partition later
 mkdir -p /boot/firmware
 
-apt-get --yes install linux-image-raspi linux-firmware-raspi2
+apt-get --yes install linux-image-raspi linux-firmware-raspi2 pi-bluetooth
+
+# Symlink to workaround bug with Bluetooth driver looking in the wrong place for firmware
+ln -s /lib/firmware /etc/firmware
 
 rm -rf /boot/firmware
 
