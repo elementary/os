@@ -19,11 +19,11 @@ kernsha256="f8d2a4fe938ff7faa565765a52e347e518a0712ca6ddd41b198bd9cc1626a724  li
 # Free space on rootfs in MiB
 free_space="500"
 
-rootdir=`pwd`
-basedir=`pwd`/pinebook-pro
+rootdir=$(pwd)
+basedir=$(pwd)/pinebook-pro
 
-mkdir -p ${basedir}
-cd ${basedir}
+mkdir -p "${basedir}"
+cd "${basedir}"
 
 export DEBIAN_FRONTEND="noninteractive"
 
@@ -48,7 +48,7 @@ cd ../u-boot-${ubootver}
 patch -Np1 -i "${rootdir}/pinebookpro/patches/uboot/0001-Add-regulator-needed-for-usage-of-USB.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/uboot/0002-Correct-boot-order-to-be-USB-SD-eMMC.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/uboot/0003-rk3399-light-pinebook-power-and-standby-leds-during-early-boot.patch"
-sed -i s/"CONFIG_BOOTDELAY=3"/"CONFIG_BOOTDELAY=0"/g configs/pinebook-pro-rk3399_defconfig
+sed -i 's/CONFIG_BOOTDELAY=3/CONFIG_BOOTDELAY=0/g' configs/pinebook-pro-rk3399_defconfig
 
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 CROSS_COMPILE=aarch64-linux-gnu- make pinebook-pro-rk3399_defconfig
@@ -67,29 +67,29 @@ work_dir="${basedir}/elementary-${architecture}"
 debootstrap --foreign --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
 
 # Add the QEMU emulator for running ARM executables
-cp /usr/bin/qemu-arm-static ${work_dir}/usr/bin/
+cp /usr/bin/qemu-arm-static "${work_dir}/usr/bin/"
 
 # Run the second stage of the bootstrap in QEMU
-LANG=C chroot ${work_dir} /debootstrap/debootstrap --second-stage
+LANG=C chroot "${work_dir}" /debootstrap/debootstrap --second-stage
 
 # Add the rest of the ubuntu repos
-cat << EOF > ${work_dir}/etc/apt/sources.list
+cat << EOF > "${work_dir}/etc/apt/sources.list"
 deb http://ports.ubuntu.com/ubuntu-ports $codename main restricted universe multiverse
 deb http://ports.ubuntu.com/ubuntu-ports $codename-updates main restricted universe multiverse
 EOF
 
 # Copy in the elementary PPAs/keys/apt config
-for f in ${rootdir}/etc/config/archives/*.list; do cp -- "$f" "${work_dir}/etc/apt/sources.list.d/$(basename -- $f)"; done
-for f in ${rootdir}/etc/config/archives/*.key; do cp -- "$f" "${work_dir}/etc/apt/trusted.gpg.d/$(basename -- $f).asc"; done
-for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "${work_dir}/etc/apt/preferences.d/$(basename -- $f)"; done
+for f in "${rootdir}"/etc/config/archives/*.list; do cp -- "$f" "${work_dir}/etc/apt/sources.list.d/$(basename -- "$f")"; done
+for f in "${rootdir}"/etc/config/archives/*.key; do cp -- "$f" "${work_dir}/etc/apt/trusted.gpg.d/$(basename -- "$f").asc"; done
+for f in "${rootdir}"/etc/config/archives/*.pref; do cp -- "$f" "${work_dir}/etc/apt/preferences.d/$(basename -- "$f")"; done
 
 # Set codename/channel in added repos
-sed -i "s/@CHANNEL/$channel/" ${work_dir}/etc/apt/sources.list.d/*.list*
-sed -i "s/@BASECODENAME/$codename/" ${work_dir}/etc/apt/sources.list.d/*.list*
+sed -i "s/@CHANNEL/$channel/" "${work_dir}"/etc/apt/sources.list.d/*.list*
+sed -i "s/@BASECODENAME/$codename/" "${work_dir}"/etc/apt/sources.list.d/*.list*
 
-echo "elementary" > ${work_dir}/etc/hostname
+echo "elementary" > "${work_dir}/etc/hostname"
 
-cat << EOF > ${work_dir}/etc/hosts
+cat << EOF > "${work_dir}/etc/hosts"
 127.0.0.1       elementary    localhost
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
@@ -98,12 +98,12 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 EOF
 
-mount -t proc proc ${work_dir}/proc
-mount -o bind /dev/ ${work_dir}/dev/
-mount -o bind /dev/pts ${work_dir}/dev/pts
+mount -t proc proc "${work_dir}/proc"
+mount -o bind /dev/ "${work_dir}/dev/"
+mount -o bind /dev/pts "${work_dir}/dev/pts"
 
 # Make a third stage that installs all of the metapackages
-cat << EOF > ${work_dir}/third-stage
+cat << EOF > "${work_dir}/third-stage"
 #!/bin/bash
 apt-get update
 apt-get --yes upgrade
@@ -115,8 +115,8 @@ apt-get --yes remove irqbalance
 rm -f /third-stage
 EOF
 
-chmod +x ${work_dir}/third-stage
-LANG=C chroot ${work_dir} /third-stage
+chmod +x "${work_dir}/third-stage"
+LANG=C chroot "${work_dir}" /third-stage
 
 # Pull in the wifi and bluetooth firmware from manjaro's git repository.
 git clone https://gitlab.manjaro.org/manjaro-arm/packages/community/ap6256-firmware.git
@@ -127,14 +127,14 @@ cp BCM4345C5.hcd brcm/BCM4345C5.hcd
 cp nvram_ap6256.txt brcm/brcmfmac43456-sdio.pine64,pinebook-pro.txt
 cp fw_bcm43456c5_ag.bin brcm/brcmfmac43456-sdio.bin
 cp brcmfmac43456-sdio.clm_blob brcm/brcmfmac43456-sdio.clm_blob
-mkdir -p ${work_dir}/lib/firmware/brcm/
-cp -a brcm/* ${work_dir}/lib/firmware/brcm/
+mkdir -p "${work_dir}/lib/firmware/brcm/"
+cp -a brcm/* "${work_dir}/lib/firmware/brcm/"
 
 # Time to build the kernel
-cd ${work_dir}/usr/src
+cd "${work_dir}/usr/src"
 
 wget "http://www.kernel.org/pub/linux/kernel/v5.x/linux-${linuxver}.tar.xz"
-echo $kernsha256 | sha256sum --check
+echo "$kernsha256" | sha256sum --check
 
 tar xf "linux-${linuxver}.tar.xz"
 rm "linux-${linuxver}.tar.xz"
@@ -161,100 +161,101 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0004-Bluetooth-hci_h5-Add-s
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0005-Bluetooth-btrtl-add-support-for-the-RTL8723CS.patch"
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0006-bluetooth-btrtl-Make-more-space-for-config-firmware-file-name.patch"
 
-cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config .config
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) Image modules
+cp "${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config" .config
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "-j$(nproc)" Image modules
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- DTC_FLAGS="-@" dtbs
 
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${work_dir} modules_install
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH="${work_dir}" modules_install
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_DTBS_PATH="${work_dir}/boot/dtbs" dtbs_install
 
-cp arch/arm64/boot/Image ${work_dir}/boot
+cp arch/arm64/boot/Image "${work_dir}/boot"
 
 # clean up because otherwise we leave stuff around that causes external modules
 # to fail to build.
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- mrproper
-cp ${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config .config
+cp "${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config" .config
 
 # Fix up the symlink for building external modules
 # kernver is used to we don't need to keep track of what the current compiled
 # version is
-kernver=$(ls ${work_dir}/lib/modules)
-cd ${work_dir}/lib/modules/${kernver}/
+kernver=$(ls "${work_dir}/lib/modules")
+cd "${work_dir}/lib/modules/${kernver}/"
 rm build
 rm source
 ln -s /usr/src/linux build
 ln -s /usr/src/linux source
-cd ${basedir}
+cd "${basedir}"
 
 # Build the initramfs for our kernel
-cat << EOF > ${work_dir}/build-initramfs
+cat << EOF > "${work_dir}/build-initramfs"
 #!/bin/bash
 update-initramfs -c -k ${kernver}
 rm -f /build-initramfs
 EOF
 
-chmod +x ${work_dir}/build-initramfs
-LANG=C chroot ${work_dir} /build-initramfs
+chmod +x "${work_dir}/build-initramfs"
+LANG=C chroot "${work_dir}" /build-initramfs
 
-mkdir ${work_dir}/hooks
-cp ${rootdir}/etc/config/hooks/live/*.chroot ${work_dir}/hooks
+mkdir "${work_dir}/hooks"
+cp "${rootdir}/etc/config/hooks/live/*.chroot" "${work_dir}/hooks"
 
-for f in ${work_dir}/hooks/*
+hook_files="${work_dir}/hooks/*"
+for f in $hook_files
 do
-    base=`basename ${f}`
-    LANG=C chroot ${work_dir} "/hooks/${base}"
+    base=$(basename "${f}")
+    LANG=C chroot "${work_dir}" "/hooks/${base}"
 done
 
 rm -r "${work_dir}/hooks"
 
 # Calculate the space to create the image.
-root_size=$(du -s -B1K ${work_dir} | cut -f1)
-raw_size=$(($((${free_space}*1024))+${root_size}))
+root_size=$(du -s -B1K "${work_dir}" | cut -f1)
+raw_size=$(($((free_space*1024))+root_size))
 
 # Create the disk and partition it
 echo "Creating image file"
 
 # Sometimes fallocate fails if the filesystem or location doesn't support it, fallback to slower dd in this case
-if ! fallocate -l $(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f) ${basedir}/${imagename}.img
+if ! fallocate -l "$(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f)" "${basedir}/${imagename}.img"
 then
-    dd if=/dev/zero of=${basedir}/${imagename}.img bs=1024 count=${raw_size}
+    dd if=/dev/zero of="${basedir}/${imagename}.img" bs=1024 count=${raw_size}
 fi
 
-parted ${imagename}.img --script -- mklabel msdos
-parted ${imagename}.img --script -- mkpart primary ext4 32M 100%
+parted "${imagename}.img" --script -- mklabel msdos
+parted "${imagename}.img" --script -- mkpart primary ext4 32M 100%
 
 # Set the partition variables
-loopdevice=`losetup -f --show "${basedir}"/${imagename}.img`
-device=`kpartx -va ${loopdevice} | sed 's/.*\(loop[0-9]\+\)p.*/\1/g' | head -1`
+loopdevice=$(losetup -f --show "${basedir}/${imagename}.img")
+device=$(kpartx -va "${loopdevice}" | sed 's/.*\(loop[0-9]\+\)p.*/\1/g' | head -1)
 sleep 5
 device="/dev/mapper/${device}"
-rootp=${device}p1
+rootp="${device}p1"
 
 # Create file systems
-mkfs.ext4 ${rootp}
+mkfs.ext4 "${rootp}"
 
 # Create the dirs for the partitions and mount them
-mkdir -p "${basedir}"/root
-mount ${rootp} "${basedir}"/root
+mkdir -p "${basedir}/root"
+mount "${rootp}" "${basedir}/root"
 
 # Create an fstab so that we don't mount / read-only.
-UUID=$(blkid -s UUID -o value ${rootp})
-echo "UUID=$UUID /               ext4    errors=remount-ro 0       1" >> ${work_dir}/etc/fstab
+UUID=$(blkid -s UUID -o value "${rootp}")
+echo "UUID=$UUID /               ext4    errors=remount-ro 0       1" >> "${work_dir}/etc/fstab"
 
-mkdir ${work_dir}/boot/extlinux/
+mkdir "${work_dir}/boot/extlinux/"
 
 # U-boot config
-cat << EOF > ${work_dir}/boot/extlinux/extlinux.conf
+cat << EOF > "${work_dir}/boot/extlinux/extlinux.conf"
 LABEL elementary ARM
 KERNEL /boot/Image
 FDT /boot/dtbs/rockchip/rk3399-pinebook-pro.dtb
 APPEND initrd=/boot/initrd.img-${kernver} console=ttyS2,1500000 console=tty1 root=UUID=${UUID} rw rootwait video=eDP-1:1920x1080@60 video=HDMI-A-1:1920x1080@60 quiet splash plymouth.ignore-serial-consoles
 EOF
-cd ${basedir}
+cd "${basedir}"
 
-mkdir -p ${work_dir}/etc/udev/hwdb.d/
-cat << EOF > ${work_dir}/etc/udev/hwdb.d/10-usb-kbd.hwdb
+mkdir -p "${work_dir}/etc/udev/hwdb.d/"
+cat << EOF > "${work_dir}/etc/udev/hwdb.d/10-usb-kbd.hwdb"
 # Make the sleep and brightness Fn hotkeys work
 evdev:input:b0003v258Ap001E*
   KEYBOARD_KEY_700a5=brightnessdown
@@ -270,8 +271,8 @@ evdev:input:b0003v258Ap001Ee0110-e0,1,2,4,k110,111,112,r0,1,am4,lsfw
 EOF
 
 # Mark the keyboard as internal, so that "disable when typing" works for the touchpad
-mkdir -p ${work_dir}/etc/libinput/
-cat << EOF > ${work_dir}/etc/libinput/local-overrides.quirks
+mkdir -p "${work_dir}/etc/libinput/"
+cat << EOF > "${work_dir}/etc/libinput/local-overrides.quirks"
 [Pinebook Pro Keyboard]
 MatchUdevType=keyboard
 MatchBus=usb
@@ -281,55 +282,55 @@ AttrKeyboardIntegration=internal
 EOF
 
 # Make resume from suspend work
-sed -i s/"#SuspendState=mem standby freeze"/"SuspendState=freeze"/g ${work_dir}/etc/systemd/sleep.conf
+sed -i 's/#SuspendState=mem standby freeze/SuspendState=freeze/g' "${work_dir}/etc/systemd/sleep.conf"
 
 # Disable ondemand scheduler so we can default to schedutil
-rm ${work_dir}/etc/systemd/system/multi-user.target.wants/ondemand.service
+rm "${work_dir}/etc/systemd/system/multi-user.target.wants/ondemand.service"
 
 # Make sound work
-mkdir -p ${work_dir}/var/lib/alsa/
-cp ${rootdir}/pinebookpro/config/alsa/asound.state ${work_dir}/var/lib/alsa/
+mkdir -p "${work_dir}/var/lib/alsa/"
+cp "${rootdir}/pinebookpro/config/alsa/asound.state" "${work_dir}/var/lib/alsa/"
 
 # Add a oneshot service to grow the rootfs on first boot
-install -m 755 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs "${work_dir}/usr/sbin/resizerootfs"
-install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "${work_dir}/etc/systemd/system"
+install -m 755 -o root -g root "${rootdir}/pinebookpro/files/resizerootfs" "${work_dir}/usr/sbin/resizerootfs"
+install -m 644 -o root -g root "${rootdir}/pinebookpro/files/resizerootfs.service" "${work_dir}/etc/systemd/system"
 mkdir -p "${work_dir}/etc/systemd/system/systemd-remount-fs.service.requires/"
 ln -s /etc/systemd/system/resizerootfs.service "${work_dir}/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
 
 # Tweak the minimum frequencies of the GPU and CPU governors to get a bit more performance
-mkdir -p ${work_dir}/etc/tmpfiles.d/
-cat << EOF > ${work_dir}/etc/tmpfiles.d/cpufreq.conf
+mkdir -p "${work_dir}/etc/tmpfiles.d/"
+cat << EOF > "${work_dir}/etc/tmpfiles.d/cpufreq.conf"
 w- /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq - - - - 1200000
 w- /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq - - - - 1008000
 w- /sys/class/devfreq/ff9a0000.gpu/min_freq - - - - 600000000
 EOF
 
-umount ${work_dir}/dev/pts
-umount ${work_dir}/dev/
-umount ${work_dir}/proc
+umount "${work_dir}/dev/pts"
+umount "${work_dir}/dev/"
+umount "${work_dir}/proc"
 
 echo "Rsyncing rootfs into image file"
-rsync -HPavz -q ${work_dir}/ "${basedir}"/root/
+rsync -HPavz -q "${work_dir}/" "${basedir}/root/"
 
 # Flash u-boot into the early sectors of the image
-cp "${basedir}"/u-boot-"${ubootver}"/idbloader.img "${basedir}"/u-boot-"${ubootver}"/u-boot.itb "${basedir}"/root/boot/
-dd if="${basedir}"/u-boot-"${ubootver}"/idbloader.img of=${loopdevice} seek=64 conv=notrunc
-dd if="${basedir}"/u-boot-"${ubootver}"/u-boot.itb of=${loopdevice} seek=16384 conv=notrunc
+cp "${basedir}/u-boot-${ubootver}/idbloader.img" "${basedir}/u-boot-${ubootver}/u-boot.itb" "${basedir}/root/boot/"
+dd if="${basedir}/u-boot-${ubootver}/idbloader.img" of="${loopdevice}" seek=64 conv=notrunc
+dd if="${basedir}/u-boot-${ubootver}/u-boot.itb" of="${loopdevice}" seek=16384 conv=notrunc
 
 # Unmount partitions
 sync
-umount ${rootp}
+umount "${rootp}"
 
-kpartx -dv ${loopdevice}
-losetup -d ${loopdevice}
+kpartx -dv "${loopdevice}"
+losetup -d "${loopdevice}"
 
 echo "Compressing ${imagename}.img"
-xz -z "${basedir}"/${imagename}.img
+xz -z "${basedir}/${imagename}.img"
 
 cd "${basedir}"
 
-md5sum ${imagename}.img.xz > ${imagename}.md5.txt
-sha256sum ${imagename}.img.xz > ${imagename}.sha256.txt
+md5sum "${imagename}.img.xz" > "${imagename}.md5.txt"
+sha256sum "${imagename}.img.xz" > "${imagename}.sha256.txt"
 
 cd "${rootdir}"
 
