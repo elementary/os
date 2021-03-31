@@ -198,7 +198,7 @@ chmod +x "${work_dir}/build-initramfs"
 LANG=C chroot "${work_dir}" /build-initramfs
 
 mkdir "${work_dir}/hooks"
-cp "${rootdir}/etc/config/hooks/live/*.chroot" "${work_dir}/hooks"
+cp "${rootdir}"/etc/config/hooks/live/*.chroot "${work_dir}/hooks"
 
 hook_files="${work_dir}/hooks/*"
 for f in $hook_files
