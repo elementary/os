@@ -162,7 +162,7 @@ patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0005-Bluetooth-btrtl-add-su
 patch -Np1 -i "${rootdir}/pinebookpro/patches/kernel/0006-bluetooth-btrtl-Make-more-space-for-config-firmware-file-name.patch"
 
 cp "${rootdir}/pinebookpro/config/kernel/pinebook-pro-5.8.config" .config
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- "-j$(nproc)" Image modules
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- DTC_FLAGS="-@" dtbs
 
