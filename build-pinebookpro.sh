@@ -38,10 +38,18 @@ echo "c1f5bf9ee6bb6e648edbf19ce2ca9452f614b08a9f886f1a566aa42e8cf05f6a u-boot-${
 
 tar xf "trusted-firmware-a-${tfaver}.tar.gz"
 tar xf "u-boot-${ubootver}.tar.bz2"
+
+# These tarballs are extracted now, delete them
+rm "trusted-firmware-a-${tfaver}.tar.gz"
+rm "u-boot-${ubootver}.tar.bz2"
+
 cd "trusted-firmware-a-${tfaver}"
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 CROSS_COMPILE=aarch64-linux-gnu- make PLAT=rk3399
 cp build/rk3399/release/bl31/bl31.elf ../u-boot-${ubootver}/
+
+# We've got the compiled binary we need out of this folder, clean it up
+rm -rf "${basedir}/trusted-firmware-a-${tfaver}"
 
 cd ../u-boot-${ubootver}
 
@@ -315,6 +323,11 @@ rsync -HPavz -q ${work_dir}/ "${basedir}"/root/
 cp "${basedir}"/u-boot-"${ubootver}"/idbloader.img "${basedir}"/u-boot-"${ubootver}"/u-boot.itb "${basedir}"/root/boot/
 dd if="${basedir}"/u-boot-"${ubootver}"/idbloader.img of=${loopdevice} seek=64 conv=notrunc
 dd if="${basedir}"/u-boot-"${ubootver}"/u-boot.itb of=${loopdevice} seek=16384 conv=notrunc
+
+# u-boot and the root filesystem now reside in the .img file, clean up the sources of those so we have space to
+# compress the image
+rm -rf "${basedir}/u-boot-${ubootver}"
+rm -rf "${work_dir}"
 
 # Unmount partitions
 sync
