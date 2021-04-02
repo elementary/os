@@ -9,8 +9,8 @@ apt-get install -y --no-install-recommends ubuntu-keyring ca-certificates deboot
 # Make sure cross-running ARM ELF executables is enabled
 update-binfmts --enable
 
-rootdir=`pwd`
-basedir=`pwd`/artifacts/elementary-rpi
+rootdir=$(pwd)
+basedir=$(pwd)/artifacts/elementary-rpi
 
 # Free space on rootfs in MiB
 free_space="500"
@@ -24,8 +24,8 @@ version=6.0
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
-mkdir -p ${basedir}
-cd ${basedir}
+mkdir -p "${basedir}"
+cd "${basedir}"
 
 # Bootstrap an ubuntu minimal system
 debootstrap --foreign --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
@@ -37,7 +37,7 @@ cp /usr/bin/qemu-arm-static elementary-$architecture/usr/bin/
 LANG=C chroot elementary-$architecture /debootstrap/debootstrap --second-stage
 
 # Copy Raspberry Pi specific files
-cp -r ${rootdir}/rpi/rootfs/writable/* elementary-${architecture}/
+cp -r "${rootdir}"/rpi/rootfs/writable/* elementary-${architecture}/
 
 # Add the rest of the ubuntu repos
 cat << EOF > elementary-$architecture/etc/apt/sources.list
@@ -46,9 +46,9 @@ deb http://ports.ubuntu.com/ubuntu-ports $codename-updates main restricted unive
 EOF
 
 # Copy in the elementary PPAs/keys/apt config
-for f in ${rootdir}/etc/config/archives/*.list; do cp -- "$f" "elementary-$architecture/etc/apt/sources.list.d/$(basename -- $f)"; done
-for f in ${rootdir}/etc/config/archives/*.key; do cp -- "$f" "elementary-$architecture/etc/apt/trusted.gpg.d/$(basename -- $f).asc"; done
-for f in ${rootdir}/etc/config/archives/*.pref; do cp -- "$f" "elementary-$architecture/etc/apt/preferences.d/$(basename -- $f)"; done
+for f in "${rootdir}"/etc/config/archives/*.list; do cp -- "$f" "elementary-$architecture/etc/apt/sources.list.d/$(basename -- "$f")"; done
+for f in "${rootdir}"/etc/config/archives/*.key; do cp -- "$f" "elementary-$architecture/etc/apt/trusted.gpg.d/$(basename -- "$f").asc"; done
+for f in "${rootdir}"/etc/config/archives/*.pref; do cp -- "$f" "elementary-$architecture/etc/apt/preferences.d/$(basename -- "$f")"; done
 
 # Set codename/channel in added repos
 sed -i "s/@CHANNEL/$channel/" elementary-$architecture/etc/apt/sources.list.d/*.list*
@@ -121,22 +121,23 @@ chmod +x elementary-$architecture/hardware
 LANG=C chroot elementary-$architecture /hardware
 
 # Copy in any file overrides
-cp -r ${rootdir}/etc/config/includes.chroot/* elementary-$architecture/
+cp -r "${rootdir}"/etc/config/includes.chroot/* elementary-$architecture/
 
 mkdir elementary-$architecture/hooks
-cp ${rootdir}/etc/config/hooks/live/*.chroot elementary-$architecture/hooks
+cp "${rootdir}"/etc/config/hooks/live/*.chroot elementary-$architecture/hooks
 
-for f in elementary-$architecture/hooks/*
+hook_files="elementary-$architecture/hooks/*"
+for f in $hook_files
 do
-    base=`basename ${f}`
+    base=$(basename "${f}")
     LANG=C chroot elementary-$architecture "/hooks/${base}"
 done
 
 rm -r "elementary-$architecture/hooks"
 
 # Add a oneshot service to grow the rootfs on first boot
-install -m 755 -o root -g root ${rootdir}/rpi/files/resizerootfs "elementary-$architecture/usr/sbin/resizerootfs"
-install -m 644 -o root -g root ${rootdir}/pinebookpro/files/resizerootfs.service "elementary-$architecture/etc/systemd/system"
+install -m 755 -o root -g root "${rootdir}/rpi/files/resizerootfs" "elementary-$architecture/usr/sbin/resizerootfs"
+install -m 644 -o root -g root "${rootdir}/pinebookpro/files/resizerootfs.service" "elementary-$architecture/etc/systemd/system"
 mkdir -p "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/"
 ln -s /etc/systemd/system/resizerootfs.service "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
 
@@ -154,42 +155,42 @@ EOF
 
 # Calculate the space to create the image.
 root_size=$(du -s -B1K elementary-$architecture | cut -f1)
-raw_size=$(($((${free_space}*1024))+${root_size}))
+raw_size=$(($((free_space*1024))+root_size))
 
 # Create the disk and partition it
 echo "Creating image file"
 
 # Sometimes fallocate fails if the filesystem or location doesn't support it, fallback to slower dd in this case
-if ! fallocate -l $(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f) ${basedir}/${imagename}.img
+if ! fallocate -l "$(echo ${raw_size}Ki | numfmt --from=iec-i --to=si --format=%.1f)" "${basedir}/${imagename}.img"
 then
-    dd if=/dev/zero of=${basedir}/${imagename}.img bs=1024 count=${raw_size}
+    dd if=/dev/zero of="${basedir}/${imagename}.img" bs=1024 count=${raw_size}
 fi
 
-parted ${imagename}.img --script -- mklabel msdos
-parted ${imagename}.img --script -- mkpart primary fat32 0 256
-parted ${imagename}.img --script -- mkpart primary ext4 256 -1
+parted "${imagename}.img" --script -- mklabel msdos
+parted "${imagename}.img" --script -- mkpart primary fat32 0 256
+parted "${imagename}.img" --script -- mkpart primary ext4 256 -1
 
 # Set the partition variables
-loopdevice=`losetup -f --show ${basedir}/${imagename}.img`
-device=`kpartx -va $loopdevice| sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
+loopdevice=$(losetup -f --show "${basedir}/${imagename}.img")
+device=$(kpartx -va "$loopdevice" | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1)
 device="/dev/mapper/${device}"
 bootp=${device}p1
 rootp=${device}p2
 
 # Create file systems
-mkfs.vfat -n system-boot $bootp
-mkfs.ext4 -L writable $rootp
+mkfs.vfat -n system-boot "$bootp"
+mkfs.ext4 -L writable "$rootp"
 
 # Create the dirs for the partitions and mount them
-mkdir -p ${basedir}/bootp ${basedir}/root
-mount -t vfat $bootp ${basedir}/bootp
-mount $rootp ${basedir}/root
+mkdir -p "${basedir}/bootp" "${basedir}/root"
+mount -t vfat "$bootp" "${basedir}/bootp"
+mount "$rootp" "${basedir}/root"
 
 mkdir -p elementary-$architecture/boot/firmware
-mount -o bind ${basedir}/bootp/ elementary-$architecture/boot/firmware
+mount -o bind "${basedir}/bootp/" elementary-$architecture/boot/firmware
 
 # Copy Raspberry Pi specific files
-cp -r ${rootdir}/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
+cp -r "${rootdir}"/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
 
 # Copy kernels and firemware to boot partition
 cat << EOF > elementary-$architecture/hardware
@@ -210,9 +211,9 @@ LANG=C chroot elementary-$architecture /hardware
 
 # Grab some updated firmware from the Raspberry Pi foundation
 git clone -b '1.20201022' --single-branch --depth 1 https://github.com/raspberrypi/firmware raspi-firmware
-cp raspi-firmware/boot/*.elf ${basedir}/bootp/
-cp raspi-firmware/boot/*.dat ${basedir}/bootp/
-cp raspi-firmware/boot/bootcode.bin ${basedir}/bootp/
+cp raspi-firmware/boot/*.elf "${basedir}/bootp/"
+cp raspi-firmware/boot/*.dat "${basedir}/bootp/"
+cp raspi-firmware/boot/bootcode.bin "${basedir}/bootp/"
 
 umount elementary-$architecture/dev/pts
 umount elementary-$architecture/dev/
@@ -220,21 +221,21 @@ umount elementary-$architecture/proc
 umount elementary-$architecture/boot/firmware
 
 echo "Rsyncing rootfs into image file"
-rsync -HPavz -q ${basedir}/elementary-$architecture/ ${basedir}/root/
+rsync -HPavz -q "${basedir}/elementary-$architecture/" "${basedir}/root/"
 
 # Unmount partitions
-umount $bootp
-umount $rootp
-kpartx -dv $loopdevice
-losetup -d $loopdevice
+umount "$bootp"
+umount "$rootp"
+kpartx -dv "$loopdevice"
+losetup -d "$loopdevice"
 
 echo "Compressing ${imagename}.img"
-xz -T0 -z ${basedir}/${imagename}.img
+xz -T0 -z "${basedir}/${imagename}.img"
 
 cd "${basedir}"
 
-md5sum ${imagename}.img.xz > ${imagename}.md5.txt
-sha256sum ${imagename}.img.xz > ${imagename}.sha256.txt
+md5sum "${imagename}.img.xz" > "${imagename}.md5.txt"
+sha256sum "${imagename}.img.xz" > "${imagename}.sha256.txt"
 
 cd "${rootdir}"
 
