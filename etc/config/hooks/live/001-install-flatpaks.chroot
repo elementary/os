@@ -16,5 +16,4 @@ flatpak remote-add --if-not-exists --filter=/etc/flatpak/epiphany.filter flathub
 
 flatpak install -y flathub org.gnome.Epiphany
 
-flatpak remote-add --if-not-exists appcenter https://flatpak.elementary.io/appcenter/
-flatpak remote-add --if-not-exists elementary https://flatpak.elementary.io/elementary/
+flatpak remote-add --if-not-exists elementary https://flatpak.elementary.io/elementary/elementary.flatpakrepo
