@@ -5,4 +5,5 @@ mkdir -p /etc/flatpak
 
 flatpak remote-add --if-not-exists elementary https://flatpak.elementary.io/elementary.flatpakrepo
 
+flatpak install -y elementary io.elementary.calculator
 flatpak install -y elementary org.gnome.Epiphany
