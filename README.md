@@ -43,8 +43,8 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
-    ./build-rpi.sh
+    debian:latest \
+    /bin/bash -s etc/terraform-daily-6.0-rpi.conf < build.sh
 ```
 
 ### Pinebook Pro
@@ -53,8 +53,8 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
-    ./build-pinebookpro.sh
+    debian:latest \
+    /bin/bash -s etc/terraform-daily-6.0-pinebookpro.conf < build.sh
 ```
 
 ## Further Information

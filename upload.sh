@@ -20,14 +20,19 @@ apt-get update
 apt-get install -y curl python3 python3-distutils
 
 echo -e "
-#------------#
-# UPLOAD ISO #
-#------------#
+#--------------#
+# UPLOAD IMAGE #
+#--------------#
 "
 # install boto, which can be fetched via pip
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python3 get-pip.py
 pip install boto3
+
+
+
+IMGPATH="${basedir}"/${imagename}.img.xz
+IMGNAME=${channel}-pinebookpro/$(basename "$IMGPATH")
 
 # get the paths & filenames of the files to upload
 ISOPATHS="$(find builds -name "*.iso")"

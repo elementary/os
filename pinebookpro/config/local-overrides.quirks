@@ -1,0 +1,6 @@
+[Pinebook Pro Keyboard]
+MatchUdevType=keyboard
+MatchBus=usb
+MatchVendor=0x258A
+MatchProduct=0x001E
+AttrKeyboardIntegration=internal

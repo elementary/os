@@ -1,0 +1,6 @@
+Machine: Raspberry Pi 400 Rev 1.0
+Method: pi
+Kernel-Flavors: raspi raspi2
+DTB-Id: bcm2711-rpi-4-b.dtb
+U-Boot-Script-Name: bootscr.rpi
+Required-Packages: u-boot-tools
