@@ -5,4 +5,4 @@ mkdir -p /etc/flatpak
 
 flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
 
-flatpak install -y appcenter io.elementary.calculator org.gnome.Epiphany org.gnome.Evince
+flatpak install -y appcenter io.elementary.calculator io.elementary.screenshot org.gnome.Epiphany org.gnome.Evince
