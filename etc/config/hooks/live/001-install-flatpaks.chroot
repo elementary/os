@@ -3,6 +3,12 @@
 
 mkdir -p /etc/flatpak
 
-flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
+cat << EOF > /etc/flatpak/freedesktop.filter
+# Only allow FreeDesktop extensions
+deny *
+allow runtime/org.freedesktop.*
+EOF
 
-flatpak install -y appcenter io.elementary.calculator io.elementary.screenshot org.gnome.Epiphany org.gnome.Evince
+flatpak remote-add --if-not-exists --system --filter=/etc/flatpak/freedesktop.filter freedesktop https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
+flatpak install --system -y appcenter io.elementary.calculator io.elementary.screenshot org.gnome.Epiphany org.gnome.Evince
