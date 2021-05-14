@@ -15,5 +15,6 @@ flatpak install --system -y appcenter \
     io.elementary.calculator \
     io.elementary.camera \
     io.elementary.screenshot \
+    io.elementary.tasks \
     org.gnome.Epiphany \
     org.gnome.Evince
