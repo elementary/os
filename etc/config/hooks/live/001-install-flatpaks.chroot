@@ -17,5 +17,5 @@ flatpak install --system -y appcenter \
     io.elementary.mail \
     io.elementary.screenshot \
     io.elementary.tasks \
-    org.gnome.Epiphany \
+    org.gnome.Epiphany//daily \
     org.gnome.Evince
