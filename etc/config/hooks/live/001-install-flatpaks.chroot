@@ -19,3 +19,6 @@ flatpak install --system -y appcenter \
     io.elementary.tasks \
     org.gnome.Epiphany//daily \
     org.gnome.Evince
+
+# Required for Epiphany
+flatpak install --system freedesktop org.freedesktop.Platform.GL.default//20.08
