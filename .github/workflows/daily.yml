@@ -1,0 +1,41 @@
+---
+
+name: Daily Build
+
+on:
+  push:
+    branches:
+      - master
+      - github-update
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build (${{ matrix.configuration.name }})
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        configuration:
+          - name: Pinebook Pro
+            script: ./build-pinebookpro.sh
+
+          - name: Raspberry Pi
+            script: ./build-rpi.sh
+
+    steps:
+      - name: Clean
+        uses: easimon/maximize-build-space@v4
+        with:
+          root-reserve-mb: 20480
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          sudo ${{ matrix.configuration.script }} "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
