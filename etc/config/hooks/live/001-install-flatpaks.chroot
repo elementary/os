@@ -14,7 +14,6 @@ flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary
 flatpak install --system -y appcenter \
     io.elementary.calculator \
     io.elementary.camera//daily \
-    io.elementary.mail \
     io.elementary.screenshot \
     io.elementary.tasks \
     org.gnome.Epiphany//daily \
