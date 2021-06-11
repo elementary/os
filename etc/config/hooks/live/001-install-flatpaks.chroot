@@ -12,7 +12,7 @@ EOF
 flatpak remote-add --if-not-exists --system --filter=/etc/flatpak/freedesktop.filter freedesktop https://flathub.org/repo/flathub.flatpakrepo
 flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
 flatpak install --system -y appcenter \
-    io.elementary.calculator \
+    io.elementary.calculator//master \
     io.elementary.camera//daily \
     io.elementary.screenshot \
     io.elementary.tasks \
