@@ -14,10 +14,10 @@ flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary
 flatpak install --system -y appcenter \
     io.elementary.calculator//master \
     io.elementary.camera//daily \
-    io.elementary.screenshot \
-    io.elementary.tasks \
+    io.elementary.screenshot//master \
+    io.elementary.tasks//master \
     org.gnome.Epiphany//daily \
-    org.gnome.Evince
+    org.gnome.Evince//master
 
 # Required for Epiphany
 flatpak install --system -y freedesktop org.freedesktop.Platform.GL.default//20.08
