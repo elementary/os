@@ -13,6 +13,7 @@ flatpak remote-add --if-not-exists --system --filter=/etc/flatpak/freedesktop.fi
 flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
 flatpak install --system -y appcenter \
     io.elementary.calculator//stable \
+    io.elementary.calendar//stable \
     io.elementary.camera//stable \
     io.elementary.screenshot//stable \
     io.elementary.tasks//stable \
