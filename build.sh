@@ -30,10 +30,6 @@ apt-get install -y live-build patch ubuntu-keyring
 # https://salsa.debian.org/live-team/live-build/merge_requests/31
 patch -d /usr/lib/live/build/ < live-build-fix-syslinux.patch
 
-# TODO: Remove this once debootstrap 1.0.117 or newer is released and available:
-# https://salsa.debian.org/installer-team/debootstrap/blob/master/debian/changelog
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/focal
-
 build () {
   BUILD_ARCH="$1"
 
