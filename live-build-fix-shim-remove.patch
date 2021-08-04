@@ -1,0 +1,18 @@
+--- /usr/lib/live/build/binary_grub-efi	2019-03-11 10:05:40.000000000 +0000
++++ /usr/lib/live/build/binary_grub-efi_v2	2021-08-04 13:37:20.064547041 +0000
+@@ -267,8 +267,12 @@
+ 		# Saving cache
+ 		Save_cache cache/packages.binary
+
+-		# Removing depends
+-		Remove_package
++		# Removing depends, some bootloader packages are marked as Protected/Important
++		# in Ubuntu, so temporarily add an apt flag to allow them to be removed
++		PRE_APT_OPTIONS="${APT_OPTIONS}"
++		APT_OPTIONS="${APT_OPTIONS} --allow-remove-essential"
++		Remove_package
++		APT_OPTIONS="${PRE_APT_OPTIONS}"
+ 		;;
+
+ 	false)
+

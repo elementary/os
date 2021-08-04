@@ -30,6 +30,8 @@ apt-get install -y live-build patch ubuntu-keyring
 # https://salsa.debian.org/live-team/live-build/merge_requests/31
 patch -d /usr/lib/live/build/ < live-build-fix-syslinux.patch
 
+patch -d /usr/lib/live/build/ < live-build-fix-shim-remove.patch
+
 build () {
   BUILD_ARCH="$1"
 
