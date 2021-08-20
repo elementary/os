@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: debian:latest
+      image: debian:buster
       volumes:
         - /proc:/proc
       options: --privileged
