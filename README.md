@@ -33,7 +33,7 @@ Configure the channel in the `etc/terraform.conf` (stable, daily), then run:
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:debian:buster \
+    debian:buster \
     /bin/bash -s etc/terraform.conf < build.sh
 ```
 
