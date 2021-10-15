@@ -14,7 +14,6 @@ flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary
 flatpak install --system -y appcenter \
     io.elementary.calculator//stable \
     io.elementary.camera//stable \
-    io.elementary.screenshot//stable \
     org.gnome.Epiphany//stable \
     org.gnome.Evince//stable
 
