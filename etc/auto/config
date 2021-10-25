@@ -28,6 +28,7 @@ lb config noauto \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
     --debootstrap-options="--extractor=ar" \
+    --checksums md5 \
     --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
     --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
     --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
