@@ -24,20 +24,23 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y live-build patch ubuntu-keyring
+apt-get install -y live-build patch wget binutils zstd
 
-# TODO: Remove once live-build is able to acommodate for cases where LB_INITRAMFS is not live-boot:
-# https://salsa.debian.org/live-team/live-build/merge_requests/31
-patch -d /usr/lib/live/build/ < live-build-fix-syslinux.patch
+wget http://archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2021.03.26_all.deb
+dpkg -i ubuntu-keyring_2021.03.26_all.deb
+rm -f ubuntu-keyring_2021.03.26_all.deb
 
 # TODO: This patch was submitted upstream at:
 # https://salsa.debian.org/live-team/live-build/-/merge_requests/255
 # This can be removed when our Debian container has a version containing this fix
 patch -d /usr/lib/live/build/ < live-build-fix-shim-remove.patch
 
-# TODO: Remove this once debootstrap 1.0.117 or newer is released and available:
+# TODO: This can be removed when our Debian container has debootstrap 1.0.124 or later
+patch -d /usr/share/debootstrap/ < debootstrap-backport-zstd-support.patch
+
+# TODO: Remove this once debootstrap has a script to build jammy images in our container:
 # https://salsa.debian.org/installer-team/debootstrap/blob/master/debian/changelog
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/focal
+ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/jammy
 
 build () {
   BUILD_ARCH="$1"
