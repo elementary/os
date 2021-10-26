@@ -24,11 +24,13 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y live-build patch wget binutils zstd
+apt-get install -y live-build patch gnupg2 binutils zstd
 
-wget http://archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2021.03.26_all.deb
-dpkg -i ubuntu-keyring_2021.03.26_all.deb
-rm -f ubuntu-keyring_2021.03.26_all.deb
+# The Debian repositories don't seem to have the `ubuntu-keyring` or `ubuntu-archive-keyring` packages
+# anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
+# To get the current key ID, find `ubuntu-keyring-xxxx-archive.gpg` in /etc/apt/trusted.gpg.d on a running
+# system and run `gpg --keyring /etc/apt/trusted.gpg.d/ubuntu-keyring-xxxx-archive.gpg --list-public-keys `
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
 
 # TODO: This patch was submitted upstream at:
 # https://salsa.debian.org/live-team/live-build/-/merge_requests/255
@@ -36,6 +38,7 @@ rm -f ubuntu-keyring_2021.03.26_all.deb
 patch -d /usr/lib/live/build/ < live-build-fix-shim-remove.patch
 
 # TODO: This can be removed when our Debian container has debootstrap 1.0.124 or later
+# It's needed to support the new zstd .deb package compression that Ubuntu is doing
 patch -d /usr/share/debootstrap/ < debootstrap-backport-zstd-support.patch
 
 # TODO: Remove this once debootstrap has a script to build jammy images in our container:
