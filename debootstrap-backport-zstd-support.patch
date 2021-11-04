@@ -1,0 +1,19 @@
+--- /usr/share/debootstrap/functions.orig	2021-10-23 23:13:10.576805331 +0000
++++ /usr/share/debootstrap/functions	2021-10-23 23:14:05.465350379 +0000
+@@ -974,6 +974,7 @@
+ 	case "$tarball" in
+ 		control.tar.gz) cat_cmd=zcat ;;
+ 		control.tar.xz) cat_cmd=xzcat ;;
++		control.tar.zst) cat_cmd=zstdcat ;;
+ 		control.tar)    cat_cmd=cat ;;
+ 		*) error 1 UNKNOWNCONTROLCOMP "Unknown compression type for %s in %s" "$tarball" "$pkg" ;;
+ 	esac
+@@ -996,6 +997,7 @@
+ 		data.tar.gz)  cat_cmd=zcat ;;
+ 		data.tar.bz2) cat_cmd=bzcat ;;
+ 		data.tar.xz)  cat_cmd=xzcat ;;
++		data.tar.zst) cat_cmd=zstdcat ;;
+ 		data.tar)     cat_cmd=cat ;;
+ 		*) error 1 UNKNOWNDATACOMP "Unknown compression type for %s in %s" "$tarball" "$pkg" ;;
+ 	esac
+

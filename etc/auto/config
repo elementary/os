@@ -25,6 +25,8 @@ lb config noauto \
     --linux-packages linux-image \
     --linux-flavours "$KERNEL_FLAVORS" \
     --bootappend-live "boot=casper maybe-ubiquity quiet splash" \
+    --debootstrap-options="--extractor=ar --keyring=/etc/apt/trusted.gpg" \
+    --checksums md5 \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
     --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
