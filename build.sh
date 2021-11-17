@@ -103,8 +103,8 @@ build () {
   # includes the filename and not the path to
   # our file.
   cd $OUTPUT_DIR
-  md5sum "${FNAME}.iso" > "${FNAME}.md5.txt"
-  sha256sum "${FNAME}.iso" > "${FNAME}.sha256.txt"
+  md5sum "${FNAME}.iso" | tee "${FNAME}.md5.txt"
+  sha256sum "${FNAME}.iso" | tee "${FNAME}.sha256.txt"
   cd $BASE_DIR
 }
 
