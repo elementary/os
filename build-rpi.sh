@@ -234,8 +234,8 @@ xz -T0 -z "${basedir}/${imagename}.img"
 
 cd "${basedir}"
 
-md5sum "${imagename}.img.xz" > "${imagename}.md5.txt"
-sha256sum "${imagename}.img.xz" > "${imagename}.sha256.txt"
+md5sum "${imagename}.img.xz" | tee "${imagename}.md5.txt"
+sha256sum "${imagename}.img.xz" | tee "${imagename}.sha256.txt"
 
 cd "${rootdir}"
 
