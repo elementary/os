@@ -18,6 +18,9 @@ ostree_repo_dir=artifacts/ostree
 
 mkdir -p ${builddir}
 
+export LC_ALL=C
+export DEBIAN_FRONTEND=noninteractive
+
 # Install dependencies in host system
 apt-get update
 apt-get install -y --no-install-recommends ubuntu-keyring ca-certificates debootstrap ostree uuid-runtime ostree-boot grub-pc-bin
@@ -66,9 +69,6 @@ sed -i "s/@BASECODENAME/${codename}/" ${builddir}/etc/apt/sources.list.d/*.list*
 
 # Set codename in added preferences
 sed -i "s/@BASECODENAME/${codename}/" ${builddir}/etc/apt/preferences.d/*.pref*
-
-export LC_ALL=C
-export DEBIAN_FRONTEND=noninteractive
 
 mount -t proc proc ${builddir}/proc
 mount -t sysfs sys ${builddir}/sys

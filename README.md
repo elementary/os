@@ -67,7 +67,7 @@ For easier debugging, the creation of the repository and the image is currently 
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    ubuntu:latest \
     ./build-ostree-repository.sh
 ```
 
