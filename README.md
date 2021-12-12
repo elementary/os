@@ -57,6 +57,30 @@ docker run --privileged -i -v /proc:/proc \
     ./build-pinebookpro.sh
 ```
 
+### OSTree based image
+
+For easier debugging, the creation of the repository and the image is currently split into 2 steps.
+
+#### repository
+
+```sh
+docker run --privileged -i -v /proc:/proc \
+    -v ${PWD}:/working_dir \
+    -w /working_dir \
+    debian:unstable \
+    ./build-ostree-repository.sh
+```
+
+#### image
+
+```sh
+docker run --privileged -i -v /proc:/proc \
+    -v ${PWD}:/working_dir \
+    -w /working_dir \
+    debian:unstable \
+    ./build-ostree-image.sh
+```
+
 ## Further Information
 
 More information about the concepts behind `live-build` and the technical decisions made to arrive at this set of tools to build an .iso can be found [on the wiki](https://github.com/elementary/os/wiki/Building-iso-Images).
