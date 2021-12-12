@@ -4,7 +4,7 @@
 # fail on first error
 set -e
 
-export version=6
+export version=7
 export flatpak_architecture=x86_64
 export ostree_branch="io.elementary.desktop/${flatpak_architecture}/${version}"
 
