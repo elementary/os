@@ -24,8 +24,7 @@ ostree_sysroot_repopath=${ostree_sysroot}/ostree/repo
 ostree_sysroot_boot=${ostree_sysroot}/boot
 
 # Install dependencies in host system
-apt-get update
-apt-get install -y --no-install-recommends ostree uuid-runtime ostree-boot grub-pc-bin
+dnf install -y ostree grub2
 
 ostree admin init-fs "${ostree_sysroot}"
 ostree admin --sysroot="${ostree_sysroot}" os-init ${ostree_os_name}

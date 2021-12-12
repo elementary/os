@@ -77,7 +77,7 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    fedora:latest \
     ./build-ostree-image.sh
 ```
 
