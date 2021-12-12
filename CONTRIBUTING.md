@@ -33,7 +33,3 @@ This step can take up to an hour, depending on the hardware. The most time-consu
 ### build-ostree-image.sh
 
 This script is based on [deb-ostree-builder/create-deployment at 15d8fe91af21592bf323fbf9aaf03b86bbe7359d - dbnicholson/deb-ostree-builder](https://github.com/dbnicholson/deb-ostree-builder/blob/15d8fe91af21592bf323fbf9aaf03b86bbe7359d/create-deployment). Only variables were renamed and paths were adjusted.
-
-```
-error: Bootloader write config: Failed to execute child process ?grub2-mkconfig? (No such file or directory)
-```
