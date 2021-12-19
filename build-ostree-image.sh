@@ -8,6 +8,9 @@ export version=7
 export flatpak_architecture=x86_64
 export ostree_branch="io.elementary.desktop/${flatpak_architecture}/${version}"
 
+export LC_ALL=C
+export DEBIAN_FRONTEND=noninteractive
+
 builddir=artifacts/${ostree_branch}
 ostree_repo_dir=artifacts/ostree
 
