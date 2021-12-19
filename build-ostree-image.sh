@@ -7,6 +7,7 @@ set -e
 export version=7
 export flatpak_architecture=x86_64
 export ostree_branch="io.elementary.desktop/${flatpak_architecture}/${version}"
+export bootloader_backend=none
 
 export LC_ALL=C
 export DEBIAN_FRONTEND=noninteractive
@@ -32,6 +33,7 @@ apt-get install -y --no-install-recommends ostree uuid-runtime ostree-boot grub-
 
 ostree admin init-fs "${ostree_sysroot}"
 ostree admin --sysroot="${ostree_sysroot}" os-init ${ostree_os_name}
+ostree config --repo ${ostree_sysroot_repopath} set sysroot.bootloader ${bootloader_backend}
 ostree --repo="${ostree_sysroot_repopath}" remote add ${ostree_os_name} ${ostree_url} \
   ${ostree_branch}
 ostree --repo="${ostree_sysroot_repopath}" pull-local --disable-fsync \
