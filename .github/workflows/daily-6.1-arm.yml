@@ -1,6 +1,6 @@
 ---
 
-name: Daily Build
+name: Daily Build (ARM)
 
 on:
   push:
