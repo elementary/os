@@ -20,7 +20,7 @@ export architecture="arm64"
 export codename="focal"
 export channel="daily"
 
-version=6.0
+version=6.1
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
