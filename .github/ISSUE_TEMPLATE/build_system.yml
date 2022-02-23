@@ -61,7 +61,7 @@ body:
   - type: dropdown
     attributes:
       label: Hardware Platform
-      description: The processor architechture of the image you're installing
+      description: The processor architecture of the image you're installing
       options:
         - 64-bit AMD/Intel (x86)
         - Pinebook Pro (ARM)
