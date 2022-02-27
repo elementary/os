@@ -3,7 +3,6 @@ bcmwl-kernel-source
 dkms
 intel-microcode
 iucode-tool
-lupin-support
 setserial
 user-setup
 
