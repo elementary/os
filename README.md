@@ -1,7 +1,11 @@
 <div align="center">
   <a href="https://elementary.io" align="center">
     <center align="center">
-      <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-white.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png">
+  <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center">
+</picture>
     </center>
   </a>
   <br>
