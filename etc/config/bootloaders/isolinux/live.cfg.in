@@ -11,6 +11,12 @@ label live-@FLAVOUR@
 	initrd /casper/initrd.lz
 	append @APPEND_LIVE@
 
+label live-safe-@FLAVOUR@
+	menu label Try or install elementary OS (^Safe graphics)
+	linux /casper/vmlinuz
+	initrd /casper/initrd.lz
+	append @APPEND_LIVE@ nomodeset
+
 label check
 	menu label ^Check disk for defects
 	linux /casper/vmlinuz
