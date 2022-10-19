@@ -4,7 +4,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-white.png">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png">
-  <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center">
+  <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center" height="200">
 </picture>
     </center>
   </a>
@@ -17,8 +17,9 @@
 
 <p align="center">
   <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
-  <img src="https://github.com/elementary/os/workflows/daily-5.1/badge.svg" alt="Daily 5.1">
-  <img src="https://github.com/elementary/os/workflows/daily-6.0/badge.svg" alt="Daily 6.0">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-7.0.yml/badge.svg" alt="Daily 7.0">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-6.1-arm.yml/badge.svg" alt="Daily 7.0">
+  
 </p>
 
 ---
