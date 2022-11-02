@@ -11,8 +11,6 @@ EOF
 
 flatpak remote-add --if-not-exists --system --filter=/etc/flatpak/freedesktop.filter freedesktop https://flathub.org/repo/flathub.flatpakrepo
 flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
-flatpak install --system --noninteractive appcenter \
-    org.gnome.Evince//stable
 
 # Required for Epiphany
 flatpak install --system --noninteractive freedesktop org.freedesktop.Platform.GL.default//21.08
