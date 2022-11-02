@@ -12,7 +12,6 @@ EOF
 flatpak remote-add --if-not-exists --system --filter=/etc/flatpak/freedesktop.filter freedesktop https://flathub.org/repo/flathub.flatpakrepo
 flatpak remote-add --if-not-exists --system appcenter https://flatpak.elementary.io/repo.flatpakrepo
 flatpak install --system --noninteractive appcenter \
-    io.elementary.camera//stable \
     org.gnome.Epiphany//stable \
     org.gnome.Evince//stable
 
