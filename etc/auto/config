@@ -46,6 +46,7 @@ lb config noauto \
     --firmware-binary false \
     --firmware-chroot false \
     --zsync false \
+    --security true \
     "${@}"
 
 # replace channel and suite
