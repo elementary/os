@@ -24,6 +24,8 @@ jobs:
 
           - name: Raspberry Pi
             script: ./build-rpi.sh
+      # Don't fail the whole workflow if one config fails
+      fail-fast: false
 
     steps:
       - name: Clean
