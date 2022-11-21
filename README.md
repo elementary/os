@@ -48,7 +48,7 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    ubuntu:20.04 \
     ./build-rpi.sh
 ```
 
@@ -58,7 +58,7 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    ubuntu:20.04 \
     ./build-pinebookpro.sh
 ```
 
