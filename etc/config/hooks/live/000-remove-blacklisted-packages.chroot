@@ -3,7 +3,9 @@
 
 echo "P: Begin executing remove-blacklisted-packages chroot hook..."
 
-dist="$(lsb_release -c -s -u 2>&1)"||dist="$(lsb_release -c -s)"
+export LSB_OS_RELEASE="/usr/lib/upstream-os-release"
+dist="$(lsb_release -c -s)"
+unset LSB_OS_RELEASE
 
 apt-get install --no-install-recommends -f -q -y git
 
