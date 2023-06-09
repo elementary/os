@@ -48,7 +48,7 @@ docker run --privileged -i -v /proc:/proc \
 docker run --privileged -i -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    ubuntu:20.04 \
+    ubuntu:22.04 \
     ./build-rpi.sh
 ```
 

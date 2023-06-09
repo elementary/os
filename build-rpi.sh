@@ -17,10 +17,10 @@ free_space="500"
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
-export codename="focal"
+export codename="jammy"
 export channel="daily"
 
-version=6.1
+version=7.0
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
@@ -210,7 +210,7 @@ chmod +x elementary-$architecture/hardware
 LANG=C chroot elementary-$architecture /hardware
 
 # Grab some updated firmware from the Raspberry Pi foundation
-git clone -b '1.20201022' --single-branch --depth 1 https://github.com/raspberrypi/firmware raspi-firmware
+git clone -b 'stable' --single-branch --depth 1 https://github.com/raspberrypi/firmware raspi-firmware
 cp raspi-firmware/boot/*.elf "${basedir}/bootp/"
 cp raspi-firmware/boot/*.dat "${basedir}/bootp/"
 cp raspi-firmware/boot/bootcode.bin "${basedir}/bootp/"
