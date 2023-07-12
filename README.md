@@ -19,7 +19,7 @@
   <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
   <img src="https://github.com/elementary/os/actions/workflows/daily-7.0.yml/badge.svg" alt="Daily 7.0">
   <img src="https://github.com/elementary/os/actions/workflows/daily-6.1-arm.yml/badge.svg" alt="Daily 7.0">
-  
+
 </p>
 
 ---
@@ -35,7 +35,8 @@ The following examples assume you have Docker correctly installed and set up, an
 Configure the channel in the `etc/terraform.conf` (stable, daily), then run:
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     debian:latest \
@@ -45,7 +46,8 @@ docker run --privileged -i -v /proc:/proc \
 ### Raspberry Pi 4
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     ubuntu:22.04 \
@@ -55,7 +57,8 @@ docker run --privileged -i -v /proc:/proc \
 ### Pinebook Pro
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     ubuntu:20.04 \
