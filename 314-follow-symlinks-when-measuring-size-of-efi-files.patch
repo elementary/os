@@ -1,0 +1,35 @@
+From 80f8ec50968a1cbe874db846da9b7cdf906b2bc3 Mon Sep 17 00:00:00 2001
+From: David Hewitt <davidmhewitt@gmail.com>
+Date: Wed, 12 Jul 2023 20:29:04 +0000
+Subject: [PATCH] Follow symlinks while measuring size of EFI files
+
+Some of the EFI files on Ubuntu are symlinks, so when calculating the size of the FAT32 partition, we need to take into account the actual size of the files instead of the size of the symlinks, or else we get "Disk full" errors when trying to copy the files into the new FAT32 partition.
+
+```
+lrwxrwxrwx. 1 root root   36 Jul 12 20:04 bootx64.efi -> /etc/alternatives/shimx64.efi.signed
+```
+---
+ binary_grub-efi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/binary_grub-efi b/binary_grub-efi
+index bd7d75f02..1309c95f3 100755
+--- a/binary_grub-efi
++++ b/binary_grub-efi
+@@ -246,10 +246,13 @@ touch ${_CHROOT_DIR}/grub-efi-temp-cfg/grub.cfg -d@${SOURCE_DATE_EPOCH}
+ # This is the same as in efi-image, but we need to redo it here in
+ # the case of a multi-arch amd64/i386 image
+
++# Use the -L flag on stat to follow symlinks. Ubuntu symlinks some of its
++# EFI files, so we need to get the actual size.
++
+ size=0
+ for file in ${_CHROOT_DIR}/grub-efi-temp/EFI/boot/*.efi \
+ 		${_CHROOT_DIR}/grub-efi-temp-cfg/grub.cfg; do
+-	size=\$((\$size + \$(stat -c %s "\$file")))
++	size=\$((\$size + \$(stat -L -c %s "\$file")))
+ done
+
+ # directories: EFI EFI/boot boot boot/grub
+--
+GitLab
