@@ -33,7 +33,7 @@ index d504569cb..ccac228b8 100755
  		cp -a ${_CHROOT_DIR}/usr/lib/grub/\$platform-signed/gcd\$efi_name.efi.signed \
  			${_CHROOT_DIR}/grub-efi-temp/EFI/boot/grub\$efi_name.efi
 -		cp -a ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed \
-+		cp --dereference -a ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed \
++		cp -a --dereference ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed \
  			${_CHROOT_DIR}/grub-efi-temp/EFI/boot/boot\$efi_name.efi
  	fi
  }
