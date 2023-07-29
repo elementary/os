@@ -3,6 +3,7 @@ bcmwl-kernel-source
 dkms
 intel-microcode
 iucode-tool
+open-vm-tools-desktop
 setserial
 user-setup
 
