@@ -40,7 +40,7 @@ docker run --rm --privileged -it \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     debian:latest \
-    /bin/bash -s etc/terraform.conf < build.sh
+    ./build.sh etc/terraform.conf
 ```
 
 ### Raspberry Pi 4

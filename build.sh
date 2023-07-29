@@ -49,9 +49,6 @@ build () {
   # Make sure conffile specified as arg has correct name
   cp -f "$BASE_DIR"/"$CONFIG_FILE" terraform.conf
 
-  # Symlink chosen package lists to where live-build will find them
-  ln -s "package-lists.$PACKAGE_LISTS_SUFFIX" "config/package-lists"
-
   # copy appcenter list & key
   if [ "$INCLUDE_APPCENTER" = "yes" ]; then
     cp "config/appcenter/appcenter.list.binary" "config/archives/appcenter.list.binary"
