@@ -61,3 +61,4 @@ sed -i "s/@VERSION/$VERSION/" config/includes.binary/.disk/info
 sed -i "s/@DATE/$DATE/" config/includes.binary/.disk/info
 
 sed -i "s/@XORG_HWE/$XORG_HWE/" config/package-lists/desktop.list.chroot_install
+sed -i "s/@KERNEL_HEADERS/linux-headers-$KERNEL_FLAVORS/" config/package-lists/desktop.list.chroot_install
