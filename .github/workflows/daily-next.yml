@@ -1,0 +1,27 @@
+name: daily-next
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
+    steps:
+    - name: Clone build scripts
+      uses: actions/checkout@v4
+
+    - name: Build and upload daily .iso
+      run: |
+        ./workflows.sh etc/terraform-daily-next-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
