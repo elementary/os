@@ -20,7 +20,7 @@ export architecture="arm64"
 export codename="jammy"
 export channel="daily"
 
-version=7.0
+version=7.1
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 

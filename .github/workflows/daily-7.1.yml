@@ -1,4 +1,4 @@
-name: daily-7.0
+name: daily-7.1
 
 on:
   push:
@@ -24,4 +24,4 @@ jobs:
 
     - name: Build and upload daily .iso
       run: |
-        ./workflows.sh etc/terraform-daily-7.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-daily-7.1-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
