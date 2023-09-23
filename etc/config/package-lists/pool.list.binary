@@ -3,9 +3,15 @@ bcmwl-kernel-source
 dkms
 intel-microcode
 iucode-tool
+open-vm-tools
+open-vm-tools-containerinfo
 open-vm-tools-desktop
+open-vm-tools-dev
+open-vm-tools-salt-minion
+open-vm-tools-sdmp
 setserial
 user-setup
+zram-config
 
 efibootmgr
 secureboot-db
