@@ -37,8 +37,8 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B702
 # This can be removed when our Debian container has a version containing this fix
 patch -d /usr/lib/live/build/ < 314-follow-symlinks-when-measuring-size-of-efi-files.patch
 
-# TODO: Remove this once debootstrap can natively build mantic images:
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/mantic
+# TODO: Remove this once debootstrap can natively build noble images:
+ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
 
 build () {
   BUILD_ARCH="$1"
