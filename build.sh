@@ -4,7 +4,7 @@ set -e
 
 # check for root permissions
 if [[ "$(id -u)" != 0 ]]; then
-  echo "E: Requires root permissions" > /dev/stderr
+  echo "E: Requires root permissions" >/dev/stderr
   exit 1
 fi
 
@@ -14,10 +14,10 @@ if [ -n "$1" ]; then
 else
   CONFIG_FILE="etc/terraform.conf"
 fi
-BASE_DIR="$PWD"
+BASE_DIR=$(dirname $(realpath $0)) # Make it possible to run script from anywhere. i.e `bash /tmp/os/build.sh`
 source "$BASE_DIR"/"$CONFIG_FILE"
 
-echo -e "
+echo "
 #----------------------#
 # INSTALL DEPENDENCIES #
 #----------------------#
@@ -35,12 +35,12 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B702
 # TODO: This patch was submitted upstream at:
 # https://salsa.debian.org/live-team/live-build/-/merge_requests/314
 # This can be removed when our Debian container has a version containing this fix
-patch -d /usr/lib/live/build/ < 314-follow-symlinks-when-measuring-size-of-efi-files.patch
+patch -d /usr/lib/live/build/ <314-follow-symlinks-when-measuring-size-of-efi-files.patch
 
 # TODO: Remove this once debootstrap can natively build noble images:
 ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
 
-build () {
+build() {
   BUILD_ARCH="$1"
 
   mkdir -p "$BASE_DIR/tmp/$BUILD_ARCH"
@@ -58,28 +58,28 @@ build () {
     cp "config/appcenter/appcenter.key.binary" "config/archives/appcenter.key.binary"
   fi
 
-  echo -e "
+  echo "
 #------------------#
 # LIVE-BUILD CLEAN #
 #------------------#
 "
   lb clean
 
-  echo -e "
+  echo "
 #-------------------#
 # LIVE-BUILD CONFIG #
 #-------------------#
 "
   lb config
 
-  echo -e "
+  echo "
 #------------------#
 # LIVE-BUILD BUILD #
 #------------------#
 "
   lb build
 
-  echo -e "
+  echo "
 #---------------------------#
 # MOVE OUTPUT TO BUILDS DIR #
 #---------------------------#
@@ -104,8 +104,8 @@ build () {
 rm -rf "$BASE_DIR"/builds
 
 if [[ "$ARCH" == "all" ]]; then
-    build amd64
-    build i386
+  build amd64
+  build i386
 else
-    build "$ARCH"
+  build "$ARCH"
 fi
