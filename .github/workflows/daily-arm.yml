@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Clean
-        uses: easimon/maximize-build-space@v9
+        uses: easimon/maximize-build-space@v10
         with:
           root-reserve-mb: 16000
           swap-size-mb: 1024
