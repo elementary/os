@@ -33,17 +33,12 @@ apt-get install -y live-build patch gnupg2 binutils zstd
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
 
 # TODO: This patch was submitted upstream at:
-# https://salsa.debian.org/live-team/live-build/-/merge_requests/255
+# https://salsa.debian.org/live-team/live-build/-/merge_requests/314
 # This can be removed when our Debian container has a version containing this fix
-patch -d /usr/lib/live/build/ < live-build-fix-shim-remove.patch
+patch -d /usr/lib/live/build/ < 314-follow-symlinks-when-measuring-size-of-efi-files.patch
 
-# TODO: This can be removed when our Debian container has debootstrap 1.0.124 or later
-# It's needed to support the new zstd .deb package compression that Ubuntu is doing
-patch -d /usr/share/debootstrap/ < debootstrap-backport-zstd-support.patch
-
-# TODO: Remove this once debootstrap has a script to build jammy images in our container:
-# https://salsa.debian.org/installer-team/debootstrap/blob/master/debian/changelog
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/jammy
+# TODO: Remove this once debootstrap can natively build noble images:
+ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
 
 build () {
   BUILD_ARCH="$1"
@@ -56,9 +51,6 @@ build () {
   cp -r "$BASE_DIR"/etc/* .
   # Make sure conffile specified as arg has correct name
   cp -f "$BASE_DIR"/"$CONFIG_FILE" terraform.conf
-
-  # Symlink chosen package lists to where live-build will find them
-  ln -s "package-lists.$PACKAGE_LISTS_SUFFIX" "config/package-lists"
 
   # copy appcenter list & key
   if [ "$INCLUDE_APPCENTER" = "yes" ]; then

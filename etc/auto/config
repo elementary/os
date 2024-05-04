@@ -16,7 +16,7 @@ fi
 
 lb config noauto \
     --architectures "$ARCH" \
-    --mode ubuntu \
+    --mode debian \
     --initramfs none \
     --distribution "$BASECODENAME" \
     --parent-distribution "$BASECODENAME" \
@@ -33,12 +33,11 @@ lb config noauto \
     --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
     --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
     --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
-    --parent-mirror-binary "mirror://mirrors.ubuntu.com/mirrors.txt" \
+    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-binary "http://archive.ubuntu.com/ubuntu/" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=2 --option Acquire::http::Timeout=45" \
     --cache-packages false \
-    --cache-stages false \
     --uefi-secure-boot enable \
     --binary-images iso-hybrid \
     --iso-application "$NAME" \
@@ -46,6 +45,7 @@ lb config noauto \
     --firmware-binary false \
     --firmware-chroot false \
     --zsync false \
+    --security true \
     "${@}"
 
 # replace channel and suite
@@ -61,3 +61,4 @@ sed -i "s/@VERSION/$VERSION/" config/includes.binary/.disk/info
 sed -i "s/@DATE/$DATE/" config/includes.binary/.disk/info
 
 sed -i "s/@XORG_HWE/$XORG_HWE/" config/package-lists/desktop.list.chroot_install
+sed -i "s/@KERNEL_HEADERS/linux-headers-$KERNEL_FLAVORS/" config/package-lists/desktop.list.chroot_install

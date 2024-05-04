@@ -1,4 +1,4 @@
-name: daily-7.0
+name: daily-next
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     container:
       image: debian:latest
@@ -20,8 +20,8 @@ jobs:
 
     steps:
     - name: Clone build scripts
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
 
     - name: Build and upload daily .iso
       run: |
-        ./workflows.sh etc/terraform-daily-7.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-daily-8.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"

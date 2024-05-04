@@ -132,7 +132,7 @@ cd ap6256-firmware
 mkdir brcm
 cp BCM4345C5.hcd brcm/BCM.hcd
 cp BCM4345C5.hcd brcm/BCM4345C5.hcd
-cp nvram_ap6256.txt brcm/brcmfmac43456-sdio.pine64,pinebook-pro.txt
+cp brcmfmac43456-sdio.AP6256.txt brcm/brcmfmac43456-sdio.pine64,pinebook-pro.txt
 cp fw_bcm43456c5_ag.bin brcm/brcmfmac43456-sdio.bin
 cp brcmfmac43456-sdio.clm_blob brcm/brcmfmac43456-sdio.clm_blob
 mkdir -p "${work_dir}/lib/firmware/brcm/"

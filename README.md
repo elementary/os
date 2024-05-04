@@ -1,7 +1,11 @@
 <div align="center">
   <a href="https://elementary.io" align="center">
     <center align="center">
-      <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-white.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png">
+  <img src="https://raw.githubusercontent.com/elementary/brand/master/logomark-black.png" alt="elementary" align="center" height="200">
+</picture>
     </center>
   </a>
   <br>
@@ -13,8 +17,9 @@
 
 <p align="center">
   <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
-  <img src="https://github.com/elementary/os/workflows/daily-5.1/badge.svg" alt="Daily 5.1">
-  <img src="https://github.com/elementary/os/workflows/daily-6.0/badge.svg" alt="Daily 6.0">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-7.1.yml/badge.svg" alt="Daily 7.1">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-arm.yml/badge.svg" alt="Daily ARM">
+
 </p>
 
 ---
@@ -30,30 +35,33 @@ The following examples assume you have Docker correctly installed and set up, an
 Configure the channel in the `etc/terraform.conf` (stable, daily), then run:
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     debian:latest \
-    /bin/bash -s etc/terraform.conf < build.sh
+    ./build.sh etc/terraform.conf
 ```
 
 ### Raspberry Pi 4
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    ubuntu:22.04 \
     ./build-rpi.sh
 ```
 
 ### Pinebook Pro
 
 ```sh
-docker run --privileged -i -v /proc:/proc \
+docker run --rm --privileged -it \
+    -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    debian:unstable \
+    ubuntu:20.04 \
     ./build-pinebookpro.sh
 ```
 

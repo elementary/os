@@ -4,11 +4,13 @@ on:
   push:
     tags:
       - "*"
+  schedule:
+    - cron: "0 0 1 * *"   
   workflow_dispatch: {}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     container:
       image: debian:latest
@@ -18,7 +20,7 @@ jobs:
 
     steps:
     - name: Clone build scripts
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
 
     - name: Build and upload stable .iso
       run: |

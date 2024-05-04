@@ -17,17 +17,13 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y curl python3 python3-distutils
+apt-get install -y python3 python3-boto3
 
 echo -e "
 #------------#
 # UPLOAD ISO #
 #------------#
 "
-# install boto, which can be fetched via pip
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3 get-pip.py
-pip install boto3
 
 # get the paths & filenames of the files to upload
 ISOPATHS="$(find builds -name "*.iso")"

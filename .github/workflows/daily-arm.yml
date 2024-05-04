@@ -24,17 +24,23 @@ jobs:
 
           - name: Raspberry Pi
             script: ./build-rpi.sh
+      # Don't fail the whole workflow if one config fails
+      fail-fast: false
 
     steps:
       - name: Clean
-        uses: easimon/maximize-build-space@v4
+        uses: easimon/maximize-build-space@v10
         with:
-          root-reserve-mb: 20480
+          root-reserve-mb: 16000
           swap-size-mb: 1024
           remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build
         run: |

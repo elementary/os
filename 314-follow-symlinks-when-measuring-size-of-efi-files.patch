@@ -1,0 +1,41 @@
+From bcc8b04f78cf99ffa9662b68675f346904c7aecd Mon Sep 17 00:00:00 2001
+From: David Hewitt <davidmhewitt@gmail.com>
+Date: Wed, 12 Jul 2023 20:29:04 +0000
+Subject: [PATCH] Follow symlinks while copying shim files
+
+The shim EFI file on Ubuntu can be a symlink, as it may be in the alternatives system, so
+previously, when calculating the size of the FAT32 partition, we would measure the size of the
+symlink instead of the actual file and get "Disk full" errors when trying to copy the files into
+the new FAT32 partition.
+
+If we dereference the file on copy, we get the actual file and can calculate the size accurately.
+
+```
+lrwxrwxrwx. 1 root root   36 Jul 12 20:04 bootx64.efi -> /etc/alternatives/shimx64.efi.signed
+```
+---
+ binary_grub-efi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/binary_grub-efi b/binary_grub-efi
+index d504569cb..ccac228b8 100755
+--- a/binary_grub-efi
++++ b/binary_grub-efi
+@@ -185,12 +185,14 @@ gen_efi_boot_img(){
+ 	#   USB flash drive, while grubx64.efi.signed is for hard drive.
+ 	#   Therefore here gcdx64.efi.signed is used for amd64 and gcdaa64.efi.signed is
+ 	#   for arm64.
++	# - Ubuntu's shim binary is in the alternatives system so it could be a symlink,
++	#   so ensure we dereference it and copy the actual file
+ 	if [ -r ${_CHROOT_DIR}/usr/lib/grub/\$platform-signed/gcd\$efi_name.efi.signed -a \
+ 			-r ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed -a \
+ 			"${LB_UEFI_SECURE_BOOT}" != "disable" ]; then
+ 		cp -a ${_CHROOT_DIR}/usr/lib/grub/\$platform-signed/gcd\$efi_name.efi.signed \
+ 			${_CHROOT_DIR}/grub-efi-temp/EFI/boot/grub\$efi_name.efi
+-		cp -a ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed \
++		cp -a --dereference ${_CHROOT_DIR}/usr/lib/shim/shim\$efi_name.efi.signed \
+ 			${_CHROOT_DIR}/grub-efi-temp/EFI/boot/boot\$efi_name.efi
+ 	fi
+ }
+--
+GitLab

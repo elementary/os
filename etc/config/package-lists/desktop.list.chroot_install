@@ -4,3 +4,4 @@ elementary-minimal
 elementary-standard
 
 @XORG_HWE
+@KERNEL_HEADERS
