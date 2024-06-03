@@ -17,7 +17,7 @@
 
 <p align="center">
   <img src="https://github.com/elementary/os/workflows/stable/badge.svg" alt="Stable">
-  <img src="https://github.com/elementary/os/actions/workflows/daily-7.1.yml/badge.svg" alt="Daily 7.1">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-8.0.yml/badge.svg" alt="Daily 8.0">
   <img src="https://github.com/elementary/os/actions/workflows/daily-arm.yml/badge.svg" alt="Daily ARM">
 
 </p>
