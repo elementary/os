@@ -26,6 +26,10 @@ echo -e "
 apt-get update
 apt-get install -y live-build patch gnupg2 binutils zstd
 
+# Set public DNS servers to fix ISO build failures if host has custom non public DNS servers
+echo "nameserver 1.1.1.1" >  /etc/resolv.conf
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
 # The Debian repositories don't seem to have the `ubuntu-keyring` or `ubuntu-archive-keyring` packages
 # anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
 # To get the current key ID, find `ubuntu-keyring-xxxx-archive.gpg` in /etc/apt/trusted.gpg.d on a running
