@@ -1,0 +1,27 @@
+name: stable
+
+on:
+  push:
+    tags:
+      - "*"
+  schedule:
+    - cron: "0 0 1 * *"   
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
+    steps:
+    - name: Clone build scripts
+      uses: actions/checkout@v4
+
+    - name: Build and upload stable .iso
+      run: |
+        ./workflows.sh etc/terraform-stable-8.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
