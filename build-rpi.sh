@@ -17,7 +17,7 @@ free_space="500"
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
-export codename="jammy"
+export codename="noble"
 export channel="daily"
 
 version=7.1
