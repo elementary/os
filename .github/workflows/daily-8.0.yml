@@ -1,4 +1,4 @@
-name: daily-next
+name: Daily OS 8
 
 on:
   push:
