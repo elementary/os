@@ -1,4 +1,4 @@
-name: stable
+name: Stable OS 8
 
 on:
   push:
