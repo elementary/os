@@ -17,10 +17,10 @@ free_space="500"
 
 export packages="elementary-minimal elementary-desktop elementary-standard"
 export architecture="arm64"
-export codename="jammy"
+export codename="noble"
 export channel="daily"
 
-version=7.1
+version=8.0
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
@@ -107,7 +107,7 @@ cat << EOF > elementary-$architecture/hardware
 # we'll recreate it on the actual partition later
 mkdir -p /boot/firmware
 
-apt-get --yes install linux-image-raspi linux-firmware-raspi2 pi-bluetooth
+apt-get --yes install linux-image-raspi
 
 # Symlink to workaround bug with Bluetooth driver looking in the wrong place for firmware
 ln -s /lib/firmware /etc/firmware
@@ -140,18 +140,6 @@ install -m 755 -o root -g root "${rootdir}/rpi/files/resizerootfs" "elementary-$
 install -m 644 -o root -g root "${rootdir}/pinebookpro/files/resizerootfs.service" "elementary-$architecture/etc/systemd/system"
 mkdir -p "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/"
 ln -s /etc/systemd/system/resizerootfs.service "elementary-$architecture/etc/systemd/system/systemd-remount-fs.service.requires/resizerootfs.service"
-
-
-# Support for kernel updates on the Pi 400
-cat << EOF >> elementary-$architecture/etc/flash-kernel/db
-
-Machine: Raspberry Pi 400 Rev 1.0
-Method: pi
-Kernel-Flavors: raspi raspi2
-DTB-Id: bcm2711-rpi-4-b.dtb
-U-Boot-Script-Name: bootscr.rpi
-Required-Packages: u-boot-tools
-EOF
 
 # Calculate the space to create the image.
 root_size=$(du -s -B1K elementary-$architecture | cut -f1)
@@ -192,7 +180,7 @@ mount -o bind "${basedir}/bootp/" elementary-$architecture/boot/firmware
 # Copy Raspberry Pi specific files
 cp -r "${rootdir}"/rpi/rootfs/system-boot/* elementary-${architecture}/boot/firmware/
 
-# Copy kernels and firemware to boot partition
+# Copy kernels and firmware to boot partition
 cat << EOF > elementary-$architecture/hardware
 #!/bin/bash
 
