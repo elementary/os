@@ -28,7 +28,10 @@ mkdir -p "${basedir}"
 cd "${basedir}"
 
 # Bootstrap an ubuntu minimal system
-debootstrap --foreign --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
+# Disable merged-usr because base-files on noble or later contains symlink to /bin, /lib, /lib64, and /sbin,
+# which causes extracting base-files failing.
+# See https://bugs.launchpad.net/ubuntu/+source/base-files/+bug/2054925
+debootstrap --foreign --no-merged-usr --arch $architecture $codename elementary-$architecture http://ports.ubuntu.com/ubuntu-ports
 
 # Add the QEMU emulator for running ARM executables
 cp /usr/bin/qemu-arm-static elementary-$architecture/usr/bin/
