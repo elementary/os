@@ -234,13 +234,7 @@ BUCKET="$4"
 IMGPATH="${basedir}"/${imagename}.img.xz
 IMGNAME=${channel}-rpi/$(basename "$IMGPATH")
 
-apt-get install -y python3 python3-pip python3-venv
-
-python3 -m venv .venv
-. .venv/bin/activate
-trap 'deactivate' EXIT
-
-pip3 install boto3
+apt-get install -y python3 python3-boto3
 
 python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$IMGPATH" "$IMGNAME" || exit 1
 
