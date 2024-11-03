@@ -24,6 +24,7 @@ version=8.0
 YYYYMMDD="$(date +%Y%m%d)"
 imagename=elementaryos-$version-$channel-rpi-$YYYYMMDD
 
+rm -rf "${basedir}"
 mkdir -p "${basedir}"
 cd "${basedir}"
 
