@@ -1,4 +1,5 @@
 .DS_Store
+.venv
 tmp
 artifacts
 builds

@@ -354,11 +354,13 @@ BUCKET="$4"
 IMGPATH="${basedir}"/${imagename}.img.xz
 IMGNAME=${channel}-pinebookpro/$(basename "$IMGPATH")
 
-apt-get install -y curl python3 python3-distutils
+apt-get install -y python3 python3-pip python3-venv
 
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python3 get-pip.py
-pip install boto3
+python3 -m venv .venv
+. .venv/bin/activate
+trap 'deactivate' EXIT
+
+pip3 install boto3
 
 python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$IMGPATH" "$IMGNAME" || exit 1
 
