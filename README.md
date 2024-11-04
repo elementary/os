@@ -50,7 +50,7 @@ docker run --rm --privileged -it \
     -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    ubuntu:22.04 \
+    ubuntu:24.04 \
     ./build-rpi.sh
 ```
 
@@ -61,7 +61,7 @@ docker run --rm --privileged -it \
     -v /proc:/proc \
     -v ${PWD}:/working_dir \
     -w /working_dir \
-    ubuntu:20.04 \
+    ubuntu:24.04 \
     ./build-pinebookpro.sh
 ```
 
