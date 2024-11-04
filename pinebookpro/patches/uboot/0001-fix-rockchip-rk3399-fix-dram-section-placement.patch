@@ -1,0 +1,39 @@
+From f943b7c8e292e3aad2fcbdd0a37505f62b3b4c87 Mon Sep 17 00:00:00 2001
+From: Patrick Georgi <pgeorgi@google.com>
+Date: Wed, 23 Jun 2021 21:34:38 +0200
+Subject: [PATCH] fix(rockchip/rk3399): fix dram section placement
+
+To quote jwerner in T925:
+"The __sramdata in the declaration is a mistake, the correct target
+section for that global needs to be .pmusram.data. This used to be
+in .sram.data once upon a time but then the suspend.c stuff got added
+and required it to be moved to PMUSRAM. I guess they forgot to update
+that part in the declaration and since the old GCC seemed to silently
+prefer the attribute in the definition, nobody noticed."
+
+This fixes building with gcc 11.
+
+fix #T925
+
+Change-Id: I2b91542277c95cf487eaa1344927294d5d1b8f2b
+Signed-off-by: Patrick Georgi <pgeorgi@google.com>
+---
+ plat/rockchip/rk3399/drivers/dram/dram.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plat/rockchip/rk3399/drivers/dram/dram.h b/plat/rockchip/rk3399/drivers/dram/dram.h
+index 0eb12cf29..5572b1612 100644
+--- a/plat/rockchip/rk3399/drivers/dram/dram.h
++++ b/plat/rockchip/rk3399/drivers/dram/dram.h
+@@ -149,7 +149,7 @@ struct rk3399_sdram_params {
+ 	uint32_t rx_cal_dqs[2][4];
+ };
+ 
+-extern __sramdata struct rk3399_sdram_params sdram_config;
++extern struct rk3399_sdram_params sdram_config;
+ 
+ void dram_init(void);
+ 
+-- 
+2.47.0
+
