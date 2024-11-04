@@ -30,7 +30,9 @@ export DEBIAN_FRONTEND="noninteractive"
 apt-get update
 apt-get install -y --no-install-recommends python3 bzip2 wget gcc-arm-none-eabi crossbuild-essential-arm64 make bison flex bc device-tree-compiler ca-certificates sed build-essential debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync git libssl-dev xz-utils coreutils util-linux
 
-wget "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$tfaver.tar.gz"
+# Tarballs available on official Gitiles repo have different timestamps on every download, so we can't validate them using sha256sum
+# Use GitHub mirror instead
+wget -O "trusted-firmware-a-${tfaver}.tar.gz" "https://github.com/TrustedFirmware-A/trusted-firmware-a/archive/refs/tags/v${tfaver}.tar.gz"
 wget "ftp://ftp.denx.de/pub/u-boot/u-boot-${ubootver}.tar.bz2"
 
 echo "37f917922bcef181164908c470a2f941006791c0113d738c498d39d95d543b21 trusted-firmware-a-${tfaver}.tar.gz" | sha256sum --check
