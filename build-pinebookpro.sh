@@ -20,7 +20,7 @@ kernsha256="f8d2a4fe938ff7faa565765a52e347e518a0712ca6ddd41b198bd9cc1626a724  li
 free_space="500"
 
 rootdir=$(pwd)
-basedir=$(pwd)/pinebook-pro
+basedir=$(pwd)/artifacts/pinebook-pro
 
 mkdir -p "${basedir}"
 cd "${basedir}"
