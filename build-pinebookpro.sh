@@ -22,6 +22,7 @@ free_space="500"
 rootdir=$(pwd)
 basedir=$(pwd)/pinebook-pro
 
+rm -rf "${basedir}"
 mkdir -p "${basedir}"
 cd "${basedir}"
 
