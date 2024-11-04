@@ -46,7 +46,8 @@ rm "trusted-firmware-a-${tfaver}.tar.gz"
 rm "u-boot-${ubootver}.tar.bz2"
 
 cd "trusted-firmware-a-${tfaver}"
-patch -Np1 -i "${rootdir}/pinebookpro/patches/uboot/0001-fix-rockchip-rk3399-fix-dram-section-placement.patch"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/trusted-firmware-a/0001-fix-rockchip-rk3399-fix-dram-section-placement.patch"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/trusted-firmware-a/0002-feat-build-add-support-for-new-binutils-versions.patch"
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 CROSS_COMPILE=aarch64-linux-gnu- make PLAT=rk3399
 cp build/rk3399/release/bl31/bl31.elf ../u-boot-${ubootver}/
