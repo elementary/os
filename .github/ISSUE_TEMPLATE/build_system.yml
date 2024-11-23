@@ -49,12 +49,26 @@ body:
 
   - type: dropdown
     attributes:
-      label: OS Version
-      description: The version of elementary OS you are using, or other operating system
+      label: Host OS
+      description: The host OS you are using to build elementary OS
       options:
-        - 6.x (Stable, from our homepage)
-        - 6.x (Early Access)
-        - 7.x (Early Access)
+        - elementary OS 6.x (Stable, from our homepage)
+        - elementary OS 6.x (Early Access)
+        - elementary OS 7.x (Early Access)
+        - Other Linux
+        - Windows
+        - macOS
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: Image Version
+      description: The version of elementary OS you are attempting to build
+      options:
+        - OS 6.x stable
+        - OS 6.x daily
+        - OS 7.x daily
     validations:
       required: true
 
