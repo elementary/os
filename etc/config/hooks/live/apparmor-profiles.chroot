@@ -1,4 +1,4 @@
 #!/bin/sh
-# Description: install experiment profiles for bubble wrap so Flatpak apps can open in Demo Mode
+# Description: enable experimental AppArmor profile for bubblewrap so Flatpak apps can open in Demo Mode
 
-apparmor_parser -r /usr/share/apparmor/extra-profiles/bwrap-userns-restrict
+ln -s /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/
