@@ -20,7 +20,7 @@ kernsha256="f8d2a4fe938ff7faa565765a52e347e518a0712ca6ddd41b198bd9cc1626a724  li
 free_space="500"
 
 rootdir=$(pwd)
-basedir=$(pwd)/pinebook-pro
+basedir=$(pwd)/artifacts/pinebook-pro
 
 rm -rf "${basedir}"
 mkdir -p "${basedir}"
@@ -31,7 +31,9 @@ export DEBIAN_FRONTEND="noninteractive"
 apt-get update
 apt-get install -y --no-install-recommends python3 bzip2 wget gcc-arm-none-eabi crossbuild-essential-arm64 make bison flex bc device-tree-compiler ca-certificates sed build-essential debootstrap qemu-user-static qemu-utils qemu-system-arm binfmt-support parted kpartx rsync git libssl-dev xz-utils coreutils util-linux
 
-wget "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$tfaver.tar.gz"
+# Tarballs available on official Gitiles repo have different timestamps on every download, so we can't validate them using sha256sum
+# Use GitHub mirror instead
+wget -O "trusted-firmware-a-${tfaver}.tar.gz" "https://github.com/TrustedFirmware-A/trusted-firmware-a/archive/refs/tags/v${tfaver}.tar.gz"
 wget "ftp://ftp.denx.de/pub/u-boot/u-boot-${ubootver}.tar.bz2"
 
 echo "37f917922bcef181164908c470a2f941006791c0113d738c498d39d95d543b21 trusted-firmware-a-${tfaver}.tar.gz" | sha256sum --check
@@ -45,6 +47,8 @@ rm "trusted-firmware-a-${tfaver}.tar.gz"
 rm "u-boot-${ubootver}.tar.bz2"
 
 cd "trusted-firmware-a-${tfaver}"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/trusted-firmware-a/0001-fix-rockchip-rk3399-fix-dram-section-placement.patch"
+patch -Np1 -i "${rootdir}/pinebookpro/patches/trusted-firmware-a/0002-Add-support-for-new-binutils-versions.patch"
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 CROSS_COMPILE=aarch64-linux-gnu- make PLAT=rk3399
 cp build/rk3399/release/bl31/bl31.elf ../u-boot-${ubootver}/
