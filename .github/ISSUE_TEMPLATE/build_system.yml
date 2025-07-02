@@ -68,6 +68,7 @@ body:
       description: The processor architecture of the image you're installing
       options:
         - 64-bit AMD/Intel (x86)
+        - 64-bit Native ARM (arm64)
         - Pinebook Pro (ARM)
         - Raspberry Pi 4 (ARM)
     validations:
