@@ -43,28 +43,6 @@ docker run --rm --privileged -it \
     ./build.sh etc/terraform.conf
 ```
 
-### Raspberry Pi 4
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    ubuntu:24.04 \
-    ./build-rpi.sh
-```
-
-### Pinebook Pro
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    ubuntu:24.04 \
-    ./build-pinebookpro.sh
-```
-
 ## Further Information
 
 More information about the concepts behind `live-build` and the technical decisions made to arrive at this set of tools to build an .iso can be found [on the wiki](https://github.com/elementary/os/wiki/Building-iso-Images).
