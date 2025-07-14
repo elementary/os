@@ -18,8 +18,6 @@
 <p align="center">
   <img src="https://github.com/elementary/os/actions/workflows/stable-8.0.yml/badge.svg" alt="Stable 8.0">
   <img src="https://github.com/elementary/os/actions/workflows/daily-8.0.yml/badge.svg" alt="Daily 8.0">
-  <img src="https://github.com/elementary/os/actions/workflows/daily-arm.yml/badge.svg" alt="Daily ARM">
-
 </p>
 
 ---
@@ -41,28 +39,6 @@ docker run --rm --privileged -it \
     -w /working_dir \
     debian:latest \
     ./build.sh etc/terraform.conf
-```
-
-### Raspberry Pi 4
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    ubuntu:24.04 \
-    ./build-rpi.sh
-```
-
-### Pinebook Pro
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    ubuntu:24.04 \
-    ./build-pinebookpro.sh
 ```
 
 ## Further Information
