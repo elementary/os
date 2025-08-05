@@ -30,7 +30,7 @@ The following examples assume you have Docker correctly installed and set up, an
 
 ### 64-bit AMD/Intel
 
-Configure the channel in the `etc/terraform.conf` (stable, daily), then run:
+Configure the channel in the `etc/terraform-amd64.conf` (stable, daily), then run:
 
 ```sh
 docker run --rm --privileged -it \
@@ -38,7 +38,18 @@ docker run --rm --privileged -it \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     debian:latest \
-    ./build.sh etc/terraform.conf
+    ./build.sh etc/terraform-amd64.conf
+```
+
+### 64-bit ARM
+
+```sh
+docker run --rm --privileged -it \
+    -v /proc:/proc \
+    -v ${PWD}:/working_dir \
+    -w /working_dir \
+    debian:latest \
+    ./build.sh etc/terraform-arm64.conf
 ```
 
 ## Further Information
