@@ -26,11 +26,9 @@
 
 As elementary OS is built with the Debian version of `live-build`, not the Ubuntu patched version, it's easiest to build an elementary .iso in a Debian VM or container. This prevents messing up your host system too.
 
-The following examples assume you have Docker correctly installed and set up, and that your current working directory is this repo. When done, your image will be in the `builds` folder.
+The following example assumes you have Docker correctly installed and set up, and that your current working directory is this repo. When done, your image will be in the `builds` folder.
 
-### 64-bit AMD/Intel
-
-Configure the channel in the `etc/terraform-amd64.conf` (stable, daily), then run:
+Configure the channel (stable, daily) in the configuration file (`etc/terraform-amd64.conf` or `etc/terraform-arm64.conf` based on your host architecture), then run:
 
 ```sh
 docker run --rm --privileged -it \
@@ -38,18 +36,7 @@ docker run --rm --privileged -it \
     -v ${PWD}:/working_dir \
     -w /working_dir \
     debian:latest \
-    ./build.sh etc/terraform-amd64.conf
-```
-
-### 64-bit ARM
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    debian:latest \
-    ./build.sh etc/terraform-arm64.conf
+    ./build.sh
 ```
 
 ## Further Information
