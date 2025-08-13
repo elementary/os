@@ -9,6 +9,6 @@ OS_RELEASE_DIVERTED="${OS_RELEASE}.debootstrap"
 
 dpkg-divert --list "$OS_RELEASE" | grep -q "$OS_RELEASE"
 if [ $? -eq 0 ]; then
-    rm -f "$OS_RELEASE"
-    dpkg-divert --local --remove --rename --divert "$OS_RELEASE_DIVERTED" "$OS_RELEASE"
+    mv "$OS_RELEASE_DIVERTED" "$OS_RELEASE"
+    dpkg-divert --local --remove --no-rename --divert "$OS_RELEASE_DIVERTED" "$OS_RELEASE"
 fi
