@@ -1,0 +1,14 @@
+#!/bin/sh
+# Description: Revert dpkg-divert of /etc/os-release done by live-build
+# https://salsa.debian.org/live-team/live-build/-/blob/debian/1%2520250505/scripts/build/bootstrap_debootstrap?ref_type=tags#L125-142
+
+echo "P: Begin executing revert-os-release-divert chroot hook..."
+
+OS_RELEASE=/etc/os-release
+OS_RELEASE_DIVERTED="${OS_RELEASE}.debootstrap"
+
+dpkg-divert --list "$OS_RELEASE" | grep -q "$OS_RELEASE"
+if [ $? -eq 0 ]; then
+    mv "$OS_RELEASE_DIVERTED" "$OS_RELEASE"
+    dpkg-divert --quiet --local --remove --no-rename --divert "$OS_RELEASE_DIVERTED" "$OS_RELEASE"
+fi
