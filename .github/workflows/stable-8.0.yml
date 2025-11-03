@@ -10,7 +10,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
 
     container:
       image: debian:latest
@@ -24,4 +32,4 @@ jobs:
 
     - name: Build and upload stable .iso
       run: |
-        ./workflows.sh etc/terraform-stable-8.0-azure.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-stable-8.0-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
