@@ -32,4 +32,4 @@ jobs:
 
     - name: Build and upload daily .iso
       run: |
-        ./workflows.sh etc/terraform-daily-8.0-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-daily-8.1-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
