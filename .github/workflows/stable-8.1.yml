@@ -1,11 +1,11 @@
-name: Daily OS 8
+name: Stable OS 8
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "*"
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 1 * *"   
   workflow_dispatch: {}
 
 jobs:
@@ -30,6 +30,6 @@ jobs:
     - name: Clone build scripts
       uses: actions/checkout@v6
 
-    - name: Build and upload daily .iso
+    - name: Build and upload stable .iso
       run: |
-        ./workflows.sh etc/terraform-daily-8.0-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./workflows.sh etc/terraform-stable-8.1-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
