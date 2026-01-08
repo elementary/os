@@ -1,0 +1,16 @@
+#!/bin/sh
+# Description: enable experimental AppArmor profile for bubblewrap so Flatpak apps can open in Demo Mode
+
+# The apparmor systemd service (that parses profiles and loads them into the kernel) is patched to be disabled
+# when running on "live" systems due to historical bugs with it breaking applications. Apparmor is still 
+# enabled, but no profiles are loaded as a result.
+#
+# There are discussions dating back a few years questioning whether this is still necessary:
+# https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1821688.html
+#
+# Since it breaks our Flatpak apps, remove the config that disables it.
+mkdir -p /usr/lib/systemd/system/apparmor.service.d
+cat << EOF > /usr/lib/systemd/system/apparmor.service.d/99_enable_in_live_mode.conf
+[Unit]
+ConditionPathExists=
+EOF

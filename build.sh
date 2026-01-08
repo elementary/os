@@ -12,7 +12,7 @@ fi
 if [ -n "$1" ]; then
   CONFIG_FILE="$1"
 else
-  CONFIG_FILE="etc/terraform.conf"
+  CONFIG_FILE="etc/terraform-$(dpkg --print-architecture).conf"
 fi
 BASE_DIR="$PWD"
 source "$BASE_DIR"/"$CONFIG_FILE"
@@ -30,12 +30,7 @@ apt-get install -y live-build patch gnupg2 binutils zstd
 # anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
 # To get the current key ID, find `ubuntu-keyring-xxxx-archive.gpg` in /etc/apt/trusted.gpg.d on a running
 # system and run `gpg --keyring /etc/apt/trusted.gpg.d/ubuntu-keyring-xxxx-archive.gpg --list-public-keys `
-apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
-
-# TODO: This patch was submitted upstream at:
-# https://salsa.debian.org/live-team/live-build/-/merge_requests/314
-# This can be removed when our Debian container has a version containing this fix
-patch -d /usr/lib/live/build/ < 314-follow-symlinks-when-measuring-size-of-efi-files.patch
+gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/trusted.gpg --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
 
 # TODO: Remove this once debootstrap can natively build noble images:
 ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
@@ -88,7 +83,7 @@ build () {
   YYYYMMDD="$(date +%Y%m%d)"
   OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
   mkdir -p "$OUTPUT_DIR"
-  FNAME="elementaryos-$VERSION-$CHANNEL.$YYYYMMDD$OUTPUT_SUFFIX"
+  FNAME="elementaryos-$VERSION-$CHANNEL-$BUILD_ARCH.$YYYYMMDD$OUTPUT_SUFFIX"
   mv "$BASE_DIR/tmp/$BUILD_ARCH/live-image-$BUILD_ARCH.hybrid.iso" "$OUTPUT_DIR/${FNAME}.iso"
 
   # cd into output to so {FNAME}.sha256.txt only
@@ -103,9 +98,4 @@ build () {
 # remove old builds before creating new ones
 rm -rf "$BASE_DIR"/builds
 
-if [[ "$ARCH" == "all" ]]; then
-    build amd64
-    build i386
-else
-    build "$ARCH"
-fi
+build "$ARCH"

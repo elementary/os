@@ -10,6 +10,11 @@ BUCKET="$5"
 
 source "$CONFIG_FILE"
 
+BASEDIR="$CHANNEL"
+if [ "$ARCH" != "amd64" ]; then
+  BASEDIR="$CHANNEL-$ARCH"
+fi
+
 echo -e "
 #----------------------#
 # INSTALL DEPENDENCIES #
@@ -30,9 +35,9 @@ ISOPATHS="$(find builds -name "*.iso")"
 while IFS= read -r ISOPATH; do
   SHAPATH="${ISOPATH%.*}.sha256.txt"
   MD5PATH="${ISOPATH%.*}.md5.txt"
-  ISO="$CHANNEL/$(basename "$ISOPATH")"
-  SHASUM="$CHANNEL/$(basename "$SHAPATH")"
-  MD5="$CHANNEL/$(basename "$MD5PATH")"
+  ISO="$BASEDIR/$(basename "$ISOPATH")"
+  SHASUM="$BASEDIR/$(basename "$SHAPATH")"
+  MD5="$BASEDIR/$(basename "$MD5PATH")"
   echo "uploading $ISO..."
   python3 upload.py "$KEY" "$SECRET" "$ENDPOINT" "$BUCKET" "$ISOPATH" "$ISO" || exit 1
   echo "uploading $SHASUM..."
