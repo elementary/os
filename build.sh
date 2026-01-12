@@ -12,7 +12,7 @@ fi
 if [ -n "$1" ]; then
   CONFIG_FILE="$1"
 else
-  CONFIG_FILE="etc/mkosi-$(dpkg --print-architecture).conf"
+  CONFIG_FILE="etc/terraform-$(dpkg --print-architecture).conf"
 fi
 BASE_DIR="$PWD"
 source "$BASE_DIR"/"$CONFIG_FILE"
@@ -42,13 +42,18 @@ build () {
   rm -rf config auto
   cp -r "$BASE_DIR"/etc/* .
   # Make sure conffile specified as arg has correct name
-  cp -f "$BASE_DIR"/"$CONFIG_FILE" mkosi.conf
+  cp -f "$BASE_DIR"/"$CONFIG_FILE" terraform.conf
 
   # copy appcenter list & key
   if [ "$INCLUDE_APPCENTER" = "yes" ]; then
     cp "config/appcenter/appcenter.list.binary" "config/archives/appcenter.list.binary"
     cp "config/appcenter/appcenter.key.binary" "config/archives/appcenter.key.binary"
   fi
+
+  YYYYMMDD="$(date +%Y%m%d)"
+  OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
+  mkdir -p "$OUTPUT_DIR"
+  FNAME="elementaryos-$VERSION-$CHANNEL-$BUILD_ARCH.$YYYYMMDD$OUTPUT_SUFFIX"
 
   echo -e "
 #------------------#
@@ -62,19 +67,18 @@ build () {
 # MKOSI BUILD #
 #------------------#
 "
-  mkosi build
+  mkosi build \
+    --distribution=ubuntu \
+    --release="$BASECODENAME" \
+    --mirror="$MIRROR_URL" \
+    --ouput=$FNAME \
+    --output-directory=$OUTPUT_DIR
 
   echo -e "
 #---------------------------#
 # MOVE OUTPUT TO BUILDS DIR #
 #---------------------------#
 "
-
-  YYYYMMDD="$(date +%Y%m%d)"
-  OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
-  mkdir -p "$OUTPUT_DIR"
-  FNAME="elementaryos-$VERSION-$CHANNEL-$BUILD_ARCH.$YYYYMMDD$OUTPUT_SUFFIX"
-  mv "$BASE_DIR/tmp/$BUILD_ARCH/live-image-$BUILD_ARCH.hybrid.iso" "$OUTPUT_DIR/${FNAME}.iso"
 
   # cd into output to so {FNAME}.sha256.txt only
   # includes the filename and not the path to
