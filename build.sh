@@ -24,16 +24,14 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y live-build patch gnupg2 binutils zstd
+apt-get install -y mkosi patch gnupg2 binutils zstd
+mkosi dependencies | xargs -d '\n' apt-get install -y
 
 # The Debian repositories don't seem to have the `ubuntu-keyring` or `ubuntu-archive-keyring` packages
 # anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
 # To get the current key ID, find `ubuntu-keyring-xxxx-archive.gpg` in /etc/apt/trusted.gpg.d on a running
 # system and run `gpg --keyring /etc/apt/trusted.gpg.d/ubuntu-keyring-xxxx-archive.gpg --list-public-keys `
 gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/trusted.gpg --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
-
-# TODO: Remove this once debootstrap can natively build noble images:
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
 
 build () {
   BUILD_ARCH="$1"
@@ -53,38 +51,34 @@ build () {
     cp "config/appcenter/appcenter.key.binary" "config/archives/appcenter.key.binary"
   fi
 
-  echo -e "
-#------------------#
-# LIVE-BUILD CLEAN #
-#------------------#
-"
-  lb clean
-
-  echo -e "
-#-------------------#
-# LIVE-BUILD CONFIG #
-#-------------------#
-"
-  lb config
+  YYYYMMDD="$(date +%Y%m%d)"
+  OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
+  mkdir -p "$OUTPUT_DIR"
+  FNAME="elementaryos-$VERSION-$CHANNEL-$BUILD_ARCH.$YYYYMMDD$OUTPUT_SUFFIX"
 
   echo -e "
 #------------------#
-# LIVE-BUILD BUILD #
+# MKOSI CLEAN #
 #------------------#
 "
-  lb build
+  mkosi clean
+
+  echo -e "
+#------------------#
+# MKOSI BUILD #
+#------------------#
+"
+  mkosi build \
+    --release="$BASECODENAME" \
+    --mirror="$MIRROR_URL" \
+    --ouput=$FNAME \
+    --output-directory=$OUTPUT_DIR
 
   echo -e "
 #---------------------------#
 # MOVE OUTPUT TO BUILDS DIR #
 #---------------------------#
 "
-
-  YYYYMMDD="$(date +%Y%m%d)"
-  OUTPUT_DIR="$BASE_DIR/builds/$BUILD_ARCH"
-  mkdir -p "$OUTPUT_DIR"
-  FNAME="elementaryos-$VERSION-$CHANNEL-$BUILD_ARCH.$YYYYMMDD$OUTPUT_SUFFIX"
-  mv "$BASE_DIR/tmp/$BUILD_ARCH/live-image-$BUILD_ARCH.hybrid.iso" "$OUTPUT_DIR/${FNAME}.iso"
 
   # cd into output to so {FNAME}.sha256.txt only
   # includes the filename and not the path to
