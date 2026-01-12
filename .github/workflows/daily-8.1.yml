@@ -16,8 +16,8 @@ jobs:
         include:
           - runner: ubuntu-24.04
             arch: amd64
-          - runner: ubuntu-24.04-arm
-            arch: arm64
+          # - runner: ubuntu-24.04-arm
+          #   arch: arm64
     runs-on: ${{ matrix.runner }}
 
     container:
@@ -32,4 +32,4 @@ jobs:
 
     - name: Build and upload daily .iso
       run: |
-        ./workflows.sh etc/terraform-daily-8.1-azure-${{ matrix.arch }}.conf "${{ secrets.key }}" "${{ secrets.secret }}" "${{ secrets.endpoint }}" "${{ secrets.bucket }}"
+        ./build.sh etc/terraform-daily-8.1-azure-${{ matrix.arch }}.conf
