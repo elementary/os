@@ -47,12 +47,6 @@ build () {
   # Make sure conffile specified as arg has correct name
   cp -f "$BASE_DIR"/"$CONFIG_FILE" terraform.conf
 
-  # copy appcenter list & key
-  if [ "$INCLUDE_APPCENTER" = "yes" ]; then
-    cp "config/appcenter/appcenter.list.binary" "config/archives/appcenter.list.binary"
-    cp "config/appcenter/appcenter.key.binary" "config/archives/appcenter.key.binary"
-  fi
-
   echo -e "
 #------------------#
 # LIVE-BUILD CLEAN #
