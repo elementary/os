@@ -68,7 +68,6 @@ build () {
 #------------------#
 "
   mkosi build \
-    --distribution=ubuntu \
     --release="$BASECODENAME" \
     --mirror="$MIRROR_URL" \
     --ouput=$FNAME \
