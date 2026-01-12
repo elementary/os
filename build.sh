@@ -25,6 +25,7 @@ echo -e "
 
 apt-get update
 apt-get install -y mkosi patch gnupg2 binutils zstd
+mkosi dependencies | xargs -d '\n' apt-get install -y
 
 # The Debian repositories don't seem to have the `ubuntu-keyring` or `ubuntu-archive-keyring` packages
 # anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
