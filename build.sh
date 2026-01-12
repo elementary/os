@@ -12,7 +12,7 @@ fi
 if [ -n "$1" ]; then
   CONFIG_FILE="$1"
 else
-  CONFIG_FILE="etc/terraform-$(dpkg --print-architecture).conf"
+  CONFIG_FILE="etc/mkosi-$(dpkg --print-architecture).conf"
 fi
 BASE_DIR="$PWD"
 source "$BASE_DIR"/"$CONFIG_FILE"
@@ -24,16 +24,13 @@ echo -e "
 "
 
 apt-get update
-apt-get install -y live-build patch gnupg2 binutils zstd
+apt-get install -y mkosi patch gnupg2 binutils zstd
 
 # The Debian repositories don't seem to have the `ubuntu-keyring` or `ubuntu-archive-keyring` packages
 # anymore, so we add the archive keys manually. This may need to be updated if Ubuntu changes their signing keys
 # To get the current key ID, find `ubuntu-keyring-xxxx-archive.gpg` in /etc/apt/trusted.gpg.d on a running
 # system and run `gpg --keyring /etc/apt/trusted.gpg.d/ubuntu-keyring-xxxx-archive.gpg --list-public-keys `
 gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/trusted.gpg --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
-
-# TODO: Remove this once debootstrap can natively build noble images:
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
 
 build () {
   BUILD_ARCH="$1"
@@ -45,7 +42,7 @@ build () {
   rm -rf config auto
   cp -r "$BASE_DIR"/etc/* .
   # Make sure conffile specified as arg has correct name
-  cp -f "$BASE_DIR"/"$CONFIG_FILE" terraform.conf
+  cp -f "$BASE_DIR"/"$CONFIG_FILE" mkosi.conf
 
   # copy appcenter list & key
   if [ "$INCLUDE_APPCENTER" = "yes" ]; then
@@ -55,24 +52,17 @@ build () {
 
   echo -e "
 #------------------#
-# LIVE-BUILD CLEAN #
+# MKOSI CLEAN #
 #------------------#
 "
-  lb clean
-
-  echo -e "
-#-------------------#
-# LIVE-BUILD CONFIG #
-#-------------------#
-"
-  lb config
+  mkosi clean
 
   echo -e "
 #------------------#
-# LIVE-BUILD BUILD #
+# MKOSI BUILD #
 #------------------#
 "
-  lb build
+  mkosi build
 
   echo -e "
 #---------------------------#
