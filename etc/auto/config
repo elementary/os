@@ -14,6 +14,17 @@ if [ "$HWE_X11" = "yes" ]; then
     XORG_HWE="xserver-xorg-hwe-${BASEVERSION}"
 fi
 
+case "$ARCH" in
+    amd64|i386)
+        MIRROR_BINARY_URL="http://archive.ubuntu.com/ubuntu/"
+        MIRROR_BINARY_SECURITY_URL="http://security.ubuntu.com/ubuntu/"
+        ;;
+    arm64)
+        MIRROR_BINARY_URL="http://ports.ubuntu.com/ubuntu-ports/"
+        MIRROR_BINARY_SECURITY_URL="http://ports.ubuntu.com/ubuntu-ports/"
+        ;;
+esac
+
 lb config noauto \
     --architectures "$ARCH" \
     --mode debian \
@@ -29,12 +40,12 @@ lb config noauto \
     --checksums md5 \
     --mirror-bootstrap "$MIRROR_URL" \
     --parent-mirror-bootstrap "$MIRROR_URL" \
-    --mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
-    --parent-mirror-chroot-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --parent-mirror-binary-security "http://security.ubuntu.com/ubuntu/" \
-    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
-    --parent-mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-chroot-security "$MIRROR_BINARY_SECURITY_URL" \
+    --parent-mirror-chroot-security "$MIRROR_BINARY_SECURITY_URL" \
+    --mirror-binary-security "$MIRROR_BINARY_SECURITY_URL" \
+    --parent-mirror-binary-security "$MIRROR_BINARY_SECURITY_URL" \
+    --mirror-binary "$MIRROR_BINARY_URL" \
+    --parent-mirror-binary "$MIRROR_BINARY_URL" \
     --keyring-packages ubuntu-keyring \
     --apt-options "--yes --option Acquire::Retries=2 --option Acquire::http::Timeout=45" \
     --cache-packages false \

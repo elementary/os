@@ -14,6 +14,3 @@ cat << EOF > /usr/lib/systemd/system/apparmor.service.d/99_enable_in_live_mode.c
 [Unit]
 ConditionPathExists=
 EOF
-
-# Enable the experimental bubblewrap profile
-ln -s /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/
