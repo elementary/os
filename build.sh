@@ -32,8 +32,8 @@ apt-get install -y live-build patch gnupg2 binutils zstd
 # system and run `gpg --keyring /etc/apt/trusted.gpg.d/ubuntu-keyring-xxxx-archive.gpg --list-public-keys `
 gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/trusted.gpg --recv-keys --keyserver keyserver.ubuntu.com F6ECB3762474EDA9D21B7022871920D1991BC93C
 
-# TODO: Remove this once debootstrap can natively build noble images:
-ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/noble
+# TODO: Remove this once debootstrap can natively build resolute images:
+ln -sfn /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/resolute
 
 build () {
   BUILD_ARCH="$1"
