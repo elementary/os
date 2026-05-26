@@ -10,7 +10,7 @@ shim
 shim-signed
 
 #if ARCHITECTURES amd64
-bcmwl-kernel-source
+broadcom-sta-dkms
 intel-microcode
 iucode-tool
 
