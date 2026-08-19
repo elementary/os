@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate SHA256SUMS (all partitions)
         run: |
-          cd mkosi.output/sysupdate
+          cd mkosi.output
           sha256sum *.esp.raw \
               *.usr-*.*.raw.xz \
               *.usr-*-verity.*.raw \
@@ -48,7 +48,7 @@ jobs:
       - name: Extract Date
         id: get_date
         run: |
-          FILE_PATH=$(ls mkosi.output/sysupdate/elementary_*.raw | grep -E 'elementary_[0-9]+\.raw$' | head -n 1)
+          FILE_PATH=$(ls mkosi.output/elementary_*.raw | grep -E 'elementary_[0-9]+\.raw$' | head -n 1)
           TIMESTAMP=$(basename "$FILE_PATH" | sed 's/^elementary_//;s/\..*//')
           echo "RELEASE_TAG=os9-$TIMESTAMP" >> "$GITHUB_OUTPUT"
           echo "RELEASE_DATE=${TIMESTAMP:0:8}" >> "$GITHUB_OUTPUT"
@@ -60,12 +60,12 @@ jobs:
           AWS_DEFAULT_REGION: auto
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
         run: |
-          aws s3 sync mkosi.output/sysupdate/ "s3://${{ secrets.R2_BUCKET_DAILY_UPDATES }}/" \
+          aws s3 sync mkosi.output/ "s3://${{ secrets.R2_BUCKET_DAILY_UPDATES }}/" \
             --exclude "*" \
             --include=*.esp.raw \
             --include=*.usr-*.*.raw.xz \
             --include=*.usr-*-verity.*.raw \
             --include=*.usr-*-verity-sig.*.raw \
             --include="SHA256SUMS"
-          aws s3 cp mkosi.output/elementary-liveiso.iso "s3://${{ secrets.R2_BUCKET_DAILY_INSTALLER }}/amd64/elementaryos-9.0-daily-amd64.${{ steps.get_date.outputs.RELEASE_DATE }}.iso"
+          aws s3 cp mkosi.output/elementaryos-9.0-*.iso "s3://${{ secrets.R2_BUCKET_DAILY_INSTALLER }}/amd64/elementaryos-9.0-daily-amd64.${{ steps.get_date.outputs.RELEASE_DATE }}.iso"
 
