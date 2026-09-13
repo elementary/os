@@ -49,6 +49,11 @@ sed -i "s|%PLACEHOLDER_ARCH%|${ARCH})|g" iso_root/.disk/info
 
 
 echo "Creating casper liveiso..."
+
+echo "Copying raw image into staging directory..."
+mkdir -p iso_root/extra
+cp "$RAW_IMAGE" "iso_root/extra/$(basename "$RAW_IMAGE")"
+
 sudo podman run --rm -it \
   --network host \
   --dns 8.8.8.8 \
@@ -62,28 +67,9 @@ sudo podman run --rm -it \
            cp ${base_name}/boot/initrd.img-\${KERNEL_VERSION} iso_root/casper/initrd
            rm -f iso_root/casper/filesystem.squashfs
            mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd
-           grub-mkrescue -o custom_ubuntu_live.iso iso_root/
+           grub-mkrescue -o ${OUT_ISO} iso_root/
            echo 'Live environment generated!'"
 
-
-echo "Generating installer..."
-BASE_ISO="./custom_ubuntu_live.iso"
-rm -f "$OUT_ISO"
-
-LOCAL_RAW_IMAGE="./$(basename "$RAW_IMAGE")"
-
-podman run --rm \
-  --security-opt label=disable \
-  -v "$(pwd):/work" \
-  -w /work \
-  ghcr.io/jumpyvi/xorriso:tanit \
-  sh -c '
-        apk add --no-cache xorriso && \
-        xorriso -indev "'"$BASE_ISO"'" \
-        -outdev "'"$OUT_ISO"'" \
-        -boot_image any keep \
-        -map "'"$LOCAL_RAW_IMAGE"'" /extra/"$(basename "'"$LOCAL_RAW_IMAGE"'")" \
-        -commit
-  '
+rm -f custom_ubuntu_live.iso
 
 echo "Success! Your live ISO is at: mkosi.output/$OUT_ISO"
