@@ -1,0 +1,5 @@
+Types: deb
+URIs: https://ppa.launchpadcontent.net/elementary-os/os-patches/ubuntu
+Suites: resolute
+Components: main
+Signed-By: /etc/apt/keyrings/elementary-os-os-patches.gpg

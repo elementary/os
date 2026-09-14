@@ -1,0 +1,12 @@
+#!/bin/bash
+set -xeuo pipefail
+
+fc-cache --force --really-force --system-only --verbose
+
+glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+mkdir -p /var/usrlocal
+ln -s /var/usrlocal /usr/local
+cp -a /usr/local/. /var/usrlocal/
+rm -rf /usr/local
+ln -s /var/usrlocal /usr/local

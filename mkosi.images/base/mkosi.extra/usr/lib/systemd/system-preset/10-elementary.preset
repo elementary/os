@@ -1,0 +1,15 @@
+enable systemd-resolved
+enable apparmor-firstboot.service
+enable NetworkManager.service
+enable NetworkManager-wait-online.service
+disable systemd-networkd
+
+enable systemd-timesyncd.service
+disable systemd-homed-firstboot.service
+disable systemd-firstboot.service
+
+enable systemd-homed.service
+
+disable avahi.*
+
+enable preset-global.service

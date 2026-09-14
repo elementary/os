@@ -1,0 +1,3 @@
+Package: gdm3 gnome-control-center gnome-remote-desktop gnome-screensaver gnome-shell gnome-session gnome-software gnome-system-monitor nautilus
+Pin: release *
+Pin-Priority: -1

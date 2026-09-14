@@ -1,0 +1,4 @@
+enable gnome-keyring-daemon.service
+enable gnome-keyring-daemon.socket
+enable gcr-ssh-agent.service
+enable gcr-ssh-agent.socket

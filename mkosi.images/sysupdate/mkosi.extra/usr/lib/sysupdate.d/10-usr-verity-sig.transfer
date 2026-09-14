@@ -1,0 +1,15 @@
+[Transfer]
+ProtectVersion=%A
+
+[Source]
+Type=url-file
+Path=PLACEHOLDER_BUCKET_PATH
+MatchPattern=elementary_@v.usr-%a-verity-sig.@u.raw.zst
+
+[Target]
+Type=partition
+Path=auto
+MatchPattern=elementary_@v_verity_sig
+MatchPartitionType=usr-verity-sig
+PartitionFlags=0
+ReadOnly=1

@@ -1,16 +1,13 @@
-name: Build and Release Daily (elementary OS 9)
+name: Build and Release Stable (elementary OS 9)
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 jobs:
   call-reusable-build:
     uses: ./.github/workflows/reusable-release.yml
     with:
-      build_type: daily
+      build_type: stable
     secrets: inherit

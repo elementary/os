@@ -1,0 +1,142 @@
+name: Build and Release
+
+on:
+  workflow_call:
+    inputs:
+      build_type:
+        description: 'Build to run (daily or stable)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    name: Build Image and Release
+    strategy:
+      matrix:
+          include:
+            - runner: ubuntu-26.04
+              arch: amd64
+            - runner: ubuntu-26.04-arm
+              arch: arm64
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Get arch
+        id: get_arch
+        run: |
+          ARCH=$(uname -m | tr '_' '-')
+          echo "Current build is for: $ARCH"
+          echo "ARCH=$ARCH" >> "$GITHUB_ENV"
+
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install just podman -y
+
+      - name: Generate key
+        run: just genkey
+
+      - name: Build with mkosi
+        # Will either run do-daily or do-stable
+        run: just do-${{ inputs.build_type }}
+
+      - name: Generate SHA256SUMS (all partitions)
+        run: just checksum-repo
+
+      - name: Import GPG Key
+        run: echo "${{ secrets.SYSUPDATE_GPG_PK }}" | gpg --batch --import
+
+      - name: Generate Signature
+        run: |
+          cd mkosi.output/
+          gpg --batch --pinentry-mode loopback \
+              --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
+              --local-user "Elementary Sysupdate Key" \
+              --output SHA256SUMS.gpg \
+              --detach-sign SHA256SUMS
+
+      - name: Extract Date
+        id: get_date
+        run: |
+          set -euo pipefail
+          FILE_PATH=$(ls mkosi.output/*.usr-*.raw.zst | head -n 1)
+          TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
+          if [ -z "$TIMESTAMP" ]; then
+            echo "Fatal: No timpestamped file found."
+            exit 0
+          fi
+          echo "Release date: $TIMESTAMP"
+          echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+
+      - name: Upload sysupdate, iso and SHA256SUMS to Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          set -euo pipefail
+
+          # 1. Images
+          cd mkosi.output
+          find . -maxdepth 1 -type f \( \
+              -name "*.esp.raw" \
+              -o -name "*.usr-*.*.raw.zst" \
+              -o -name "*.usr-*-verity.*.raw.zst" \
+              -o -name "*.usr-*-verity-sig.*.raw.zst" \
+            \) -print0 | while IFS= read -r -d '' f; do
+              aws s3 cp "$f" "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}" --cache-control "public, max-age=31536000, immutable"
+            done
+          cd ..
+            
+          # 2. SHA256SUMS
+          aws s3 cp mkosi.output/SHA256SUMS \
+            "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}/SHA256SUMS" \
+            --content-type "text/plain" \
+            --cache-control "no-cache"
+
+          aws s3 cp mkosi.output/SHA256SUMS.gpg \
+            "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}/SHA256SUMS.gpg" \
+            --content-type "application/pgp-signature" \
+            --cache-control "no-cache"
+
+          # 3. Live ISO + hash
+          ISO=$(basename $(ls mkosi.output/elementaryos-*.iso | head -n 1))
+          ( cd mkosi.output && sha256sum "$ISO" > "$ISO.sha256.txt" )
+
+          ISO_DEST="s3://${{ secrets.R2_BUCKET_INSTALLER }}/${{inputs.build_type}}/
+
+          aws s3 cp "mkosi.output/$ISO" "$ISO_DEST/$ISO" \
+            --cache-control "public, max-age=31536000, immutable"
+
+          aws s3 cp "mkosi.output/$ISO.sha256.txt" "$ISO_DEST/$ISO.sha256.txt" \
+            --content-type "text/plain" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Checksum Extensions
+        run: just checksum-ext
+
+      - name: Release Extensions
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.build_type }}-${{ steps.get_date.outputs.RELEASE_DATE }}-${ARCH}
+          prerelease: ${{ inputs.build_type == 'daily' }}
+          make_latest: ${{ inputs.build_type == 'stable' && 'true' || 'false' }}
+          name: Extension release ${{ steps.get_date.outputs.RELEASE_DATE }} (${{ inputs.build_type }}) for ${ARCH}
+          files: |
+            mkosi.output/ext/ext-*.raw.zst
+            mkosi.output/ext/SHA256SUMS

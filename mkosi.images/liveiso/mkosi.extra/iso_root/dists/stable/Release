@@ -1,0 +1,7 @@
+Origin: elementary-cdrom
+Label: elementary-cdrom
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: Empty disc index for apt-cdrom compatibility

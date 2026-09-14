@@ -1,0 +1,17 @@
+[Unit]
+ConditionFirstBoot=no
+ConditionPathIsReadWrite=/etc
+
+DefaultDependencies=no
+
+Before=basic.target
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=systemctl preset-all --global
+
+[Install]
+WantedBy=basic.target

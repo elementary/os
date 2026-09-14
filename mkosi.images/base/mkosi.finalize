@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Capture the entirety of /etc in /usr/share/factory/etc so we can use
+# systemd-tmpfiles to symlink individual directories from it to /etc.
+mkdir -p "$BUILDROOT/usr/share/factory/"
+cp --archive --no-target-directory --update=none "$BUILDROOT/etc" "$BUILDROOT/usr/share/factory/etc"
+ln -sr "$BUILDROOT/usr" "$BUILDROOT/usr/share/factory/usr"

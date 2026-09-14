@@ -1,0 +1,86 @@
+#!/bin/bash
+set -eo pipefail
+
+echo "Thank you for testing! <3"
+
+medium=$(findmnt -rn -t iso9660,udf -o TARGET | head -1)
+extra="$medium/extra"
+raw_zstd=$(find "$extra" -maxdepth 1 -type f -name '*.raw.zst' | head -n1)
+repart_src="/opt/repart-target/"
+
+if [ -z "$raw_zstd" ]; then
+    echo "Installation aborted: No .raw.zst file found."
+    exit 1
+fi
+
+echo "Using source image: $raw_zstd"
+
+PS3="Select installation disk (ALL DATA WILL BE LOST): "
+
+select selected_disk in $(lsblk -d -n -p -o NAME -e 7,11); do
+    if [[ -n "$selected_disk" ]]; then
+        break
+    fi
+    echo "Invalid selection, try again."
+done
+
+if [ -z "$selected_disk" ]; then
+    echo "Installation aborted: No disk selected."
+    exit 1
+fi
+
+dest_dev=$(echo "$selected_disk" | awk '{print $1}')
+
+echo "$dest_dev selected for repartitioning..."
+echo "Destroying drive in 3s ..."
+sleep 1
+echo "Destroying drive in 2s ..."
+sleep 1
+echo "Destroying drive in 1s ..."
+sleep 1
+
+/usr/sbin/wipefs -a "$dest_dev"
+
+echo "Creating root partition..."
+systemd-repart \
+    --definitions="$repart_src/root" \
+    --dry-run=no \
+    --empty=force \
+    "$dest_dev"
+
+partprobe "$dest_dev"
+udevadm settle
+
+root_part=$(lsblk -n -o PATH -l "$dest_dev" | grep -v "^${dest_dev}$" | head -n1)
+
+if [ -z "$root_part" ]; then
+    echo "Error: No root-scratch parition, aborting."
+    exit 1
+fi
+
+root_mount=/mnt/future-root
+mkdir -p "$root_mount"
+
+echo "Mounting $root_part to $root_mount as a scratch buffer..."
+if ! mount "$root_part" "$root_mount"; then
+    echo "Could not mount, aborting."
+    exit 1
+fi
+
+raw_src="$root_mount/source.raw"
+echo "Decompressing image into the scratch buffer..."
+zstd -dc -T0 "$raw_zstd" > "$raw_src"
+
+echo "Configuring partitions..."
+systemd-repart \
+    --copy-from="$raw_src" \
+    --definitions="$repart_src/home" \
+    --dry-run=no \
+    "$dest_dev"
+
+echo "Cleaning up scratch buffer..."
+rm "$raw_src"
+umount "$root_mount"
+rmdir "$root_mount"
+
+echo "Everything is done! Enjoy your stay."

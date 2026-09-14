@@ -1,0 +1,6 @@
+disable systemd-timesyncd.service
+disable sshd.socket
+disable sshd.service
+enable ufw.service
+enable systemd-resolved.service
+enable plymouth.service

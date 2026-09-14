@@ -1,0 +1,62 @@
+#!/bin/bash
+set -euo pipefail
+
+RUN_DIR=/run/usroverlay
+UPPER="$RUN_DIR/upper"
+WORK="$RUN_DIR/work"
+TARGET=/usr
+
+if [[ $EUID -ne 0 ]]; then
+    SCRIPT_PATH="$(readlink -f "$0")"
+    exec run0 "$SCRIPT_PATH" "$@"
+fi
+
+is_active() {
+    findmnt -n -o FSTYPE "$TARGET" 2>/dev/null | grep -q '^overlay$'
+}
+
+cmd_enable() {
+    if is_active; then
+        echo "usroverlay: already active on $TARGET"
+        exit 0
+    fi
+
+    mkdir -p "$UPPER" "$WORK"
+    mount -t overlay overlay \
+        -o "lowerdir=$TARGET,upperdir=$UPPER,workdir=$WORK" \
+        "$TARGET"
+
+    echo "usroverlay is enabled, discard with usroverlay discard"
+}
+
+cmd_discard() {
+    if ! is_active; then
+        echo "usroverlay: not currently active" >&2
+        exit 1
+    fi
+
+    umount -l "$TARGET"
+    ( sleep 5; rm -rf "$RUN_DIR" 2>/dev/null || true ) &
+    disown
+
+    echo "usroverlay has been discarded"
+}
+
+cmd_status() {
+    if is_active; then
+        echo "usroverlay: ACTIVE"
+    else
+        echo "usroverlay: inactive"
+    fi
+}
+
+case "${1:-}" in
+    enable)  cmd_enable ;;
+    discard) cmd_discard ;;
+    status)  cmd_status ;;
+    *)
+        echo "Usage: usroverlay {enable|discard|status}" >&2
+        cmd_status
+        exit 1
+        ;;
+esac

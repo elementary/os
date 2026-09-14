@@ -18,27 +18,49 @@
 <p align="center">
   <img src="https://github.com/elementary/os/actions/workflows/stable-8.1.yml/badge.svg" alt="Stable 8.1">
   <img src="https://github.com/elementary/os/actions/workflows/daily-8.1.yml/badge.svg" alt="Daily 8.1">
+  <img src="https://github.com/elementary/os/actions/workflows/daily-9.0.yml/badge.svg" alt="Daily 9.0">
 </p>
 
 ---
 
-## Building Locally
+## Building, Testing, and Installation
 
-As elementary OS is built with the Debian version of `live-build`, not the Ubuntu patched version, it's easiest to build an elementary .iso in a Debian VM or container. This prevents messing up your host system too.
+You'll need the following dependencies:
+* podman
+* just
 
-The following example assumes you have Docker correctly installed and set up, and that your current working directory is this repo. When done, your image will be in the `builds` folder.
+Generate keys and then build with `just`
 
-Configure the channel (stable, daily) in the configuration file (`etc/terraform-amd64.conf` or `etc/terraform-arm64.conf` based on your host architecture), then run:
-
-```sh
-docker run --rm --privileged -it \
-    -v /proc:/proc \
-    -v ${PWD}:/working_dir \
-    -w /working_dir \
-    debian:latest \
-    ./build.sh
+```bash
+just genkey
+just do-daily
 ```
+Create install media with [Fedora Media Writer](https://flathub.org/en/apps/org.fedoraproject.MediaWriter) or [Impression](flathub.org/en/apps/io.gitlab.adhami3310.Impression), or boot with GNOME Boxes (>=51).
 
-## Further Information
+### Installation (sysupdate)
 
-More information about the concepts behind `live-build` and the technical decisions made to arrive at this set of tools to build an .iso can be found [on the wiki](https://github.com/elementary/os/wiki/Building-iso-Images).
+Once in the liveiso, inside the terminal or a tty, run:
+
+```bash
+run0 elementary-install
+```
+You will be prompted with installation options
+
+### Installation (classic)
+
+To install classic mode, follow the steps in the GUI installer from the liveiso.
+
+## Operations
+
+### Upgrades
+
+`run0 sysupdate update --verify=no`
+
+Append the exact version ID at the end to upgrade to a specific version, or downgrade.
+
+## Minimum specs
+- UEFI with secure boot disabled
+- 8 GB of USB flash drive
+- GNOME Boxes >=51 (for VM only)
+- 55 GB of destination disk
+- 4 GB of system memory (RAM)

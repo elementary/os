@@ -1,0 +1,12 @@
+[Transfer]
+Features=ext-virt
+
+[Source]
+Type=url-file
+Path=PLACEHOLDER_BUCKET_PATH
+MatchPattern=ext-virt_@v.raw.zst
+
+[Target]
+Type=regular-file
+Path=/var/lib/extensions
+MatchPattern=ext-virt_@v.raw

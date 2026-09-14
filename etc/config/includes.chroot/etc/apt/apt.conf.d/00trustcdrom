@@ -1,1 +1,0 @@
-APT::Authentication::TrustCDROM "true";

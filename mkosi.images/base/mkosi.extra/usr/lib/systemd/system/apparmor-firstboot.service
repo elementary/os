@@ -1,0 +1,12 @@
+[Unit]
+Description=Restart apparmor after configs were added by tmpfiles
+ConditionFirstBoot=yes
+After=systemd-tmpfiles-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl reload --no-block apparmor.service
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

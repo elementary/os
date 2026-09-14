@@ -1,0 +1,23 @@
+[Transfer]
+ProtectVersion=%A
+
+[Source]
+Type=url-file
+Path=PLACEHOLDER_BUCKET_PATH
+MatchPattern=elementary_@v.efi
+
+[Target]
+Type=regular-file
+Path=/EFI/Linux
+PathRelativeTo=boot
+MatchPattern=elementary_@v_%a+@l-@d.efi \
+             elementary_@v_%a+@l.efi \
+             elementary_@v_%a.efi \
+             elementary_@v+@l-@d.efi \
+             elementary_@v+@l.efi \
+             elementary_@v.efi
+# MatchPartitionType=uki
+Mode=0600
+TriesLeft=3
+TriesDone=0
+InstancesMax=2
