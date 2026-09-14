@@ -10,7 +10,7 @@ on:
 
 jobs:
   call-reusable-build:
-    uses: ./.github/workflows/reusable-release.yml
+    uses: ./.github/workflows/build-release.yml
     with:
       build_type: daily
     secrets: inherit
