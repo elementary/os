@@ -15,6 +15,8 @@ do-daily: (_do-release "daily")
 
 do-stable: (_do-release "stable")
 
+_get_arch:
+    @uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/'
 
 genkey:
     just run-in-podman mkosi genkey

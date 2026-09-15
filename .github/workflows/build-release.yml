@@ -37,13 +37,12 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      - name: Get arch
-        run: |
-          ARCH=$(uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/')
-          echo "ARCH=$ARCH" >> "$GITHUB_ENV"
-
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install just podman -y
+
+      - name: Get arch
+        run: |
+          echo "ARCH=$(just _get_arch)" >> "$GITHUB_ENV"
 
       - name: Generate key
         run: just genkey
