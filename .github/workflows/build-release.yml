@@ -133,10 +133,10 @@ jobs:
       - name: Release Extensions
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ inputs.build_type }}-${{ steps.get_date.outputs.RELEASE_DATE }}-${ARCH}
+          tag_name: ${{ inputs.build_type }}-${{ steps.get_date.outputs.RELEASE_DATE }}-${{ matrix.arch }}
           prerelease: ${{ inputs.build_type == 'daily' }}
           make_latest: ${{ inputs.build_type == 'stable' && 'true' || 'false' }}
-          name: Extension release ${{ steps.get_date.outputs.RELEASE_DATE }} (${{ inputs.build_type }}) for ${ARCH}
+          name: Extension release ${{ steps.get_date.outputs.RELEASE_DATE }} (${{ inputs.build_type }}) for ${{ matrix.arch }}
           files: |
             mkosi.output/ext/ext-*.raw.zst
             mkosi.output/ext/SHA256SUMS
