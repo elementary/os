@@ -58,8 +58,7 @@ jobs:
         run: just checksum-repo
 
       - name: Import GPG Key
-        run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY }}" | gpg --batch --import
-
+        run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY_BASE64 }}" | base64 --decode | gpg --batch --import
       - name: Generate Signature
         run: |
           cd mkosi.output/
