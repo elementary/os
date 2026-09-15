@@ -65,7 +65,7 @@ jobs:
           cd mkosi.output/
           gpg --batch --pinentry-mode loopback \
               --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
-              --local-user "Elementary Sysupdate Key" \
+              --local-user "sysupdate" \
               --output SHA256SUMS.gpg \
               --detach-sign SHA256SUMS
 
