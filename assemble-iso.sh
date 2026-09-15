@@ -7,7 +7,7 @@ SEARCH_DIR=.
 DATE=$(basename $(ls -d liveiso_* | grep -vE '\.(raw|iso|vmlinuz|initrd|efi|manifest)$' | head -n1))
 DATE=${DATE#liveiso_}
 
-ARCH=$(uname -m | tr '_' '-')
+ARCH=$(uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/')
 
 OUT_ISO="./elementaryos-9.0-daily-${ARCH}.${DATE}.iso"
 
