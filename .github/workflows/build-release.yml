@@ -118,7 +118,7 @@ jobs:
           ISO=$(basename $(ls mkosi.output/elementaryos-*.iso | head -n 1))
           ( cd mkosi.output && sha256sum "$ISO" > "$ISO.sha256.txt" )
 
-          ISO_DEST="s3://${{ secrets.R2_BUCKET_INSTALLER }}/${{inputs.build_type}}/
+          ISO_DEST="s3://${{ secrets.R2_BUCKET_INSTALLER }}/${{inputs.build_type}}/"
 
           aws s3 cp "mkosi.output/$ISO" "$ISO_DEST/$ISO" \
             --cache-control "public, max-age=31536000, immutable"
