@@ -37,15 +37,12 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      - name: Get arch
-        id: get_arch
-        run: |
-          ARCH=$(uname -m | tr '_' '-')
-          echo "Current build is for: $ARCH"
-          echo "ARCH=$ARCH" >> "$GITHUB_ENV"
-
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install just podman -y
+
+      - name: Get arch
+        run: |
+          echo "ARCH=$(just _get_arch)" >> "$GITHUB_ENV"
 
       - name: Generate key
         run: just genkey
@@ -106,7 +103,7 @@ jobs:
                 --cache-control "public, max-age=31536000, immutable"
             done
           cd ..
-            
+
           # 2. SHA256SUMS
           aws s3 cp mkosi.output/SHA256SUMS \
             "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
