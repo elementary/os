@@ -8,8 +8,9 @@ DATE=$(basename $(ls -d liveiso_* | grep -vE '\.(raw|iso|vmlinuz|initrd|efi|mani
 DATE=${DATE#liveiso_}
 
 ARCH=$(uname -m | tr '_' '-')
+PROFILE="${PROFILE:-unknown}"
 
-OUT_ISO="./elementaryos-9.0-daily-${ARCH}.${DATE}.iso"
+OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
 
 RAW_IMAGE=$(find "$SEARCH_DIR" -maxdepth 1 -type f \
   | grep -E '/elementary_[0-9]{14}\.raw.zst$' \
@@ -59,7 +60,7 @@ sudo podman run --rm -it \
   --dns 8.8.8.8 \
   -v "$(pwd)":/workspace:Z \
   -w /workspace \
-  ghcr.io/jumpyvi/xorriso:tanit \
+  ghcr.io/elementary/xorriso:tanit \
   sh -c "set -e
            KERNEL_VERSION=\$(ls ${base_name}/lib/modules | head -n 1)
            chroot ${base_name} update-initramfs -u -k \${KERNEL_VERSION}

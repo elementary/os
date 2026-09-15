@@ -7,7 +7,7 @@ _do-release profile:
     #!/usr/bin/env bash
     sudo rm -rf mkosi.output/ && \
     just run-in-podman mkosi -B --debug --profile={{profile}} --profile=$(uname -m | tr '_' '-') --force --workspace-directory=/workspace && \
-    sudo ./assemble-iso.sh
+    sudo PROFILE={{profile}} ./assemble-iso.sh
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
 
@@ -34,7 +34,7 @@ run-in-podman +command:
         -v "{{invocation_directory()}}:/work" \
         -w /work \
         -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
-        ghcr.io/jumpyvi/mkosi:tanit \
+        ghcr.io/elementary/mkosi:tanit \
         {{command}}
 
 
