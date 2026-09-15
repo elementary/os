@@ -91,6 +91,9 @@ jobs:
         run: |
           set -euo pipefail
 
+          R2_BUCKET_UPDATES = "${{inputs.build_type}}-updates"
+          R2_BUCKET_INSTALLER = "${{inputs.build_type}}-installer"
+
           # 1. Images
           cd mkosi.output
           find . -maxdepth 1 -type f \( \
@@ -99,18 +102,18 @@ jobs:
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
             \) -print0 | while IFS= read -r -d '' f; do
-              aws s3 cp "$f" "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}" --cache-control "public, max-age=31536000, immutable"
+              aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH" --cache-control "public, max-age=31536000, immutable"
             done
           cd ..
             
           # 2. SHA256SUMS
           aws s3 cp mkosi.output/SHA256SUMS \
-            "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/SHA256SUMS.gpg \
-            "s3://${{ secrets.R2_BUCKET_UPDATES }}/$ARCH/${{inputs.build_type}}/SHA256SUMS.gpg" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"
 
@@ -118,12 +121,10 @@ jobs:
           ISO=$(basename $(ls mkosi.output/elementaryos-*.iso | head -n 1))
           ( cd mkosi.output && sha256sum "$ISO" > "$ISO.sha256.txt" )
 
-          ISO_DEST="s3://${{ secrets.R2_BUCKET_INSTALLER }}/${{inputs.build_type}}/"
-
-          aws s3 cp "mkosi.output/$ISO" "$ISO_DEST/$ISO" \
+          aws s3 cp "mkosi.output/$ISO" "s3://$R2_BUCKET_INSTALLER/$ISO" \
             --cache-control "public, max-age=31536000, immutable"
 
-          aws s3 cp "mkosi.output/$ISO.sha256.txt" "$ISO_DEST/$ISO.sha256.txt" \
+          aws s3 cp "mkosi.output/$ISO.sha256.txt" "s3://$R2_BUCKET_INSTALLER/$ISO.sha256.txt" \
             --content-type "text/plain" \
             --cache-control "public, max-age=31536000, immutable"
 
