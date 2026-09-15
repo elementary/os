@@ -58,7 +58,7 @@ jobs:
         run: just checksum-repo
 
       - name: Import GPG Key
-        run: echo "${{ secrets.SYSUPDATE_GPG_PK }}" | gpg --batch --import
+        run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY }}" | gpg --batch --import
 
       - name: Generate Signature
         run: |
