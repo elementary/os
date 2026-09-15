@@ -1,4 +1,4 @@
-name: Build and Release Daily (elementary OS 9)
+name: Daily OS 9
 
 on:
   push:
