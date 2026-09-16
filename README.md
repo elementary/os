@@ -54,7 +54,7 @@ To install classic mode, follow the steps in the GUI installer from the liveiso.
 
 ### Upgrades
 
-`sudo updatectl update`
+`updatectl update`
 
 Append the exact version ID at the end to upgrade to a specific version, or downgrade.
 
