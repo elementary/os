@@ -10,23 +10,3 @@ ln -s /var/usrlocal /usr/local
 cp -a /usr/local/. /var/usrlocal/
 rm -rf /usr/local
 ln -s /var/usrlocal /usr/local
-
-# sysupdate has no input for a release channel,
-# so we search-and-replace it afterwards
-
-# $profiles = "daily x86-64", so we take the
-# first word, which is the build type.
-BUILD_TYPE="${PROFILES:-}"
-BUILD_TYPE="${BUILD_TYPE%% *}"
-
-if [ "$BUILD_TYPE" != "daily" ] && [ "$BUILD_TYPE" != "stable" ]; then
-    echo "Expected daily or stable as the first profile, got PROFILES='${PROFILES:-}'" >&2
-    exit 1
-fi
-
-sed -i "s|[$]BUILD_TYPE|$BUILD_TYPE|g" /usr/lib/sysupdate.d/*.transfer
-
-if grep -l '[$]BUILD_TYPE' /usr/lib/sysupdate.d/*.transfer; then
-    echo "BUILD_TYPE substitution failed" >&2
-    exit 1
-fi

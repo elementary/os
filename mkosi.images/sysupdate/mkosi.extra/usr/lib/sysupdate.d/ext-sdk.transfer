@@ -3,7 +3,7 @@ Features=ext-sdk
 
 [Source]
 Type=url-file
-Path=https://$BUILD_TYPE.updates.elementaryos.org/%a/ext
+Path=https://%W.updates.elementaryos.org/%a/ext
 MatchPattern=ext-sdk_@v.raw.zst
 
 [Target]

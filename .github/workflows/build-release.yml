@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       build_type:
-        description: 'Build to run (daily or stable)'
+        description: 'Stream to build for (daily or stable)'
         required: true
         type: string
 
