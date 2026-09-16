@@ -3,7 +3,7 @@ Features=ext-sdk
 
 [Source]
 Type=url-file
-Path=PLACEHOLDER_BUCKET_PATH
+Path=https://%W.updates.elementaryos.org/%a/ext
 MatchPattern=ext-sdk_@v.raw.zst
 
 [Target]
