@@ -42,7 +42,7 @@ Create install media with [Fedora Media Writer](https://flathub.org/en/apps/org.
 Once in the liveiso, inside the terminal or a tty, run:
 
 ```bash
-run0 elementary-install
+sudo elementary-install
 ```
 You will be prompted with installation options
 
@@ -54,7 +54,7 @@ To install classic mode, follow the steps in the GUI installer from the liveiso.
 
 ### Upgrades
 
-`run0 sysupdate update --verify=no`
+`sudo sysupdate update`
 
 Append the exact version ID at the end to upgrade to a specific version, or downgrade.
 
