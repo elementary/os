@@ -1,0 +1,17 @@
+[Transfer]
+ProtectVersion=%A
+Features=driver-nvidia
+Verify=yes
+
+[Source]
+Type=url-file
+Path=https://%W.updates.elementaryos.org/%a/ext
+MatchPattern=driver-nvidia-addon-%a_@v.addon.efi
+
+[Target]
+Type=regular-file
+Path=/EFI/Linux
+PathRelativeTo=boot
+MatchPattern=elementary_@v_%a.efi.extra.d/nvidia.addon.efi
+Mode=0444
+InstancesMax=2
