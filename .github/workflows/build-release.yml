@@ -48,8 +48,6 @@ jobs:
         run: just genkey
 
       - name: Build with mkosi
-        env:
-          BUILD_TYPE: ${{ inputs.build_type }}
         # Will either run do-daily or do-stable
         run: just do-${{ inputs.build_type }}
 
