@@ -94,7 +94,7 @@ jobs:
           # 1. Images
           cd mkosi.output
           find . -maxdepth 1 -type f \( \
-              -name "*.esp.raw" \
+              -name "*.efi" \
               -o -name "*.usr-*.*.raw.zst" \
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
