@@ -141,3 +141,36 @@ jobs:
           files: |
             mkosi.output/ext/ext-*.raw.zst
             mkosi.output/ext/SHA256SUMS
+
+      - name: Sign and upload extensions to Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          set -euo pipefail
+
+          R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
+
+          gpg --batch --pinentry-mode loopback \
+              --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
+              --local-user "sysupdate" \
+              --output mkosi.output/ext/SHA256SUMS.gpg \
+              --detach-sign mkosi.output/ext/SHA256SUMS
+
+          # Matches Path=.../%a/ext in ext-*.transfer
+          for f in mkosi.output/ext/ext-*.raw.zst; do
+            aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
+              --cache-control "public, max-age=31536000, immutable"
+          done
+
+          aws s3 cp mkosi.output/ext/SHA256SUMS \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
+            --content-type "text/plain" \
+            --cache-control "no-cache"
+
+          aws s3 cp mkosi.output/ext/SHA256SUMS.gpg \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
+            --content-type "application/pgp-signature" \
+            --cache-control "no-cache"
