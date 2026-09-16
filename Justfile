@@ -50,8 +50,6 @@ checksum-repo:
     cd mkosi.output
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \
-        elementary_*.usr-*-verity.*.raw.zst \
-        elementary_*.usr-*-verity-sig.*.raw.zst \
         > SHA256SUMS
     cat SHA256SUMS
 
