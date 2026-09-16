@@ -3,7 +3,7 @@ ProtectVersion=%A
 
 [Source]
 Type=url-file
-Path=PLACEHOLDER_BUCKET_PATH
+Path=https://daily.updates.elementaryos.org/$ARCHITECTURE
 MatchPattern=elementary_@v.usr-%a.@u.raw.zst
 
 [Target]

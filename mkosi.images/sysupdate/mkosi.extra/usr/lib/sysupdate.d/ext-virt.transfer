@@ -3,7 +3,7 @@ Features=ext-virt
 
 [Source]
 Type=url-file
-Path=PLACEHOLDER_BUCKET_PATH
+Path=https://daily.updates.elementaryos.org/$ARCHITECTURE
 MatchPattern=ext-virt_@v.raw.zst
 
 [Target]
