@@ -3,7 +3,7 @@ ProtectVersion=%A
 
 [Source]
 Type=url-file
-Path=https://$BUILD_TYPE.updates.elementaryos.org/$ARCHITECTURE
+Path=https://$BUILD_TYPE.updates.elementaryos.org/%a
 MatchPattern=elementary_@v.usr-%a-verity.@u.raw.zst
 
 [Target]
