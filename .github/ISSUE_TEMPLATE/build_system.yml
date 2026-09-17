@@ -34,9 +34,9 @@ body:
       label: Steps to Reproduce
       description: Explain the exact steps one would take to experience the issue. If applicable, add screenshots or screen recordings.
       placeholder: |
-          1. Went here 
-          2. Did this 
-          3. Clicked that 
+          1. Went here
+          2. Did this
+          3. Clicked that
     validations:
       required: true
 
@@ -49,16 +49,20 @@ body:
 
   - type: textarea
     attributes:
-      label: Host OS
-      description: The host OS you are using to build elementary OS
-    validations:
-      required: true
-
-  - type: textarea
-    attributes:
       label: Image Version
       description: The version of elementary OS you are attempting to build
       placeholder: OS x.x daily
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: Install Type
+      description: The edition of elementary you are attempting to run or build
+      options:
+        - Atomic
+        - Classic
+        - LiveBuild (deprecated)
     validations:
       required: true
 
