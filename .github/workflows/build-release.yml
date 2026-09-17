@@ -90,19 +90,19 @@ jobs:
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
             \) -print0 | while IFS= read -r -d '' f; do
-              aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/" \
+              aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/" \
                 --cache-control "public, max-age=31536000, immutable"
             done
           cd ..
 
           # 2. SHA256SUMS
           aws s3 cp mkosi.output/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/SHA256SUMS.gpg \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/SHA256SUMS.gpg" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"
 
@@ -139,16 +139,16 @@ jobs:
 
           # Matches Path=.../%a/ext in ext-*.transfer
           for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
-            aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/" \
+            aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
               --cache-control "public, max-age=31536000, immutable"
           done
 
           aws s3 cp mkosi.output/ext/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/ext/SHA256SUMS.gpg \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/SHA256SUMS.gpg" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"

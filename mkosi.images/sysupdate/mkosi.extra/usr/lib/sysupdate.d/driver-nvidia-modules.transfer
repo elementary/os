@@ -5,7 +5,7 @@ Verify=yes
 
 [Source]
 Type=url-file
-Path=https://%W.updates.elementaryos.org/%a/@v/ext
+Path=https://%W.updates.elementaryos.org/%a/ext
 MatchPattern=driver-nvidia-modules-%a_@v.raw.zst
 
 [Target]

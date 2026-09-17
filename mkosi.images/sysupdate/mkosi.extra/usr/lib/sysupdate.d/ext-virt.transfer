@@ -3,7 +3,7 @@ Features=ext-virt
 
 [Source]
 Type=url-file
-Path=https://%W.updates.elementaryos.org/%a/@v/ext
+Path=https://%W.updates.elementaryos.org/@v/ext
 MatchPattern=ext-virt_@v.raw.zst
 
 [Target]
