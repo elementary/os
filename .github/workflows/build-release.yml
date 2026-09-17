@@ -85,7 +85,7 @@ jobs:
           # Upload image parts
           cd mkosi.output
           find . -maxdepth 1 -type f \( \
-              -name "*.efi" \
+              -name "elementary_*.efi" \
               -o -name "*.usr-*.*.raw.zst" \
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
@@ -158,7 +158,7 @@ jobs:
           R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
 
           # Matches Path=.../%a/ext in ext-*.transfer
-          for f in mkosi.output/ext/ext-*.raw.zst; do
+          for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
             aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
               --cache-control "public, max-age=31536000, immutable"
           done
