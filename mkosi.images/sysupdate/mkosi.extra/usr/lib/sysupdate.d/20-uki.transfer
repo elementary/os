@@ -3,7 +3,7 @@ ProtectVersion=%A
 
 [Source]
 Type=url-file
-Path=https://%W.updates.elementaryos.org/@v/
+Path=https://%W.updates.elementaryos.org/%a
 MatchPattern=elementary_@v.efi
 
 [Target]
