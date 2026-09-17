@@ -66,18 +66,9 @@ jobs:
               --output SHA256SUMS.gpg \
               --detach-sign SHA256SUMS
 
-      - name: Extract Date
-        id: get_date
+      - name: Extract Timestamp
         run: |
-          set -euo pipefail
-          FILE_PATH=$(ls mkosi.output/*.usr-*.raw.zst | head -n 1)
-          TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
-          if [ -z "$TIMESTAMP" ]; then
-            echo "Fatal: No timpestamped file found."
-            exit 0
-          fi
-          echo "Release date: $TIMESTAMP"
-          echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
 
       - name: Upload sysupdate, iso and SHA256SUMS to Bucket
         env:
@@ -94,7 +85,7 @@ jobs:
           # 1. Images
           cd mkosi.output
           find . -maxdepth 1 -type f \( \
-              -name "*.efi" \
+              -name "elementary_*.efi" \
               -o -name "*.usr-*.*.raw.zst" \
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
@@ -129,17 +120,6 @@ jobs:
       - name: Checksum Extensions
         run: just checksum-ext
 
-      - name: Release Extensions
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ inputs.build_type }}-${{ steps.get_date.outputs.RELEASE_DATE }}-${{ env.ARCH }}
-          prerelease: ${{ inputs.build_type == 'daily' }}
-          make_latest: ${{ inputs.build_type == 'stable' && 'true' || 'false' }}
-          name: Extension release ${{ steps.get_date.outputs.RELEASE_DATE }} (${{ inputs.build_type }}) for ${{ env.ARCH }}
-          files: |
-            mkosi.output/ext/ext-*.raw.zst
-            mkosi.output/ext/SHA256SUMS
-
       - name: Sign and upload extensions to Bucket
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -158,7 +138,7 @@ jobs:
               --detach-sign mkosi.output/ext/SHA256SUMS
 
           # Matches Path=.../%a/ext in ext-*.transfer
-          for f in mkosi.output/ext/ext-*.raw.zst; do
+          for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
             aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
               --cache-control "public, max-age=31536000, immutable"
           done

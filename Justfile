@@ -18,6 +18,18 @@ do-stable: (_do-release "stable")
 _get_arch:
     @uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/'
 
+
+_get_timestamp:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    FILE_PATH=$(ls -d mkosi.output/base_* 2>/dev/null | head -n 1 || true)
+    TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
+    if [ -z "$TIMESTAMP" ]; then
+        echo "Fatal: No timestamped file found."
+        exit 1
+    fi
+    echo "$TIMESTAMP"
+
 genkey:
     just run-in-podman mkosi genkey
 
@@ -57,9 +69,11 @@ checksum-ext:
     #!/usr/bin/env bash
     cd mkosi.output
     mkdir ext
-    mv ext-*.raw.zst ext/
+    mv {ext,driver}-*.raw.zst ext/
+    mv *addon.efi ext/
     cd ext/
-    sha256sum ext-*.raw.zst > SHA256SUMS
+    sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
+    sha256sum *addon.efi >> SHA256SUMS
     cat SHA256SUMS
 
 serve:
