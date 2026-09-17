@@ -66,18 +66,9 @@ jobs:
               --output SHA256SUMS.gpg \
               --detach-sign SHA256SUMS
 
-      - name: Extract Date
-        id: get_date
+      - name: Extract Timestamp
         run: |
-          set -euo pipefail
-          FILE_PATH=$(ls mkosi.output/*.usr-*.raw.zst | head -n 1)
-          TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
-          if [ -z "$TIMESTAMP" ]; then
-            echo "Fatal: No timpestamped file found."
-            exit 0
-          fi
-          echo "Release date: $TIMESTAMP"
-          echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
 
       - name: Upload sysupdate, iso and SHA256SUMS to Bucket
         env:
@@ -99,19 +90,19 @@ jobs:
               -o -name "*.usr-*-verity.*.raw.zst" \
               -o -name "*.usr-*-verity-sig.*.raw.zst" \
             \) -print0 | while IFS= read -r -d '' f; do
-              aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/" \
+              aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/" \
                 --cache-control "public, max-age=31536000, immutable"
             done
           cd ..
 
           # 2. SHA256SUMS
           aws s3 cp mkosi.output/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/SHA256SUMS.gpg \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS.gpg" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"
 
@@ -148,16 +139,16 @@ jobs:
 
           # Matches Path=.../%a/ext in ext-*.transfer
           for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
-            aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
+            aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/" \
               --cache-control "public, max-age=31536000, immutable"
           done
 
           aws s3 cp mkosi.output/ext/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/ext/SHA256SUMS.gpg \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/$TIMESTAMP/ext/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"
