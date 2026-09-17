@@ -105,14 +105,28 @@ jobs:
           cd ..
 
           # 2. SHA256SUMS
-          aws s3 cp mkosi.output/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
+           aws s3 cp mkosi.output/SHA256SUMS \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS_versioned.$TIMESTAMP" \
             --content-type "text/plain" \
+            --cache-control "no-cache"
+
+          mkdir -p /temp_shas/
+
+          aws s3 cp "s3://$R2_BUCKET_UPDATES/$ARCH/" /temp_shas/ \
+              --recursive \
+              --exclude "*" \
+              --include "SHA256SUMS_versioned.*"
+
+          cat ./temp_shas/SHA256SUMS_versioned.* > /temp_shas/SHA256SUMS
+
+          aws s3 cp /temp_shas/SHA256SUMS \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
+            --content-type "application/pgp-signature" \
             --cache-control "no-cache"
 
           aws s3 cp mkosi.output/SHA256SUMS.gpg \
             "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS.gpg" \
-            --content-type "application/pgp-signature" \
+            --content-type "text/plain" \
             --cache-control "no-cache"
 
           # 3. Live ISO + hash
@@ -128,17 +142,6 @@ jobs:
 
       - name: Checksum Extensions
         run: just checksum-ext
-
-      - name: Release Extensions
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ inputs.build_type }}-${{ steps.get_date.outputs.RELEASE_DATE }}-${{ env.ARCH }}
-          prerelease: ${{ inputs.build_type == 'daily' }}
-          make_latest: ${{ inputs.build_type == 'stable' && 'true' || 'false' }}
-          name: Extension release ${{ steps.get_date.outputs.RELEASE_DATE }} (${{ inputs.build_type }}) for ${{ env.ARCH }}
-          files: |
-            mkosi.output/ext/ext-*.raw.zst
-            mkosi.output/ext/SHA256SUMS
 
       - name: Sign and upload extensions to Bucket
         env:
@@ -164,9 +167,24 @@ jobs:
           done
 
           aws s3 cp mkosi.output/ext/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS_versioned.$TIMESTAMP" \
             --content-type "text/plain" \
             --cache-control "no-cache"
+
+          mkdir -p /temp_shas/ext
+
+          aws s3 cp "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" /temp_shas/ext/ \
+              --recursive \
+              --exclude "*" \
+              --include "SHA256SUMS_versioned.*"
+
+          cat ./temp_shas/ext/SHA256SUMS_versioned.* > /temp_shas/ext/SHA256SUMS
+
+          aws s3 cp temp_shas/ext/SHA256SUMS.gpg \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
+            --content-type "application/pgp-signature" \
+            --cache-control "no-cache"
+
 
           aws s3 cp mkosi.output/ext/SHA256SUMS.gpg \
             "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
