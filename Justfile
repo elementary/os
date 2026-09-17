@@ -57,9 +57,9 @@ checksum-ext:
     #!/usr/bin/env bash
     cd mkosi.output
     mkdir ext
-    mv ext-*.raw.zst ext/
+    mv {ext,driver}-*.raw.zst ext/
     cd ext/
-    sha256sum ext-*.raw.zst > SHA256SUMS
+    sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
     cat SHA256SUMS
 
 serve:
