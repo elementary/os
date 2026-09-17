@@ -11,5 +11,5 @@ MatchPattern=driver-nvidia-runtime-%a_@v.raw.zst
 [Target]
 Type=regular-file
 Path=/var/lib/extensions/
-MatchPattern=driver-nvidia-runtime-@a_@v.raw
+MatchPattern=driver-nvidia-runtime-%a_@v.raw
 InstancesMax=2
