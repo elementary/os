@@ -58,7 +58,7 @@ body:
   - type: dropdown
     attributes:
       label: Install Type
-      description: The edition of elementary you are attempting to run or build
+      description: The edition of elementary OS you are attempting to run or build
       options:
         - Atomic
         - Classic
