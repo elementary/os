@@ -13,20 +13,20 @@ ARCH=$(just _get_arch)
 OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
 
 RAW_IMAGE=$(find "$SEARCH_DIR" -maxdepth 1 -type f \
-  | grep -E '/elementary_[0-9]{14}\.raw.zst$' \
-  | head -n1)
+| grep -E '/elementary_[0-9]{14}\.raw$' \
+| head -n1)
 
 if [[ -z "$RAW_IMAGE" ]]; then
-  echo "error: No .raw.zst image found matching the pattern." >&2
-  exit 1
+echo "error: No .raw image found matching the pattern." >&2
+exit 1
 fi
 
 # Detect version
 output_dir=$(ls -d liveiso_* | grep -vE '\.(raw|iso|vmlinuz|initrd|efi|manifest)$' | head -n 1)
 
 if [[ -z "$output_dir" ]]; then
-  echo "error: No mkosi.output, run just do-daily or do-stable first." >&2
-  exit 1
+echo "error: No mkosi.output, run just do-daily or do-stable first." >&2
+exit 1
 fi
 
 base_name=$(basename "$output_dir")
@@ -51,23 +51,23 @@ sed -i "s|%PLACEHOLDER_ARCH%|${ARCH})|g" iso_root/.disk/info
 
 echo "Creating casper liveiso..."
 
-echo "Copying raw image into staging directory..."
 mkdir -p iso_root/extra
-cp "$RAW_IMAGE" "iso_root/extra/$(basename "$RAW_IMAGE")"
 
 sudo podman run --rm -it \
-  --network host \
-  --dns 8.8.8.8 \
-  -v "$(pwd)":/workspace:Z \
-  -w /workspace \
-  ghcr.io/elementary/xorriso:tanit \
-  sh -c "set -e
+--network host \
+--dns 8.8.8.8 \
+-v "$(pwd)":/workspace:Z \
+-w /workspace \
+ghcr.io/elementary/xorriso:tanit \
+sh -c "set -e
            KERNEL_VERSION=\$(ls ${base_name}/lib/modules | head -n 1)
            chroot ${base_name} update-initramfs -u -k \${KERNEL_VERSION}
            cp ${base_name}/boot/vmlinuz-\${KERNEL_VERSION} iso_root/casper/vmlinuz
            cp ${base_name}/boot/initrd.img-\${KERNEL_VERSION} iso_root/casper/initrd
            rm -f iso_root/casper/filesystem.squashfs
            mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd
+           echo 'Squashing raw image...'
+           mksquashfs '$RAW_IMAGE' 'iso_root/extra/$(basename "$RAW_IMAGE").squashfs' -comp zstd
            grub-mkrescue -o ${OUT_ISO} iso_root/
            echo 'Live environment generated!'"
 
