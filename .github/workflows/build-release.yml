@@ -69,6 +69,7 @@ jobs:
           fi
           echo "Release date: $TIMESTAMP"
           echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_ENV"
 
       - name: Upload sysupdate, iso and SHA256SUMS to Bucket
         env:
