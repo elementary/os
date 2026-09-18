@@ -8,9 +8,9 @@ _do-release profile:
     sudo rm -rf mkosi.output/ && \
     just run-in-podman mkosi -B --debug --profile={{profile}} --profile=$(uname -m | tr '_' '-') --force --workspace-directory=/workspace && \
     sudo PROFILE={{profile}} ./assemble-iso.sh
+    sudo just compress-repo
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
-    just compress-repo
 
 do-daily: (_do-release "daily")
 
