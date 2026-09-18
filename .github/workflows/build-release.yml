@@ -179,7 +179,7 @@ jobs:
               --include "SHA256SUMS_versioned.*"
 
           # Concatenate all versioned SHA to a master SHA256SUMS, required by sysupdate
-          cat ./temp_shas/ext/SHA256SUMS_versioned.* > /temp_shas/ext/SHA256SUMS
+          cat "$TEMP_EXT_SHAS"/SHA256SUMS_versioned.* > "$TEMP_EXT_SHAS"/SHA256SUMS
 
           # Sign master ext SHA
           gpg --batch --pinentry-mode loopback \
