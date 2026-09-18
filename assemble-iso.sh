@@ -4,29 +4,26 @@ cd mkosi.output/
 
 SEARCH_DIR=.
 
-DATE=$(basename $(ls -d liveiso_* | grep -vE '\.(raw|iso|vmlinuz|initrd|efi|manifest)$' | head -n1))
-DATE=${DATE#liveiso_}
+DATE=$(just -f ../Justfile _get_timestamp)
 
 PROFILE="${PROFILE:-unknown}"
-ARCH=$(just _get_arch)
+ARCH=$(just -f ../Justfile _get_arch)
 
 OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
 
-RAW_IMAGE=$(find "$SEARCH_DIR" -maxdepth 1 -type f \
-| grep -E '/elementary_[0-9]{14}\.raw$' \
-| head -n1)
+RAW_IMAGE=$(ls elementary_${DATE}.raw)
 
 if [[ -z "$RAW_IMAGE" ]]; then
-echo "error: No .raw image found matching the pattern." >&2
-exit 1
+    echo "error: No .raw image found matching the pattern." >&2
+    exit 1
 fi
 
 # Detect version
-output_dir=$(ls -d liveiso_* | grep -vE '\.(raw|iso|vmlinuz|initrd|efi|manifest)$' | head -n 1)
+output_dir=$(ls -d liveiso_${DATE})
 
 if [[ -z "$output_dir" ]]; then
-echo "error: No mkosi.output, run just do-daily or do-stable first." >&2
-exit 1
+    echo "error: No mkosi.output, run just do-daily or do-stable first." >&2
+    exit 1
 fi
 
 base_name=$(basename "$output_dir")

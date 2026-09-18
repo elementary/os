@@ -19,7 +19,6 @@ do-stable: (_do-release "stable")
 _get_arch:
     @uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/'
 
-
 _get_timestamp:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -58,8 +57,6 @@ clean:
     just run-in-podman mkosi clean
     sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
 
-# The sysupdate image builds uncompressed so assemble-iso.sh can squash the
-# disk image; sysupdate itself fetches .raw.zst
 compress-repo:
     #!/usr/bin/env bash
     set -euo pipefail
