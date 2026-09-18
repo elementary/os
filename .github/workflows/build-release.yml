@@ -57,19 +57,9 @@ jobs:
       - name: Import GPG Key
         run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY }}" | gpg --batch --import
 
-      - name: Extract Date
-        id: get_date
+      - name: Extract Timestamp
         run: |
-          set -euo pipefail
-          FILE_PATH=$(ls mkosi.output/*.usr-*.raw.zst | head -n 1)
-          TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
-          if [ -z "$TIMESTAMP" ]; then
-            echo "Fatal: No timestamped file found."
-            exit 1
-          fi
-          echo "Release date: $TIMESTAMP"
-          echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
-          echo "TIMESTAMP=$TIMESTAMP" >> "$GITHUB_ENV"
+          echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
 
       - name: Upload sysupdate, iso and SHA256SUMS to Bucket
         env:
