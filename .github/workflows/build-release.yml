@@ -38,7 +38,7 @@ jobs:
           swap-storage: true
 
       - name: Install deps
-        run: sudo apt-get update && sudo apt-get install just podman -y
+        run: sudo apt-get update && sudo apt-get install just podman zstd -y
 
       - name: Get arch
         run: |
@@ -57,15 +57,6 @@ jobs:
       - name: Import GPG Key
         run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY }}" | gpg --batch --import
 
-      - name: Generate Signature
-        run: |
-          cd mkosi.output/
-          gpg --batch --pinentry-mode loopback \
-              --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
-              --local-user "sysupdate" \
-              --output SHA256SUMS.gpg \
-              --detach-sign SHA256SUMS
-
       - name: Extract Timestamp
         run: |
           echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
@@ -82,7 +73,7 @@ jobs:
           R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
           R2_BUCKET_INSTALLER="${{inputs.build_type}}-installer"
 
-          # 1. Images
+          # Upload image parts
           cd mkosi.output
           find . -maxdepth 1 -type f \( \
               -name "elementary_*.efi" \
@@ -95,18 +86,44 @@ jobs:
             done
           cd ..
 
-          # 2. SHA256SUMS
-          aws s3 cp mkosi.output/SHA256SUMS \
+          # Send the current SHA as versioned SHA to the bucket
+           aws s3 cp mkosi.output/SHA256SUMS \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS_versioned.$TIMESTAMP" \
+            --content-type "text/plain" \
+            --cache-control "no-cache"
+
+          TEMP_SHAS="temp_shas"
+          mkdir -p "$TEMP_SHAS"
+
+          # Download all versioned SHA, including the one generated at last step
+          aws s3 cp "s3://$R2_BUCKET_UPDATES/$ARCH/" "$TEMP_SHAS/" \
+              --recursive \
+              --exclude "*" \
+              --include "SHA256SUMS_versioned.*"
+
+          # Concatenate all versioned SHA to a master SHA256SUMS, required by sysupdate
+          cat "$TEMP_SHAS"/SHA256SUMS_versioned.* > "$TEMP_SHAS/SHA256SUMS"
+
+          # Sign master SHA
+          gpg --batch --pinentry-mode loopback \
+              --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
+              --local-user "sysupdate" \
+              --output "$TEMP_SHAS/SHA256SUMS.gpg" \
+              --detach-sign "$TEMP_SHAS/SHA256SUMS"
+
+          # Replace master SHA in bucket
+          aws s3 cp "$TEMP_SHAS/SHA256SUMS" \
             "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
-          aws s3 cp mkosi.output/SHA256SUMS.gpg \
+          # Replace master signed SHA in bucket
+          aws s3 cp "$TEMP_SHAS/SHA256SUMS.gpg" \
             "s3://$R2_BUCKET_UPDATES/$ARCH/SHA256SUMS.gpg" \
             --content-type "application/pgp-signature" \
             --cache-control "no-cache"
 
-          # 3. Live ISO + hash
+          # Live ISO + hash
           ISO=$(basename $(ls mkosi.output/elementaryos-*.iso | head -n 1))
           ( cd mkosi.output && sha256sum "$ISO" > "$ISO.sha256.txt" )
 
@@ -131,24 +148,45 @@ jobs:
 
           R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
 
-          gpg --batch --pinentry-mode loopback \
-              --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
-              --local-user "sysupdate" \
-              --output mkosi.output/ext/SHA256SUMS.gpg \
-              --detach-sign mkosi.output/ext/SHA256SUMS
-
           # Matches Path=.../%a/ext in ext-*.transfer
           for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
             aws s3 cp "$f" "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" \
               --cache-control "public, max-age=31536000, immutable"
           done
 
+          # Send the current SHA as versioned SHA to the bucket
           aws s3 cp mkosi.output/ext/SHA256SUMS \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
+            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS_versioned.$TIMESTAMP" \
             --content-type "text/plain" \
             --cache-control "no-cache"
 
-          aws s3 cp mkosi.output/ext/SHA256SUMS.gpg \
-            "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
-            --content-type "application/pgp-signature" \
-            --cache-control "no-cache"
+          TEMP_EXT_SHAS="temp_shas_ext"
+          mkdir -p "$TEMP_EXT_SHAS"
+
+          # Download all versioned SHA, including the one generated at last step
+          aws s3 cp "s3://$R2_BUCKET_UPDATES/$ARCH/ext/" "$TEMP_EXT_SHAS/" \
+              --recursive \
+              --exclude "*" \
+              --include "SHA256SUMS_versioned.*"
+
+          # Concatenate all versioned SHA to a master SHA256SUMS, required by sysupdate
+          cat "$TEMP_EXT_SHAS"/SHA256SUMS_versioned.* > "$TEMP_EXT_SHAS"/SHA256SUMS
+
+          # Sign master ext SHA
+          gpg --batch --pinentry-mode loopback \
+                --passphrase "${{ secrets.SYSUPDATE_GPG_PASS }}" \
+                --local-user "sysupdate" \
+                --output "$TEMP_EXT_SHAS/SHA256SUMS.gpg" \
+                --detach-sign "$TEMP_EXT_SHAS/SHA256SUMS"
+
+          # Replace master ext SHA in bucket
+          aws s3 cp "$TEMP_EXT_SHAS/SHA256SUMS" \
+              "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS" \
+              --content-type "text/plain" \
+              --cache-control "no-cache"
+
+          # Replace master signed SHA in bucket
+          aws s3 cp "$TEMP_EXT_SHAS/SHA256SUMS.gpg" \
+              "s3://$R2_BUCKET_UPDATES/$ARCH/ext/SHA256SUMS.gpg" \
+              --content-type "application/pgp-signature" \
+              --cache-control "no-cache"
