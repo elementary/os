@@ -36,6 +36,36 @@ fi
 
 dest_dev=$(echo "$selected_disk" | awk '{print $1}')
 
+
+# Encryption selector
+PS3="Select encryption method: "
+repart_args=()
+
+crypt_options=("off")
+
+# Add tpm option if there is a tpm device
+if [ -e /dev/tpm0 ] || [ -e /dev/tpmrm0 ]; then
+    crypt_options+=("tpm2")
+fi
+
+select crypt in "${crypt_options[@]}"; do
+    case $crypt in
+        tpm2)
+            echo "Selected TPM2 backed encryption."
+            sed -i 's/Encrypt=.*/Encrypt=tpm2/' "$repart_src/40-root.conf"
+            break
+            ;;
+        off)
+            echo "Encryption disabled."
+            sed -i 's/Encrypt=.*/Encrypt=off/' "$repart_src/40-root.conf"
+            break
+            ;;
+        *)
+            echo "Invalid selection, try again."
+            ;;
+    esac
+done
+
 echo "$dest_dev selected for repartitioning..."
 echo "Destroying drive in 3s ..."
 sleep 1
