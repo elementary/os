@@ -57,8 +57,22 @@ clean:
     just run-in-podman mkosi clean
     sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
 
+compress-repo:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd mkosi.output
+    shopt -s nullglob
+    split=(elementary_*.usr-*.*.raw)
+    if [ ${#split[@]} -eq 0 ]; then
+        echo "Fatal: No split partition artifacts found to compress." >&2
+        exit 1
+    fi
+    zstd -T0 --rm -f "${split[@]}"
+    ls -l elementary_*.usr-*.*.raw.zst
+
 checksum-repo:
     #!/usr/bin/env bash
+    set -euo pipefail
     cd mkosi.output
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \
