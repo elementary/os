@@ -3,30 +3,35 @@ set -eo pipefail
 
 echo "Thank you for testing! <3"
 
+# Find squashfs
 medium=$(findmnt -rn -t iso9660,udf -o TARGET | head -1)
 extra="$medium/extra"
 raw_squashfs=$(find "$extra" -maxdepth 1 -type f -name '*.raw.squashfs' | head -n1)
 repart_src="/opt/repart-target"
 
+
+# Exit if iso wasnt properly built
 if [ -z "$raw_squashfs" ]; then
-echo "Installation aborted: No .raw.squashfs file found."
-exit 1
+    echo "Installation aborted: No .raw.squashfs file found."
+    exit 1
 fi
 
 echo "Using source image: $raw_squashfs"
 
+
+# Disk selector
 PS3="Select installation disk (ALL DATA WILL BE LOST): "
 
 select selected_disk in $(lsblk -d -n -p -o NAME -e 7,11); do
 if [[ -n "$selected_disk" ]]; then
-break
+    break
 fi
 echo "Invalid selection, try again."
 done
 
 if [ -z "$selected_disk" ]; then
-echo "Installation aborted: No disk selected."
-exit 1
+    echo "Installation aborted: No disk selected."
+    exit 1
 fi
 
 dest_dev=$(echo "$selected_disk" | awk '{print $1}')
@@ -39,45 +44,45 @@ sleep 1
 echo "Destroying drive in 1s ..."
 sleep 1
 
+
+# Wipe disk, wipefs -a seems to be the most reliable option for this...
 /usr/sbin/wipefs -a "$dest_dev"
 
+
+# Mount the squashed sysupdate install image
 squash_mount=/mnt/source-image
 mkdir -p "$squash_mount"
-
 echo "Mounting compressed image..."
 if ! mount -t squashfs -o loop,ro "$raw_squashfs" "$squash_mount"; then
 echo "Could not mount image, aborting."
 exit 1
 fi
 
+# Cleanup on exit
 cleanup() {
 umount "$squash_mount" 2>/dev/null || true
 rmdir "$squash_mount" 2>/dev/null || true
 }
 trap cleanup EXIT
 
+# Find the repart image in the mounted squashfs
 raw_src=$(find "$squash_mount" -maxdepth 1 -type f -name '*.raw' | head -n1)
 
 if [ -z "$raw_src" ]; then
-echo "Error: Could not locate raw image inside squashfs."
-exit 1
+    echo "Error: Could not locate raw image inside squashfs."
+    exit 1
 fi
 
-echo "Flashing image (efi, usr, ...) onto $dest_dev..."
+# The actual install! raw_src has the system partitions, while repart_src has the root partition
+echo "Flashing image (efi, root, usr, ...) onto $dest_dev..."
 systemd-repart \
 --copy-from="$raw_src" \
---definitions="$repart_src/image" \
+--definitions="$repart_src/" \
 --dry-run=no \
 --empty=force \
 "$dest_dev"
 
 partprobe "$dest_dev"
 udevadm settle
-
-echo "Creating root partition..."
-systemd-repart \
---definitions="$repart_src/40-root.conf" \
---dry-run=no \
-"$dest_dev"
 
 echo "Everything is done! Enjoy your stay."
