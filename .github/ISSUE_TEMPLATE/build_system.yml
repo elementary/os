@@ -62,7 +62,7 @@ body:
       options:
         - Atomic
         - Classic
-        - LiveBuild (deprecated)
+        - live-build (deprecated)
     validations:
       required: true
 
