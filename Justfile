@@ -3,11 +3,11 @@ default:
     set -xeuo pipefail
     just --choose
 
-_do-release profile:
+_do-release stream:
     #!/usr/bin/env bash
     sudo rm -rf mkosi.output/ && \
-    just run-in-podman mkosi -B --debug --profile={{profile}} --profile=$(uname -m | tr '_' '-') --force --workspace-directory=/workspace && \
-    sudo PROFILE={{profile}} ./assemble-iso.sh
+    just run-in-podman mkosi -B --debug --profile={{stream}} --profile=$(just _get_arch) --force --workspace-directory=/workspace && \
+    sudo PROFILE={{stream}} ./assemble-iso.sh
     sudo just compress-repo
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
