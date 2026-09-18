@@ -38,7 +38,7 @@ jobs:
           swap-storage: true
 
       - name: Install deps
-        run: sudo apt-get update && sudo apt-get install just podman -y
+        run: sudo apt-get update && sudo apt-get install just podman zstd -y
 
       - name: Get arch
         run: |
