@@ -10,6 +10,7 @@ _do-release profile:
     sudo PROFILE={{profile}} ./assemble-iso.sh
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
+    just compress-repo
 
 do-daily: (_do-release "daily")
 
@@ -57,6 +58,8 @@ clean:
     just run-in-podman mkosi clean
     sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
 
+# The sysupdate image builds uncompressed so assemble-iso.sh can squash the
+# disk image; sysupdate itself fetches .raw.zst
 compress-repo:
     #!/usr/bin/env bash
     set -euo pipefail

@@ -51,11 +51,6 @@ jobs:
         # Will either run do-daily or do-stable
         run: just do-${{ inputs.build_type }}
 
-      - name: Compress split partitions
-        # The sysupdate image builds uncompressed so assemble-iso.sh can
-        # squash the disk image; sysupdate itself fetches .raw.zst
-        run: just compress-repo
-
       - name: Generate SHA256SUMS (all partitions)
         run: just checksum-repo
 
