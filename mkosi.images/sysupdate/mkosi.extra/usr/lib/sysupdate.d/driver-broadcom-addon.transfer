@@ -1,0 +1,17 @@
+[Transfer]
+ProtectVersion=%A
+Features=driver-broadcom
+Verify=yes
+
+[Source]
+Type=url-file
+Path=https://%W.updates.elementaryos.org/%a/ext
+MatchPattern=driver-broadcom-addon-%a_@v.addon.efi
+
+[Target]
+Type=regular-file
+Path=/EFI/Linux
+PathRelativeTo=boot
+MatchPattern=elementary_@v_%a.efi.extra.d/broadcom.addon.efi
+Mode=0444
+InstancesMax=2

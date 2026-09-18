@@ -3,11 +3,12 @@ default:
     set -xeuo pipefail
     just --choose
 
-_do-release profile:
+_do-release stream:
     #!/usr/bin/env bash
     sudo rm -rf mkosi.output/ && \
-    just run-in-podman mkosi -B --debug --profile={{profile}} --profile=$(uname -m | tr '_' '-') --force --workspace-directory=/workspace && \
-    sudo PROFILE={{profile}} ./assemble-iso.sh
+    just run-in-podman mkosi -B --debug --profile={{stream}} --profile=$(just _get_arch) --force --workspace-directory=/workspace && \
+    sudo PROFILE={{stream}} ./assemble-iso.sh
+    sudo just compress-repo
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
 
@@ -17,7 +18,6 @@ do-stable: (_do-release "stable")
 
 _get_arch:
     @uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/'
-
 
 _get_timestamp:
     #!/usr/bin/env bash
@@ -57,8 +57,22 @@ clean:
     just run-in-podman mkosi clean
     sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
 
+compress-repo:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd mkosi.output
+    shopt -s nullglob
+    split=(elementary_*.usr-*.*.raw)
+    if [ ${#split[@]} -eq 0 ]; then
+        echo "Fatal: No split partition artifacts found to compress." >&2
+        exit 1
+    fi
+    zstd -T0 --rm -f "${split[@]}"
+    ls -l elementary_*.usr-*.*.raw.zst
+
 checksum-repo:
     #!/usr/bin/env bash
+    set -euo pipefail
     cd mkosi.output
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \

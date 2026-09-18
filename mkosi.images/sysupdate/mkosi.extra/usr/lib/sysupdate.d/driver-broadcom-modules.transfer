@@ -1,0 +1,15 @@
+[Transfer]
+ProtectVersion=%A
+Features=driver-broadcom
+Verify=yes
+
+[Source]
+Type=url-file
+Path=https://%W.updates.elementaryos.org/%a/ext
+MatchPattern=driver-broadcom-modules-%a_@v.raw.zst
+
+[Target]
+Type=regular-file
+Path=/var/lib/extensions/
+MatchPattern=driver-broadcom-modules-%a_@v.raw
+InstancesMax=2
