@@ -64,8 +64,8 @@ jobs:
           FILE_PATH=$(ls mkosi.output/*.usr-*.raw.zst | head -n 1)
           TIMESTAMP=$(basename "$FILE_PATH" | grep -oE '[0-9]{14}' | head -n 1 || true)
           if [ -z "$TIMESTAMP" ]; then
-            echo "Fatal: No timpestamped file found."
-            exit 0
+            echo "Fatal: No timestamped file found."
+            exit 1
           fi
           echo "Release date: $TIMESTAMP"
           echo "RELEASE_DATE=$TIMESTAMP" >> "$GITHUB_OUTPUT"
