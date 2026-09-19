@@ -3,11 +3,11 @@ default:
     set -xeuo pipefail
     just --choose
 
-_do-release profile:
+_do-release stream:
     #!/usr/bin/env bash
     sudo rm -rf mkosi.output/ && \
-    just run-in-podman mkosi -B --debug --profile={{profile}} --profile=$(uname -m | tr '_' '-') --force --workspace-directory=/workspace && \
-    sudo PROFILE={{profile}} ./assemble-iso.sh
+    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
+    sudo PROFILE={{stream}} ./assemble-iso.sh
     sudo just compress-repo
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
@@ -17,7 +17,7 @@ do-daily: (_do-release "daily")
 do-stable: (_do-release "stable")
 
 _get_arch:
-    @uname -m | sed -e 's/x86_64/x86-64/' -e 's/aarch64/arm64/'
+    @systemd-analyze architectures | awk '/native/ {print $1}'
 
 _get_timestamp:
     #!/usr/bin/env bash
@@ -31,17 +31,16 @@ _get_timestamp:
     echo "$TIMESTAMP"
 
 genkey:
-    just run-in-podman mkosi genkey
+    just mkosi genkey
 
-run-in-podman +command:
+mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
     sudo mkdir -p ~/.cache/mkosi
 
-    sudo podman run --rm -it \
+    sudo podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
-        --platform linux/$(arch) \
         --security-opt label=disable \
         -v ~/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
@@ -49,12 +48,12 @@ run-in-podman +command:
         -w /work \
         -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
         ghcr.io/elementary/mkosi:tanit \
-        {{command}}
+        mkosi {{subcommand}}
 
 
 
 clean:
-    just run-in-podman mkosi clean
+    just mkosi clean
     sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
 
 compress-repo:
