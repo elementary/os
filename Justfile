@@ -31,7 +31,7 @@ _get_timestamp:
     echo "$TIMESTAMP"
 
 genkey:
-    just genkey
+    just mkosi genkey
 
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
