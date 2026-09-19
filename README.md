@@ -16,7 +16,6 @@
 </div>
 
 <p align="center">
-  <img src="https://github.com/elementary/os/actions/workflows/stable-8.1.yml/badge.svg" alt="Stable 8.1">
   <img src="https://github.com/elementary/os/actions/workflows/daily-8.1.yml/badge.svg" alt="Daily 8.1">
   <img src="https://github.com/elementary/os/actions/workflows/daily-9.0.yml/badge.svg" alt="Daily 9.0">
 </p>
@@ -25,9 +24,11 @@
 
 ## Building, Testing, and Installation
 
-You'll need the following dependencies:
+You'll need the following runtime dependencies:
 * podman
 * just
+* zstd
+* systemd
 
 Generate keys and then build with `just`
 
@@ -44,7 +45,7 @@ Once in the liveiso, inside the terminal or a tty, run:
 ```bash
 sudo elementary-install
 ```
-You will be prompted with installation options
+You will be prompted with installation options.
 
 ### Installation (classic)
 
