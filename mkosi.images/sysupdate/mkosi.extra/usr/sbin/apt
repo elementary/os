@@ -5,6 +5,6 @@ echo "This APT does not have Super Cow Powers..."
 echo ""
 echo ""
 
-echo "APT cannot install packages on this machine, to install more software, check out AppCenter!"
+echo "APT cannot install packages on this machine since it uses Sysupdate for system updates, to install more software, check out AppCenter!"
 echo ""
 echo "https://elementary.io/docs/learning-the-basics#installing-apps"
