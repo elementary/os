@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+
+# Set EXTENSION_RELOAD_MANAGER to true, when the sysext is loaded, systemctl daemon-reload is ran
+
+sed -i '$a EXTENSION_RELOAD_MANAGER=1' \
+    "$BUILDROOT"/usr/lib/extension-release.d/extension-release.*
