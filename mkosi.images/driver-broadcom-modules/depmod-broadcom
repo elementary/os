@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-KVER=$(ls "$BUILDROOT/usr/lib/modules" | head -n 1)
+KVER=$(ls "$BUILDROOT/usr/lib/modules" | grep -v 'extramodules' | head -n 1)
 
 depmod -a -b "$BUILDROOT/usr" "$KVER"

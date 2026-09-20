@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+KVER=$(ls "$BUILDROOT/lib/modules" | grep -v 'extramodules' | head -n 1)
+
+mkdir -p "$DESTDIR/usr/lib/modules/$KVER/updates/dkms"
+
+cp "$BUILDROOT/lib/modules/$KVER/updates/dkms/wl.ko.zst" "$DESTDIR/usr/lib/modules/$KVER/updates/dkms/"

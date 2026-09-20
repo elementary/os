@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+
+mkdir -p $DESTDIR/usr/lib/modprobe.d/
+cp $BUILDROOT/etc/modprobe.d/broadcom-sta-common.conf $DESTDIR/usr/lib/modprobe.d/
