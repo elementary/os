@@ -1,10 +1,7 @@
 #!/bin/bash
 echo ""
-
-echo "This APT does not have Super Cow Powers..."
-echo ""
-echo ""
-
-echo "APT cannot install packages on this machine since it uses Sysupdate for system updates, to install more software, check out AppCenter!"
+echo "APT can't be used to manage packages on this device"
+echo "• Applications can be managed with Flatpak. See `flatpak --help` or use the AppCenter app"
+echo "• System updates can be managed with Sysupdate. See `updatectl --help` or open the System Settings app and select System"
 echo ""
 echo "https://elementary.io/docs/learning-the-basics#installing-apps"
