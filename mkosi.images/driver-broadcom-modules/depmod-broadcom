@@ -3,4 +3,4 @@ set -euo pipefail
 
 KVER=$(ls "$BUILDROOT/usr/lib/modules" | grep -v 'extramodules' | head -n 1)
 
-depmod -a -b "$BUILDROOT/usr" "$KVER"
+find "$BUILDROOT/usr/lib/modules/$KVER/" -maxdepth 1 -type f -name 'modules.*' -delete

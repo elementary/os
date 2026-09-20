@@ -1,0 +1,15 @@
+[Unit]
+Description=Load Broadcom wl module
+After=systemd-sysext.service
+Requires=systemd-sysext.service
+ConditionPathExists=/usr/lib/modules/%v/updates/dkms/wl.ko.zst
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/sbin/modprobe cfg80211
+ExecStart=/usr/sbin/insmod /usr/lib/modules/%v/updates/dkms/wl.ko.zst
+ExecStartPost=-/usr/bin/udevadm trigger --action=add --subsystem-match=pci --attr-match=vendor=0x14e4
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
