@@ -9,6 +9,7 @@ _do-release stream:
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     sudo PROFILE={{stream}} ./assemble-iso.sh
     sudo just compress-repo
+    sudo just compress-ext
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
 
