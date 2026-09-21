@@ -9,7 +9,6 @@ _do-release stream:
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     sudo PROFILE={{stream}} ./assemble-iso.sh
     sudo just compress-repo
-    sudo just compress-ext
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
 
@@ -67,21 +66,10 @@ compress-repo:
         echo "Fatal: No split OS partition artifacts found to compress." >&2
         exit 1
     fi
-    zstd -T0 --rm -f "${split[@]}"
-    ls -l elementary_*.usr-*.*.raw.zst
-
-compress-ext:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd mkosi.output/ext/
-    shopt -s nullglob
-    split=(driver*.raw)
-    if [ ${#split[@]} -eq 0 ]; then
-        echo "Fatal: No extensions found to compress." >&2
-        exit 1
-    fi
-    zstd -T0 --rm -f "${split[@]}"
-    ls -l driver*.raw.zst
+    drivers=(driver-*.raw)
+    files=("${split[@]}" "${drivers[@]}")
+    zstd -T0 --rm -f "${files[@]}"
+    ls -l "${files[@]/%/.zst}"
 
 checksum-repo:
     #!/usr/bin/env bash
