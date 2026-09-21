@@ -10,8 +10,8 @@ MatchPattern=driver-nvidia-modules-%a_@v.raw.zst
 
 [Target]
 Type=regular-file
-Path=/EFI/Linux/
+Path=/EFI/Linux/elementary_@v_%a.efi.extra.d/
 PathRelativeTo=boot
-MatchPattern=elementary_@v_%a.efi.extra.d/driver-nvidia-modules-%a_@v.raw
+MatchPattern=driver-nvidia-modules-%a_@v.raw
 Mode=0444
 InstancesMax=2
