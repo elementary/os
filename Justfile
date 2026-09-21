@@ -63,11 +63,24 @@ compress-repo:
     shopt -s nullglob
     split=(elementary_*.usr-*.*.raw)
     if [ ${#split[@]} -eq 0 ]; then
-        echo "Fatal: No split partition artifacts found to compress." >&2
+        echo "Fatal: No split OS partition artifacts found to compress." >&2
         exit 1
     fi
     zstd -T0 --rm -f "${split[@]}"
     ls -l elementary_*.usr-*.*.raw.zst
+
+compress-ext:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd mkosi.output/ext/
+    shopt -s nullglob
+    split=(driver*.raw)
+    if [ ${#split[@]} -eq 0 ]; then
+        echo "Fatal: No extensions found to compress." >&2
+        exit 1
+    fi
+    zstd -T0 --rm -f "${split[@]}"
+    ls -l driver*.raw.zst
 
 checksum-repo:
     #!/usr/bin/env bash
