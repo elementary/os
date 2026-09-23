@@ -19,7 +19,7 @@ do-daily: (_do-release "daily")
 do-stable: (_do-release "stable")
 
 # Built from PRs
-do-proposed: (_do-release "stable")
+do-proposed: (_do-release "proposed")
 
 _get_arch:
     @systemd-analyze architectures | awk '/native/ {print $1}'
