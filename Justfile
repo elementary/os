@@ -62,11 +62,13 @@ compress-repo:
     shopt -s nullglob
     split=(elementary_*.usr-*.*.raw)
     if [ ${#split[@]} -eq 0 ]; then
-        echo "Fatal: No split partition artifacts found to compress." >&2
+        echo "Fatal: No split OS partition artifacts found to compress." >&2
         exit 1
     fi
-    zstd -T0 --rm -f "${split[@]}"
-    ls -l elementary_*.usr-*.*.raw.zst
+    drivers=(driver-*.raw)
+    files=("${split[@]}" "${drivers[@]}")
+    zstd -T0 --rm -f "${files[@]}"
+    ls -l "${files[@]/%/.zst}"
 
 checksum-repo:
     #!/usr/bin/env bash

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+BUILDROOT=$(realpath "$BUILDROOT")
+
+
+KVER=$(ls "$BUILDROOT/usr/lib/modules" | head -n 1)
+MODDIR="$BUILDROOT/usr/lib/modules/$KVER"
+
+depmod -a -b "$BUILDROOT/usr" "$KVER"
+
+# Keep only the module database
+find "$BUILDROOT" -xdev -mindepth 1 -depth \
+    ! -path "$BUILDROOT/usr" \
+    ! -path "$BUILDROOT/usr/lib" \
+    ! -path "$BUILDROOT/usr/lib/modules" \
+    ! -path "$MODDIR" \
+    ! -path "$MODDIR/modules.*" \
+    -delete
