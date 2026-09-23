@@ -1,4 +1,4 @@
-name: Daily OS 9
+name: CI
 
 on:
   pull_request:
