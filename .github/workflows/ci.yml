@@ -1,0 +1,71 @@
+name: Build and Release
+
+on:
+  workflow_call:
+    inputs:
+      build_type:
+        description: 'Stream to build for (daily or stable)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    name: Build Image and Release
+    strategy:
+      matrix:
+          include:
+            - runner: ubuntu-26.04
+              arch: amd64
+            - runner: ubuntu-26.04-arm
+              arch: arm64
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install just podman zstd -y
+
+      - name: Get arch
+        run: |
+          echo "ARCH=$(just _get_arch)" >> "$GITHUB_ENV"
+
+      - name: Generate key
+        run: just genkey
+
+      - name: Build with mkosi
+        # Will either run do-daily or do-stable
+        run: just do-${{ inputs.build_type }}
+
+      - name: Generate SHA256SUMS (all partitions)
+        run: just checksum-repo
+
+      - name: Import GPG Key
+        run: echo "${{ secrets.SYSUPDATE_GPG_PRIVATE_KEY }}" | gpg --batch --import
+
+      - name: Extract Timestamp
+        run: |
+          echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
+
+      - name: Checksum Extensions
+        run: just checksum-ext
+
+      - name: Save to artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: install image
+          path: mkosi.output/elementaryos-*.iso
