@@ -68,8 +68,8 @@ clean:
         -v "{{invocation_directory()}}:/work" \
         -w /work \
         ghcr.io/elementary/mkosi:tanit \
-        rm -r mkosi.tools mkosi.cache
-    rm -r ~/.cache/mkosi/*
+        rm -rf mkosi.tools mkosi.cache mkosi.output
+    rm -rf ~/.cache/mkosi ~/.cache/mkosi-workspace
 
 compress-repo:
     #!/usr/bin/env bash
