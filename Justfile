@@ -40,7 +40,7 @@ _get_timestamp:
     echo "$(cat ./mkosi.version)"
 
 genkey:
-    just mkosi genkey
+    just mkosi genkey --force
 
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
