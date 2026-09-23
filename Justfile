@@ -10,9 +10,14 @@ _do-release stream:
     PROFILE={{stream}} ./assemble-iso.sh
     just compress-repo
 
+# Built every day from the main branch
 do-daily: (_do-release "daily")
 
+# Built monthly from the main branch
 do-stable: (_do-release "stable")
+
+# Built from PRs
+do-proposed: (_do-release "proposed")
 
 _get_arch:
     @systemd-analyze architectures | awk '/native/ {print $1}'
@@ -80,10 +85,3 @@ checksum-ext:
     sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
     sha256sum *addon.efi >> SHA256SUMS
     cat SHA256SUMS
-
-serve:
-    #!/usr/bin/env bash
-    cd mkosi.output
-    echo "Sysupdate accessible in Gnome Boxes at http://10.0.2.2:7070"
-    echo "Extensions accessible in Gnome Boxes at http://10.0.2.2:7070/ext/"
-    python -m http.server 7070
