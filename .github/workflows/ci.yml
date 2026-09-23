@@ -17,8 +17,6 @@ jobs:
               arch: amd64
             - runner: ubuntu-26.04-arm
               arch: arm64
-    with:
-      build_type: daily
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: write
@@ -50,7 +48,7 @@ jobs:
 
       - name: Build with mkosi
         # Will either run do-daily or do-stable
-        run: just do-${{ inputs.build_type }}
+        run: just do-daily
 
       - name: Generate SHA256SUMS (all partitions)
         run: just checksum-repo
