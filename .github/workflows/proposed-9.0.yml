@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  call-reusable-build:
+    uses: ./.github/workflows/build-release.yml
+    with:
+      stream: proposed
+    secrets: inherit

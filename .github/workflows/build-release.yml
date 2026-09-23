@@ -3,8 +3,8 @@ name: Build and Release
 on:
   workflow_call:
     inputs:
-      build_type:
-        description: 'Stream to build for (daily or stable)'
+      stream:
+        description: 'Stream to build for (daily, stable or proposed)'
         required: true
         type: string
 
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build with mkosi
         # Will either run do-daily or do-stable
-        run: just do-${{ inputs.build_type }}
+        run: just do-${{ inputs.stream }}
 
       - name: Generate SHA256SUMS (all partitions)
         run: just checksum-repo
@@ -70,8 +70,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
-          R2_BUCKET_INSTALLER="${{inputs.build_type}}-installer"
+          R2_BUCKET_UPDATES="${{inputs.stream}}-updates"
+          R2_BUCKET_INSTALLER="${{inputs.stream}}-installer"
 
           # Upload image parts
           cd mkosi.output
@@ -146,7 +146,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
+          R2_BUCKET_UPDATES="${{inputs.stream}}-updates"
 
           # Matches Path=.../%a/ext in ext-*.transfer
           for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do
