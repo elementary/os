@@ -17,6 +17,8 @@ jobs:
               arch: amd64
             - runner: ubuntu-26.04-arm
               arch: arm64
+    with:
+      build_type: daily
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: write
