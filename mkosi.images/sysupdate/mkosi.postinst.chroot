@@ -10,3 +10,5 @@ ln -s /var/usrlocal /usr/local
 cp -a /usr/local/. /var/usrlocal/
 rm -rf /usr/local
 ln -s /var/usrlocal /usr/local
+
+systemctl enable systemd-sysext-sysroot.service
