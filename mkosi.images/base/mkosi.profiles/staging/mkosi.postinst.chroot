@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xeuo pipefail
+
+echo "VARIANT_ID=staging" >> /usr/lib/os-release

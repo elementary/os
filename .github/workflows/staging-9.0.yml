@@ -1,0 +1,16 @@
+name: Daily OS 9
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  call-reusable-build:
+    uses: ./.github/workflows/build-release.yml
+    with:
+      build_type: daily
+    secrets: inherit
