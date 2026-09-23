@@ -7,6 +7,10 @@ SEARCH_DIR=.
 DATE=$(just -f ../Justfile _get_timestamp)
 
 PROFILE="${PROFILE:-unknown}"
+
+ISO_LABEL="elementary OS 9"
+[[ "$PROFILE" == "daily" ]] && ISO_LABEL+=" Early Access"
+
 ARCH=$(just -f ../Justfile _get_arch)
 
 OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
@@ -65,7 +69,7 @@ sh -c "set -e
            mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd
            echo 'Squashing raw image...'
            mksquashfs '$RAW_IMAGE' 'iso_root/extra/$(basename "$RAW_IMAGE").squashfs' -comp zstd
-           grub-mkrescue -o ${OUT_ISO} iso_root/
+           grub-mkrescue -o ${OUT_ISO} -iso-level 3 -volid \"${ISO_LABEL}\" iso_root/
            echo 'Live environment generated!'"
 
 rm -f custom_ubuntu_live.iso
