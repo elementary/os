@@ -1,12 +1,11 @@
-name: Build and Release
+name: CI
 
 on:
-  workflow_call:
-    inputs:
-      build_type:
-        description: 'Stream to build for (daily or stable)'
-        required: true
-        type: string
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   build-and-release:
