@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-release:
-    name: Build Image and Release
+    name: Build Image
     strategy:
       matrix:
           include:
