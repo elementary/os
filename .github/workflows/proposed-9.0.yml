@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  call-reusable-build:
+    uses: ./.github/workflows/build-release.yml
+    with:
+      stream: proposed
+    secrets: inherit
+
+  comment-installer-urls:
+    name: Comment Installer URLs
+    needs: call-reusable-build
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Comment installer URLs on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          ISO_AMD64: ${{ needs.call-reusable-build.outputs.iso_amd64 }}
+          ISO_ARM64: ${{ needs.call-reusable-build.outputs.iso_arm64 }}
+        run: |
+          set -euo pipefail
+
+          BASE_URL="https://proposed.installers.elementaryos.org"
+
+          {
+            echo "### Installer builds for $HEAD_SHA"
+            echo
+            echo "Do **not** use these installers for production systems. They are intended for testing purposes only. They will update to the latest PR build, which will break your install eventually."
+            echo
+            echo "| Arch | ISO | Checksum |"
+            echo "|---|---|---|"
+            echo "| amd64 | [$ISO_AMD64]($BASE_URL/$ISO_AMD64) | [sha256]($BASE_URL/$ISO_AMD64.sha256.txt) |"
+            echo "| arm64 | [$ISO_ARM64]($BASE_URL/$ISO_ARM64) | [sha256]($BASE_URL/$ISO_ARM64.sha256.txt) |"
+          } > body.md
+
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file body.md

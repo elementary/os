@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xeuo pipefail
+
+echo "VARIANT_ID=proposed" >> /usr/lib/os-release
