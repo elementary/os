@@ -14,5 +14,5 @@ jobs:
   call-reusable-build:
     uses: ./.github/workflows/build-release.yml
     with:
-      build_type: proposed
+      stream: proposed
     secrets: inherit
