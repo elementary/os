@@ -5,12 +5,27 @@ default:
 
 _do-release stream:
     #!/usr/bin/env bash
-    sudo rm -rf mkosi.output/ && \
+    podman run --rm \
+        --privileged \
+        -v "{{invocation_directory()}}:/work" \
+        -w /work \
+        ghcr.io/elementary/mkosi:tanit \
+        rm -rf mkosi.output/
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    sudo PROFILE={{stream}} ./assemble-iso.sh
-    sudo just compress-repo
-    sudo chown -R "$(id -u):$(id -g)" mkosi.output
-    sudo chmod -R u+rwX mkosi.output
+    PROFILE={{stream}} ./assemble-iso.sh
+    just compress-repo
+    podman run --rm \
+        --privileged \
+        -v "{{invocation_directory()}}:/work" \
+        -w /work \
+        ghcr.io/elementary/mkosi:tanit \
+        chown -R "$(id -u):$(id -g)" mkosi.output
+    podman run --rm \
+        --privileged \
+        -v "{{invocation_directory()}}:/work" \
+        -w /work \
+        ghcr.io/elementary/mkosi:tanit \
+        chmod -R u+rwX mkosi.output
 
 do-daily: (_do-release "daily")
 
@@ -29,9 +44,9 @@ genkey:
 
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    sudo mkdir -p ~/.cache/mkosi
+    mkdir -p ~/.cache/mkosi
 
-    sudo podman run --rm \
+    podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
@@ -48,7 +63,13 @@ mkosi +subcommand:
 
 clean:
     just mkosi clean
-    sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
+    podman run --rm \
+        --privileged \
+        -v "{{invocation_directory()}}:/work" \
+        -w /work \
+        ghcr.io/elementary/mkosi:tanit \
+        rm -r mkosi.tools mkosi.cache
+    rm -r ~/.cache/mkosi/*
 
 compress-repo:
     #!/usr/bin/env bash
