@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       stream:
-        description: 'Stream to build for (daily, stable or stagings)'
+        description: 'Stream to build for (daily, stable or proposed)'
         required: true
         type: string
 
