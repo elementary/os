@@ -3,10 +3,17 @@ name: Build and Release
 on:
   workflow_call:
     inputs:
-      build_type:
-        description: 'Stream to build for (daily or stable)'
+      stream:
+        description: 'Stream to build for (daily, stable or proposed)'
         required: true
         type: string
+    outputs:
+      iso_amd64:
+        description: 'Filename of the amd64 ISO'
+        value: ${{ jobs.build-and-release.outputs.iso_amd64 }}
+      iso_arm64:
+        description: 'Filename of the arm64 ISO'
+        value: ${{ jobs.build-and-release.outputs.iso_arm64 }}
 
 jobs:
   build-and-release:
@@ -21,6 +28,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: write
+    outputs:
+      iso_amd64: ${{ steps.upload.outputs.iso_amd64 }}
+      iso_arm64: ${{ steps.upload.outputs.iso_arm64 }}
 
     steps:
       - name: Checkout repository
@@ -49,7 +59,7 @@ jobs:
 
       - name: Build with mkosi
         # Will either run do-daily or do-stable
-        run: just do-${{ inputs.build_type }}
+        run: just do-${{ inputs.stream }}
 
       - name: Generate SHA256SUMS (all partitions)
         run: just checksum-repo
@@ -62,6 +72,7 @@ jobs:
           echo "TIMESTAMP=$(just _get_timestamp)" >> "$GITHUB_ENV"
 
       - name: Upload sysupdate, iso and SHA256SUMS to Bucket
+        id: upload
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -70,8 +81,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
-          R2_BUCKET_INSTALLER="${{inputs.build_type}}-installer"
+          R2_BUCKET_UPDATES="${{inputs.stream}}-updates"
+          R2_BUCKET_INSTALLER="${{inputs.stream}}-installer"
 
           # Upload image parts
           cd mkosi.output
@@ -125,6 +136,7 @@ jobs:
 
           # Live ISO + hash
           ISO=$(basename $(ls mkosi.output/elementaryos-*.iso | head -n 1))
+          echo "iso_${{ matrix.arch }}=$ISO" >> "$GITHUB_OUTPUT"
           ( cd mkosi.output && sha256sum "$ISO" > "$ISO.sha256.txt" )
 
           aws s3 cp "mkosi.output/$ISO" "s3://$R2_BUCKET_INSTALLER/$ISO" \
@@ -146,7 +158,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          R2_BUCKET_UPDATES="${{inputs.build_type}}-updates"
+          R2_BUCKET_UPDATES="${{inputs.stream}}-updates"
 
           # Matches Path=.../%a/ext in ext-*.transfer
           for f in mkosi.output/ext/{ext,driver}-*.raw.zst mkosi.output/ext/*addon.efi; do

@@ -12,9 +12,14 @@ _do-release stream:
     sudo chown -R "$(id -u):$(id -g)" mkosi.output
     sudo chmod -R u+rwX mkosi.output
 
+# Built every day from the main branch
 do-daily: (_do-release "daily")
 
+# Built monthly from the main branch
 do-stable: (_do-release "stable")
+
+# Built from PRs
+do-proposed: (_do-release "proposed")
 
 _get_arch:
     @systemd-analyze architectures | awk '/native/ {print $1}'
@@ -57,11 +62,13 @@ compress-repo:
     shopt -s nullglob
     split=(elementary_*.usr-*.*.raw)
     if [ ${#split[@]} -eq 0 ]; then
-        echo "Fatal: No split partition artifacts found to compress." >&2
+        echo "Fatal: No split OS partition artifacts found to compress." >&2
         exit 1
     fi
-    zstd -T0 --rm -f "${split[@]}"
-    ls -l elementary_*.usr-*.*.raw.zst
+    drivers=(driver-*.raw)
+    files=("${split[@]}" "${drivers[@]}")
+    zstd -T0 --rm -f "${files[@]}"
+    ls -l "${files[@]/%/.zst}"
 
 checksum-repo:
     #!/usr/bin/env bash
@@ -82,10 +89,3 @@ checksum-ext:
     sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
     sha256sum *addon.efi >> SHA256SUMS
     cat SHA256SUMS
-
-serve:
-    #!/usr/bin/env bash
-    cd mkosi.output
-    echo "Sysupdate accessible in Gnome Boxes at http://10.0.2.2:7070"
-    echo "Extensions accessible in Gnome Boxes at http://10.0.2.2:7070/ext/"
-    python -m http.server 7070
