@@ -1,17 +1,17 @@
 [Transfer]
 ProtectVersion=%A
-Features=driver-nvidia
+Features=driver-broadcom
 Verify=yes
 
 [Source]
 Type=url-file
 Path=https://%W.updates.elementaryos.org/%a/ext
-MatchPattern=driver-nvidia-modules-%a_@v.raw.zst
+MatchPattern=driver-broadcom-addon-%a_@v.addon.efi
 
 [Target]
 Type=regular-file
-Path=/EFI/Linux/
+Path=/EFI/Linux
 PathRelativeTo=boot
-MatchPattern=elementary_@v_%a.efi.extra.d/nvidia-modules.raw
+MatchPattern=elementary_@v_%a.efi.extra.d/broadcom.addon.efi
 Mode=0444
 InstancesMax=2
