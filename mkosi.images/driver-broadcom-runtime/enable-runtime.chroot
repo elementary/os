@@ -1,5 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-
-mkdir -p /usr/lib/modprobe.d/
-cp /etc/modprobe.d/broadcom-sta-common.conf /usr/lib/modprobe.d/
