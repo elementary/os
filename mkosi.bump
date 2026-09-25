@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-date -u +%Y%m%d%H%M%S
+date -u +%y.%m.%d+%H%M
