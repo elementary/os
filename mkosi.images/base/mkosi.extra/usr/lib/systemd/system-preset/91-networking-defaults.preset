@@ -1,5 +1,5 @@
 # We use NetworkManager
-disable systemd-networkd
+disable systemd-networkd*
 
 enable systemd-resolved.service
 enable systemd-timesyncd.service
