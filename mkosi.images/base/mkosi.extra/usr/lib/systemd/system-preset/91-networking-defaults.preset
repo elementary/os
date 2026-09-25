@@ -8,9 +8,9 @@ enable NetworkManager.service
 enable NetworkManager-wait-online.service
 
 # This is a desktop distro
-disable avahi.*
-disable sshd.socket
-disable sshd.service
+disable avahi-*
+disable ssh.socket
+disable ssh.service
 
 # Enable firewall by default
 enable ufw.service
