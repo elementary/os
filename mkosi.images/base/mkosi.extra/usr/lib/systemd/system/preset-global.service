@@ -1,9 +1,8 @@
 [Unit]
-ConditionFirstBoot=no
 ConditionPathIsReadWrite=/etc
 
 DefaultDependencies=no
-
+After=systemd-tmpfiles-setup.service
 Before=basic.target
 Conflicts=shutdown.target
 Before=shutdown.target

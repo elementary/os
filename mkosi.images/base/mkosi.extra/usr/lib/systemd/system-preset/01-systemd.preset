@@ -1,6 +1,3 @@
-disable systemd-timesyncd.service
-disable sshd.socket
-disable sshd.service
-enable ufw.service
-enable systemd-resolved.service
-enable plymouth.service
+# Disable first boot unit, avoid systemd TUI user creation
+disable systemd-homed-firstboot.service
+disable systemd-firstboot.service
