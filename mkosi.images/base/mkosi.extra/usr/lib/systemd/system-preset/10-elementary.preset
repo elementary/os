@@ -1,4 +1,4 @@
-# Reload apparmor at runtime after configs where added on firstboot
+# Reload apparmor at runtime after configs were added on firstboot
 enable apparmor-firstboot.service
 
 # Enable plymouth
