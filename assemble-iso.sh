@@ -9,7 +9,7 @@ DATE=$(just -f ../Justfile _get_timestamp)
 PROFILE="${PROFILE:-unknown}"
 ARCH=$(just -f ../Justfile _get_arch)
 
-OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
+OUT_ISO="./elementaryos-${PROFILE}-${ARCH}.${DATE}.iso"
 
 RAW_IMAGE=$(ls elementary_${DATE}.raw)
 
