@@ -1,5 +1,4 @@
 [Unit]
-ConditionFirstBoot=yes
 ConditionPathIsReadWrite=/etc
 
 DefaultDependencies=no
