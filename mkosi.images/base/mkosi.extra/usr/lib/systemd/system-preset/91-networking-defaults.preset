@@ -1,0 +1,16 @@
+# We use NetworkManager
+disable systemd-networkd
+
+enable systemd-resolved.service
+enable systemd-timesyncd.service
+
+enable NetworkManager.service
+enable NetworkManager-wait-online.service
+
+# This is a desktop distro
+disable avahi.*
+disable sshd.socket
+disable sshd.service
+
+# Enable firewall by default
+enable ufw.service
