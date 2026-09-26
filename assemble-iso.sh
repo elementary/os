@@ -7,7 +7,6 @@ SEARCH_DIR=.
 DATE=$(just -f ../Justfile _get_timestamp)
 
 PROFILE="${PROFILE:-unknown}"
-
 ARCH=$(just -f ../Justfile _get_arch)
 
 ISO_LABEL="elementary OS ${DATE:0:5} ${ARCH}"
