@@ -4,23 +4,12 @@ default:
     just --choose
 
 _do-release stream:
-    #!/usr/bin/env bash
-    podman run --rm \
-        --privileged \
-        -v "{{invocation_directory()}}:/work" \
-        -w /work \
-        ghcr.io/elementary/mkosi:tanit \
-        rm -rf mkosi.output/
+    sudo bash -c ' \
+    rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    PROFILE={{stream}} \
-    podman run --rm \
-        --privileged \
-        -v "{{invocation_directory()}}:/work" \
-        -w /work \
-        -e PROFILE \
-        ghcr.io/elementary/mkosi:tanit \
-        ./assemble-iso.sh
-    just compress-repo
+    PROFILE={{stream}} ./assemble-iso.sh && \
+    just compress-repo \
+    '
 
 # Built every day from the main branch
 do-daily: (_do-release "daily")
@@ -62,14 +51,10 @@ mkosi +subcommand:
 
 
 clean:
-    just mkosi clean
-    podman run --rm \
-        --privileged \
-        -v "{{invocation_directory()}}:/work" \
-        -w /work \
-        ghcr.io/elementary/mkosi:tanit \
-        rm -rf mkosi.tools mkosi.cache mkosi.output
-    rm -rf ~/.cache/mkosi ~/.cache/mkosi-workspace
+    sudo bash -c ' \
+    just mkosi clean && \
+    rm -rf mkosi.tools mkosi.cache mkosi.output ~/.cache/mkosi ~/.cache/mkosi-workspace \
+    '
 
 compress-repo:
     #!/usr/bin/env bash
