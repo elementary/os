@@ -8,10 +8,9 @@ DATE=$(just -f ../Justfile _get_timestamp)
 
 PROFILE="${PROFILE:-unknown}"
 
-ISO_LABEL="elementary OS"
-[[ "$PROFILE" == "daily" ]] && ISO_LABEL+=" Early Access"
-
 ARCH=$(just -f ../Justfile _get_arch)
+
+ISO_LABEL="elementary OS ${DATE:0:5} ${ARCH}"
 
 OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
 
