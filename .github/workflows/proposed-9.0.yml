@@ -6,6 +6,7 @@ on:
       - opened
       - reopened
       - synchronize
+      - ready_for_review
     branches:
       - main
   workflow_dispatch:
@@ -16,6 +17,7 @@ concurrency:
 
 jobs:
   call-reusable-build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     uses: ./.github/workflows/build-release.yml
     with:
       stream: proposed

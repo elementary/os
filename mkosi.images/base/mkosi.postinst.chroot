@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# These REALLY want to start
+# By default "mask", symlinks to /etc, so manually null them
+ln -sf /dev/null /usr/lib/systemd/system/systemd-firstboot.service
+ln -sf /dev/null /usr/lib/systemd/system/systemd-networkd-wait-online.service
+
+systemctl enable preset-global.service
