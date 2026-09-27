@@ -10,7 +10,9 @@ _do-release stream:
     rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     PROFILE={{stream}} ./assemble-iso.sh && \
-    just compress-repo \
+    just compress-repo && \
+    chown -R "$SUDO_UID:$SUDO_GID" mkosi.output && \
+    chmod -R u+rwX mkosi.output \
     '
 
 # Built every day from the main branch
@@ -78,17 +80,14 @@ compress-repo:
 
 [private]
 checksum-repo:
-    sudo bash -c ' \
     cd mkosi.output && \
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \
         > SHA256SUMS && \
-    cat SHA256SUMS \
-    '
+    cat SHA256SUMS
 
 [private]
 checksum-ext:
-    sudo bash -c ' \
     cd mkosi.output && \
     mkdir -p ext && \
     mv ext-*.raw.zst ext/ || true && \
@@ -98,5 +97,4 @@ checksum-ext:
     sha256sum ext-*.raw.zst > SHA256SUMS && \
     sha256sum driver-*.raw.zst >> SHA256SUMS && \
     sha256sum *addon.efi >> SHA256SUMS && \
-    cat SHA256SUMS \
-    '
+    cat SHA256SUMS
