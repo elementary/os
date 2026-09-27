@@ -17,7 +17,9 @@ concurrency:
 
 jobs:
   call-reusable-build:
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
     uses: ./.github/workflows/build-release.yml
     with:
       stream: proposed
