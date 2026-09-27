@@ -79,22 +79,21 @@ compress-repo:
 
 [private]
 checksum-repo:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd mkosi.output
+    cd mkosi.output && \
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \
-        > SHA256SUMS
+        > SHA256SUMS && \
     cat SHA256SUMS
 
 [private]
 checksum-ext:
-    #!/usr/bin/env bash
-    cd mkosi.output
-    mkdir ext
-    mv {ext,driver}-*.raw.zst ext/
-    mv *addon.efi ext/
-    cd ext/
-    sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
-    sha256sum *addon.efi >> SHA256SUMS
+    cd mkosi.output && \
+    mkdir -p ext && \
+    mv ext-*.raw.zst ext/ || true && \
+    mv driver-*.raw.zst ext/ || true && \
+    mv *addon.efi ext/ || true && \
+    cd ext/ && \
+    sha256sum ext-*.raw.zst > SHA256SUMS && \
+    sha256sum driver-*.raw.zst >> SHA256SUMS && \
+    sha256sum *addon.efi >> SHA256SUMS && \
     cat SHA256SUMS
