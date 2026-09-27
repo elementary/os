@@ -8,7 +8,8 @@ _do-release stream:
     rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     PROFILE={{stream}} ./assemble-iso.sh && \
-    just compress-repo \
+    just compress-repo && \
+    chmod -R ugo+rwX mkosi.output \
     '
 
 # Built every day from the main branch
