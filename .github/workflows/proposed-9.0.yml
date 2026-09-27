@@ -26,17 +26,38 @@ jobs:
   comment-installer-urls:
     name: Comment Installer URLs
     needs: call-reusable-build
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
 
     steps:
-      - name: Comment installer URLs on PR
+      - name: Find and set PR number and SHA into output vars
+        id: pr-info
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            PR_NUMBER=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head "$GITHUB_REF_NAME" \
+              --state open \
+              --json number \
+              --jq '.[0].number')
+            HEAD_SHA="$GITHUB_SHA"
+          fi
+
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+      - name: Comment installer URLs on PR
+        if: steps.pr-info.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.number }}
+          HEAD_SHA: ${{ steps.pr-info.outputs.sha }}
           ISO_AMD64: ${{ needs.call-reusable-build.outputs.iso_amd64 }}
           ISO_ARM64: ${{ needs.call-reusable-build.outputs.iso_arm64 }}
         run: |
