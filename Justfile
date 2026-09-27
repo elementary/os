@@ -1,3 +1,4 @@
+[private]
 default:
     #!/usr/bin/env bash
     set -xeuo pipefail
@@ -32,6 +33,7 @@ _get_timestamp:
 genkey:
     just mkosi genkey --force
 
+[private]
 mkosi +subcommand:
     mkdir -p ~/.cache/mkosi-workspace
     mkdir -p ~/.cache/mkosi
@@ -57,6 +59,7 @@ clean:
     rm -rf mkosi.tools mkosi.cache mkosi.output ~/.cache/mkosi ~/.cache/mkosi-workspace \
     '
 
+[private]
 compress-repo:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -72,6 +75,7 @@ compress-repo:
     zstd -T0 --rm -f "${files[@]}"
     ls -l "${files[@]/%/.zst}"
 
+[private]
 checksum-repo:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -81,6 +85,7 @@ checksum-repo:
         > SHA256SUMS
     cat SHA256SUMS
 
+[private]
 checksum-ext:
     #!/usr/bin/env bash
     cd mkosi.output
