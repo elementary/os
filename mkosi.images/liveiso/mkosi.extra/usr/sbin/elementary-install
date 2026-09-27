@@ -60,8 +60,8 @@ select crypt in "${crypt_options[@]}"; do
             chmod 600 "$keyfile"
 
             while true; do
-                read -rs -p "Enter encryption passphrase: " pass1; echo
-                read -rs -p "Confirm passphrase: " pass2; echo
+                IFS= read -rs -p "Enter encryption passphrase: " pass1; echo
+                IFS= read -rs -p "Confirm passphrase: " pass2; echo
                 if [ -n "$pass1" ] && [ "$pass1" = "$pass2" ]; then
                     printf '%s' "$pass1" > "$keyfile"
                     unset pass1 pass2
