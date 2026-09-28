@@ -34,7 +34,7 @@ _get_timestamp:
 
 [private]
 genkey:
-    just mkosi genkey --force
+    ORIGINAL_USER_HOME="${HOME}" just mkosi genkey --force
 
 [private]
 mkosi +subcommand:
