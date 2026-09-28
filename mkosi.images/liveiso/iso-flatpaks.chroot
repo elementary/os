@@ -10,11 +10,10 @@ FLATPAK_DIR="/var/lib/flatpak"
 
 if [[ -d "${CACHE_DIR}/repo" ]]; then
     echo "Restoring flatpak cache..."
-    cp -a "${CACHE_DIR}/." "${FLATPAK_DIR}/"
+    rsync -aH "${CACHE_DIR}/" "${FLATPAK_DIR}/"
 fi
 
 flatpak preinstall -y --noninteractive --system
 
 echo "Preserving flatpak cache..."
-rm -rf "${CACHE_DIR}/*"
-cp -a "${FLATPAK_DIR}/." "${CACHE_DIR}/"
+rsync -aH --delete "${FLATPAK_DIR}/" "${CACHE_DIR}/"
