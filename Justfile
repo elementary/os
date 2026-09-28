@@ -34,7 +34,7 @@ genkey:
 
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    sudo mkdir -p ~/.cache/mkosi
+    sudo mkdir -p ~/.cache/mkosi/flatpak-cache
 
     sudo podman run --rm \
         --network host \
