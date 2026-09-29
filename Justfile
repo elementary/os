@@ -6,7 +6,6 @@ default:
 
 _do-release stream:
     sudo ORIGINAL_USER_HOME="${HOME}" bash -c ' \
-    just genkey && \
     rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     PROFILE={{stream}} ./assemble-iso.sh && \
@@ -32,9 +31,8 @@ _get_timestamp:
     set -euo pipefail
     echo "$(cat ./mkosi.version)"
 
-[private]
 genkey:
-    ORIGINAL_USER_HOME="${HOME}" just mkosi genkey --force
+    ORIGINAL_USER_HOME="${HOME}" just mkosi genkey
 
 [private]
 mkosi +subcommand:
