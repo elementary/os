@@ -45,11 +45,11 @@ mkosi +subcommand:
         --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v {{env_var('HOME')}}/.cache/mkosi:/var/cache/mkosi \
+        -v "{{env_var('HOME')}}/.cache/mkosi:/var/cache/mkosi" \
         -v /dev:/dev \
         -v "{{invocation_directory()}}:/work" \
         -w /work \
-        -v {{env_var('HOME')}}/.cache/mkosi-workspace:/workspace \
+        -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
         ghcr.io/elementary/mkosi:tanit \
         mkosi {{subcommand}}
 
