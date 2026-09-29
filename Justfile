@@ -5,7 +5,7 @@ default:
     just --choose
 
 _do-release stream:
-    sudo ORIGINAL_USER_HOME="${HOME}" bash -c ' \
+    sudo HOME="${HOME}" bash -c ' \
     rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     PROFILE={{stream}} ./assemble-iso.sh && \
@@ -32,34 +32,35 @@ _get_timestamp:
     echo "$(cat ./mkosi.version)"
 
 genkey:
-    ORIGINAL_USER_HOME="${HOME}" just mkosi genkey
+    #ORIGINAL_USER_HOME="${HOME}" just mkosi genkey
+    just mkosi genkey
 
 [private]
 mkosi +subcommand:
-    mkdir -p {{env_var('ORIGINAL_USER_HOME')}}/.cache/mkosi-workspace
-    mkdir -p {{env_var('ORIGINAL_USER_HOME')}}/.cache/mkosi
+    mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
+    mkdir -p {{env_var('HOME')}}/.cache/mkosi
 
     podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v {{env_var('ORIGINAL_USER_HOME')}}/.cache/mkosi:/var/cache/mkosi \
+        -v {{env_var('HOME')}}/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
         -v "{{invocation_directory()}}:/work" \
         -w /work \
-        -v {{env_var('ORIGINAL_USER_HOME')}}/.cache/mkosi-workspace:/workspace \
+        -v {{env_var('HOME')}}/.cache/mkosi-workspace:/workspace \
         ghcr.io/elementary/mkosi:tanit \
         mkosi {{subcommand}}
 
 
 
 clean:
-    sudo ORIGINAL_USER_HOME="${HOME}" bash -c ' \
+    sudo HOME="${HOME}" bash -c ' \
     just mkosi clean && \
     rm -rf mkosi.tools mkosi.cache mkosi.output \
-        "${ORIGINAL_USER_HOME}/.cache/mkosi" \
-        "${ORIGINAL_USER_HOME}/.cache/mkosi-workspace" \
+        "${HOME}/.cache/mkosi" \
+        "${HOME}/.cache/mkosi-workspace" \
     '
 
 [private]
