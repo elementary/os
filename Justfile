@@ -1,16 +1,18 @@
+[private]
 default:
     #!/usr/bin/env bash
     set -xeuo pipefail
     just --choose
 
 _do-release stream:
-    #!/usr/bin/env bash
-    sudo rm -rf mkosi.output/ && \
+    sudo HOME="${HOME}" bash -c ' \
+    rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    sudo PROFILE={{stream}} ./assemble-iso.sh
-    sudo just compress-repo
-    sudo chown -R "$(id -u):$(id -g)" mkosi.output
-    sudo chmod -R u+rwX mkosi.output
+    PROFILE={{stream}} ./assemble-iso.sh && \
+    just compress-repo && \
+    chown -R "$SUDO_UID:$SUDO_GID" mkosi.output && \
+    chmod -R u+rwX mkosi.output \
+    '
 
 # Built every day from the main branch
 do-daily: (_do-release "daily")
@@ -30,18 +32,20 @@ _get_timestamp:
     echo "$(cat ./mkosi.version)"
 
 genkey:
+    #ORIGINAL_USER_HOME="${HOME}" just mkosi genkey
     just mkosi genkey
 
+[private]
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    sudo mkdir -p ~/.cache/mkosi/flatpak-cache
+    mkdir -p {{env_var('HOME')}}/.cache/mkosi/flatpak-cache
 
-    sudo podman run --rm \
+    podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v ~/.cache/mkosi:/var/cache/mkosi \
+        -v "{{env_var('HOME')}}/.cache/mkosi:/var/cache/mkosi" \
         -v /dev:/dev \
         -v "{{invocation_directory()}}:/work" \
         -w /work \
@@ -52,9 +56,14 @@ mkosi +subcommand:
 
 
 clean:
-    just mkosi clean
-    sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
+    sudo HOME="${HOME}" bash -c ' \
+    just mkosi clean && \
+    rm -rf mkosi.tools mkosi.cache mkosi.output \
+        "${HOME}/.cache/mkosi" \
+        "${HOME}/.cache/mkosi-workspace" \
+    '
 
+[private]
 compress-repo:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -70,22 +79,23 @@ compress-repo:
     zstd -T0 --rm -f "${files[@]}"
     ls -l "${files[@]/%/.zst}"
 
+[private]
 checksum-repo:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd mkosi.output
+    cd mkosi.output && \
     sha256sum elementary_*.efi \
         elementary_*.usr-*.*.raw.zst \
-        > SHA256SUMS
+        > SHA256SUMS && \
     cat SHA256SUMS
 
+[private]
 checksum-ext:
-    #!/usr/bin/env bash
-    cd mkosi.output
-    mkdir ext
-    mv {ext,driver}-*.raw.zst ext/
-    mv *addon.efi ext/
-    cd ext/
-    sha256sum {ext,driver}-*.raw.zst > SHA256SUMS
-    sha256sum *addon.efi >> SHA256SUMS
+    cd mkosi.output && \
+    mkdir -p ext && \
+    mv ext-*.raw.zst ext/ || true && \
+    mv driver-*.raw.zst ext/ || true && \
+    mv *addon.efi ext/ || true && \
+    cd ext/ && \
+    sha256sum ext-*.raw.zst > SHA256SUMS && \
+    sha256sum driver-*.raw.zst >> SHA256SUMS && \
+    sha256sum *addon.efi >> SHA256SUMS && \
     cat SHA256SUMS
