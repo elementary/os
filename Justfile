@@ -9,6 +9,7 @@ _do-release stream:
     if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi && \
     just mkosi build --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace && \
     PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
+    rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/ && \
     just compress-repo \
     '
 # Built every day from the main branch
