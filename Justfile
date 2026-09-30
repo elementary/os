@@ -47,7 +47,7 @@ mkosi +subcommand:
         --security-opt label=disable \
         -v ~/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
-        -v "{{invocation_directory()}}:/work" \
+        -v "{{invocation_directory()}}":/work \
         -w /work \
         -v ~/.cache/mkosi-workspace:/workspace \
         ghcr.io/elementary/mkosi:tanit \
