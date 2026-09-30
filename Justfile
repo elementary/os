@@ -6,7 +6,6 @@ default:
 
 _do-release stream:
     sudo HOME="${HOME}" bash -c ' \
-    rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
     just compress-repo && \
