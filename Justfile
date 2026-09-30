@@ -6,11 +6,10 @@ default:
 
 _do-release stream:
     sudo HOME="${HOME}" bash -c ' \
-    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
+    if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi && \
+    just mkosi build --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace && \
     PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
-    just compress-repo && \
-    chown -R "$SUDO_UID:$SUDO_GID" mkosi.output && \
-    chmod -R u+rwX mkosi.output \
+    just compress-repo \
     '
 # Built every day from the main branch
 do-daily: (_do-release "daily")
@@ -34,31 +33,19 @@ genkey:
 
 [private]
 mkosi +subcommand:
-    mkdir -p ~/.cache/mkosi-workspace
-    mkdir -p ~/.cache/mkosi/flatpak
-
-    if [ -n "${CI:-}" ]; then touch ~/.cache/mkosi/flatpak/.ci; fi
-
     podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v ~/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
         -v "{{invocation_directory()}}":/work \
         -w /work \
-        -v ~/.cache/mkosi-workspace:/workspace \
         ghcr.io/elementary/mkosi:tanit \
         mkosi {{subcommand}}
 
-
-
 clean:
-    sudo HOME="${HOME}" bash -c ' \
-    just mkosi clean && \
-    rm -rf mkosi.tools mkosi.cache mkosi.output ~/.cache/mkosi ~/.cache/mkosi-workspace \
-    '
+    sudo HOME="${HOME}" bash -c 'just mkosi clean -ff'
 
 [private]
 compress-repo:
