@@ -35,21 +35,21 @@ genkey:
 
 [private]
 mkosi +subcommand:
-    mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    mkdir -p {{env_var('HOME')}}/.cache/mkosi/flatpak
+    mkdir -p ~/.cache/mkosi-workspace
+    mkdir -p ~/.cache/mkosi/flatpak
 
-    if [ -n "${CI:-}" ]; then touch {{env_var('HOME')}}/.cache/mkosi/flatpak/.ci; fi
+    if [ -n "${CI:-}" ]; then touch ~/.cache/mkosi/flatpak/.ci; fi
 
     podman run --rm \
         --network host \
         --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v "{{env_var('HOME')}}/.cache/mkosi:/var/cache/mkosi" \
+        -v ~/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
         -v "{{invocation_directory()}}:/work" \
         -w /work \
-        -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
+        -v ~/.cache/mkosi-workspace:/workspace \
         ghcr.io/elementary/mkosi:tanit \
         mkosi {{subcommand}}
 
@@ -58,9 +58,7 @@ mkosi +subcommand:
 clean:
     sudo HOME="${HOME}" bash -c ' \
     just mkosi clean && \
-    rm -rf mkosi.tools mkosi.cache mkosi.output \
-        "${HOME}/.cache/mkosi" \
-        "${HOME}/.cache/mkosi-workspace" \
+    rm -rf mkosi.tools mkosi.cache mkosi.output ~/.cache/mkosi ~/.cache/mkosi-workspace \
     '
 
 [private]
