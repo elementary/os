@@ -40,6 +40,8 @@ mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
     mkdir -p {{env_var('HOME')}}/.cache/mkosi/flatpak-cache
 
+    if [ -n "${CI:-}" ]; then touch {{env_var('HOME')}}/.cache/mkosi/flatpak-cache/.ci; fi
+
     podman run --rm \
         --network host \
         --dns 8.8.8.8 \
