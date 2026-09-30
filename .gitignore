@@ -9,12 +9,8 @@ _build-*/**
 *.iso
 mkosi.local/
 mkosi.local.conf
-mkosi.output/
-mkosi.cache/
-mkosi.pkgcache/
 mkosi.tools/
 mkosi.tools.manifest
-mkosi.workspace/
 mkosi.key
 mkosi.crt
 mkosi.version
