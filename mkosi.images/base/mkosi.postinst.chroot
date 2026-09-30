@@ -6,4 +6,8 @@ set -euo pipefail
 ln -sf /dev/null /usr/lib/systemd/system/systemd-firstboot.service
 ln -sf /dev/null /usr/lib/systemd/system/systemd-networkd-wait-online.service
 
+
+# Change dbus-daemon-launch-helper group to something normal (In the non-existant render group by default)
+chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+
 systemctl enable preset-global.service
