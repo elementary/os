@@ -46,7 +46,10 @@ mkosi +subcommand:
         mkosi {{subcommand}}
 
 clean:
-    sudo HOME="${HOME}" bash -c 'just mkosi clean -ff'
+    sudo HOME="${HOME}" bash -c ' \
+    just mkosi clean -ff && \
+    rm -rf isos/* mkosi.cache/* mkosi.pkgcache/* \
+    '
 
 [private]
 compress-repo:
