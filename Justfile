@@ -31,7 +31,6 @@ _get_timestamp:
     echo "$(cat ./mkosi.version)"
 
 genkey:
-    #ORIGINAL_USER_HOME="${HOME}" just mkosi genkey
     just mkosi genkey
 
 [private]
