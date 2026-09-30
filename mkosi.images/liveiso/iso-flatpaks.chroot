@@ -5,19 +5,19 @@ if [[ "${1:-}" != "final" ]]; then
     exit 0
 fi
 
-CACHE_DIR="${SRCDIR}/flatpak-cache"
-FLATPAK_DIR="/var/lib/flatpak"
+CACHED_REPO_DIR="${SRCDIR}/flatpak/repo"
+FLATPAK_REPO_DIR="/var/lib/flatpak/repo"
 
-if [[ ! -f "${CACHE_DIR}/.ci" && -d "${CACHE_DIR}/repo" ]]; then
-    echo "Restoring flatpak cache..."
-    rsync -aH "${CACHE_DIR}/" "${FLATPAK_DIR}/"
+if [[ ! -f "${SRCDIR}/flatpak/.ci" && -d "${CACHED_REPO_DIR}" ]]; then
+    echo "Load flatpak repo from local cache"
+    rsync -aH "${CACHED_REPO_DIR}/" "${FLATPAK_REPO_DIR}"
 fi
 
 flatpak preinstall -y --noninteractive --system
 
-if [[ -f "${CACHE_DIR}/.ci" ]]; then
+if [[ -f "${SRCDIR}/flatpak/.ci" ]]; then
     exit 0
 fi
 
-echo "Preserving flatpak cache..."
-rsync -aH --delete "${FLATPAK_DIR}/" "${CACHE_DIR}/"
+echo "Save flatpak repo to local cache"
+rsync -aH --delete "${FLATPAK_REPO_DIR}/" "${CACHED_REPO_DIR}"

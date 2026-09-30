@@ -37,9 +37,9 @@ genkey:
 [private]
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    mkdir -p {{env_var('HOME')}}/.cache/mkosi/flatpak-cache
+    mkdir -p {{env_var('HOME')}}/.cache/mkosi/flatpak
 
-    if [ -n "${CI:-}" ]; then touch {{env_var('HOME')}}/.cache/mkosi/flatpak-cache/.ci; fi
+    if [ -n "${CI:-}" ]; then touch {{env_var('HOME')}}/.cache/mkosi/flatpak/.ci; fi
 
     podman run --rm \
         --network host \
