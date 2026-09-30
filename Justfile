@@ -8,12 +8,11 @@ _do-release stream:
     sudo HOME="${HOME}" bash -c ' \
     rm -rf mkosi.output/ && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    PROFILE={{stream}} ./assemble-iso.sh && \
+    PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
     just compress-repo && \
     chown -R "$SUDO_UID:$SUDO_GID" mkosi.output && \
     chmod -R u+rwX mkosi.output \
     '
-
 # Built every day from the main branch
 do-daily: (_do-release "daily")
 
