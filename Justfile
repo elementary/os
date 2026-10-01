@@ -5,11 +5,11 @@ default:
     just --choose
 
 _do-release stream:
-    sudo HOME="${HOME}" bash -c ' \
+    sudo HOME="${HOME}" CI="${CI:-}" bash -c ' \
     if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi && \
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace && \
     PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
-    rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/ && \
+    if [[ -z "${CI:-}" ]]; then rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/; fi && \
     just compress-repo \
     '
 # Built every day from the main branch
