@@ -9,7 +9,7 @@ ln -sf /dev/null /usr/lib/systemd/system/systemd-networkd-wait-online.service
 
 # Change dbus-daemon-launch-helper group to something normal (In the non-existant render group by default)
 systemd-sysusers
-chown root:messagebus /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+chown root:987 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
 chmod 4754 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
 
 systemctl enable preset-global.service
