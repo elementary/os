@@ -36,7 +36,6 @@ genkey:
 mkosi +subcommand:
     podman run --rm \
         --network host \
-        --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
         -v /dev:/dev \
