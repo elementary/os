@@ -5,13 +5,13 @@ default:
     just --choose
 
 _do-release stream:
-    sudo HOME="${HOME}" CI="${CI:-}" bash -c ' \
-    if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi && \
-    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace && \
-    PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh && \
-    if [[ -z "${CI:-}" ]]; then rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/; fi && \
-    just compress-repo \
-    '
+    #!/usr/bin/env bash
+    if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi
+    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace
+    PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
+    if [[ -z "${CI:-}" ]]; then rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/; fi
+    just compress-repo
+
 # Built every day from the main branch
 do-daily: (_do-release "daily")
 
@@ -45,10 +45,8 @@ mkosi +subcommand:
         mkosi {{subcommand}}
 
 clean:
-    sudo HOME="${HOME}" bash -c ' \
-    just mkosi clean -ff && \
-    rm -rf isos/* mkosi.cache/* mkosi.pkgcache/* \
-    '
+    just mkosi clean -ff
+    rm -rf isos/* mkosi.cache/* mkosi.pkgcache/*
 
 [private]
 compress-repo:
