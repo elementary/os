@@ -73,7 +73,7 @@ sh -c "set -e
            mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd -Xcompression-level ${SQUASHFS_LEVEL}
            echo 'Squashing raw image...'
            mksquashfs '$RAW_IMAGE' 'iso_root/extra/$(basename "$RAW_IMAGE").squashfs' -comp zstd -Xcompression-level ${SQUASHFS_LEVEL}
-           grub-mkrescue -o ${OUT_ISO} -iso-level 3 -volid \"${ISO_LABEL}\" iso_root/
+           grub-mkrescue -o ${OUT_ISO} -iso-level 3 -volid \"${ISO_LABEL}\" -appid \"elementary OS\" iso_root/
            echo 'Live environment generated!'"
 
 rm -f custom_ubuntu_live.iso
