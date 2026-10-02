@@ -21,6 +21,18 @@ do-stable: (_do-release "stable")
 # Built from PRs
 do-proposed: (_do-release "proposed")
 
+# Assemble only the daily ISO without a full build
+assemble-daily-iso: (_assemble-iso "daily")
+
+# Assemble only the stable ISO without a full build
+assemble-stable-iso: (_assemble-iso "stable")
+
+# Assemble only the proposed ISO without a full build
+assemble-proposed-iso: (_assemble-iso "proposed")
+
+_assemble-iso profile:
+    sudo bash -c 'PROFILE={{profile}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh'
+
 _get_arch:
     @systemd-analyze architectures | awk '/native/ {print $1}'
 
