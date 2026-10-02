@@ -1,0 +1,5 @@
+# Hide loopback devices
+SUBSYSTEM=="block", KERNEL=="loop*", ENV{UDISKS_IGNORE}="1"
+
+# Hide verity from loopback
+SUBSYSTEM=="block", KERNEL=="dm-*", ENV{DM_NAME}=="loop*", ENV{UDISKS_IGNORE}="1"
