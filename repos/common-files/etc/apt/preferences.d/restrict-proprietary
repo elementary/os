@@ -1,0 +1,17 @@
+Explanation: Block everything by default in multiverse, except NVIDIA.
+Package: *
+Pin: release c=multiverse
+Pin-Priority: -1
+
+Package: /.*nvidia.*/
+Pin: release c=multiverse
+Pin-Priority: 500
+
+Explanation: Block everything by default in restricted, except NVIDIA and Broadcom.
+Package: *
+Pin: release c=restricted
+Pin-Priority: -1
+
+Package: /.*(nvidia|broadcom).*/
+Pin: release c=restricted
+Pin-Priority: 500
