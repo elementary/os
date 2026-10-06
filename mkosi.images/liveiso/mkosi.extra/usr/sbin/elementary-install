@@ -9,7 +9,6 @@ extra="$medium/extra"
 raw_squashfs=$(find "$extra" -maxdepth 1 -type f -name '*.raw.squashfs' | head -n1)
 repart_src="/opt/repart-target"
 
-
 # Exit if iso wasnt properly built
 if [ -z "$raw_squashfs" ]; then
     echo "Installation aborted: No .raw.squashfs file found."
@@ -18,15 +17,14 @@ fi
 
 echo "Using source image: $raw_squashfs"
 
-
 # Disk selector
 PS3="Select installation disk (ALL DATA WILL BE LOST): "
 
 select selected_disk in $(lsblk -d -n -p -o NAME -e 7,11); do
-if [[ -n "$selected_disk" ]]; then
-    break
-fi
-echo "Invalid selection, try again."
+    if [[ -n "$selected_disk" ]]; then
+        break
+    fi
+    echo "Invalid selection, try again."
 done
 
 if [ -z "$selected_disk" ]; then
@@ -36,15 +34,15 @@ fi
 
 dest_dev=$(echo "$selected_disk" | awk '{print $1}')
 
-
 # Encryption selector
 PS3="Select encryption method: "
 repart_args=()
+keyfile=""
 
-crypt_options=("off")
+crypt_options=("off" "passphrase")
 
-# Add tpm option if there is a tpm device
-if [ -e /dev/tpm0 ] || [ -e /dev/tpmrm0 ]; then
+# Check if systemd thinks you got a good tpm (only "yes", don't show on "partial" and "no")
+if [ "$(systemd-analyze has-tpm2 2>/dev/null | head -n1)" = "yes" ]; then
     crypt_options+=("tpm2")
 fi
 
@@ -53,6 +51,27 @@ select crypt in "${crypt_options[@]}"; do
         tpm2)
             echo "Selected TPM2 backed encryption."
             sed -i 's/Encrypt=.*/Encrypt=tpm2/' "$repart_src/40-root.conf"
+            break
+            ;;
+        passphrase)
+            echo "Selected passphrase encryption."
+            sed -i 's/Encrypt=.*/Encrypt=key-file/' "$repart_src/40-root.conf"
+            keyfile=$(mktemp)
+            chmod 600 "$keyfile"
+
+            while true; do
+                IFS= read -rs -p "Enter encryption passphrase: " pass1; echo
+                IFS= read -rs -p "Confirm passphrase: " pass2; echo
+                if [ -n "$pass1" ] && [ "$pass1" = "$pass2" ]; then
+                    printf '%s' "$pass1" > "$keyfile"
+                    unset pass1 pass2
+                    break
+                fi
+                echo "Passphrases didn't match or were empty, try again."
+                unset pass1 pass2
+            done
+
+            repart_args+=(--key-file="$keyfile")
             break
             ;;
         off)
@@ -67,31 +86,30 @@ select crypt in "${crypt_options[@]}"; do
 done
 
 echo "$dest_dev selected for repartitioning..."
-echo "Destroying drive in 3s ..."
+echo "Wiping drive in 3s ..."
 sleep 1
-echo "Destroying drive in 2s ..."
+echo "Wiping drive in 2s ..."
 sleep 1
-echo "Destroying drive in 1s ..."
+echo "Wiping drive in 1s ..."
 sleep 1
 
-
-# Wipe disk, wipefs -a seems to be the most reliable option for this...
+# Wipe disk
 /usr/sbin/wipefs -a "$dest_dev"
-
 
 # Mount the squashed sysupdate install image
 squash_mount=/mnt/source-image
 mkdir -p "$squash_mount"
 echo "Mounting compressed image..."
 if ! mount -t squashfs -o loop,ro "$raw_squashfs" "$squash_mount"; then
-echo "Could not mount image, aborting."
-exit 1
+    echo "Could not mount image, aborting."
+    exit 1
 fi
 
 # Cleanup on exit
 cleanup() {
-umount "$squash_mount" 2>/dev/null || true
-rmdir "$squash_mount" 2>/dev/null || true
+    umount "$squash_mount" 2>/dev/null || true
+    rmdir "$squash_mount" 2>/dev/null || true
+    [ -n "$keyfile" ] && shred -u "$keyfile" 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -106,11 +124,12 @@ fi
 # The actual install! raw_src has the system partitions, while repart_src has the root partition
 echo "Flashing image (efi, root, usr, ...) onto $dest_dev..."
 systemd-repart \
---copy-from="$raw_src" \
---definitions="$repart_src/" \
---dry-run=no \
---empty=force \
-"$dest_dev"
+    --copy-from="$raw_src" \
+    --definitions="$repart_src/" \
+    --dry-run=no \
+    --empty=force \
+    "${repart_args[@]}" \
+    "$dest_dev"
 
 partprobe "$dest_dev"
 udevadm settle

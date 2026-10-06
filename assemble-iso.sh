@@ -9,6 +9,14 @@ DATE=$(just -f ../Justfile _get_timestamp)
 PROFILE="${PROFILE:-unknown}"
 ARCH=$(just -f ../Justfile _get_arch)
 
+if [[ "$PROFILE" == "proposed" ]]; then
+    SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-3}"
+else
+    SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-15}"
+fi
+
+ISO_LABEL="elementary OS ${PROFILE} ${ARCH}"
+
 OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
 
 RAW_IMAGE=$(ls elementary_${DATE}.raw)
@@ -46,7 +54,7 @@ sed -i "s|%PLACEHOLDER_VERSION%|$PRETTY_NAME|g" iso_root/.disk/info
 sed -i "s|%PLACEHOLDER_ARCH%|${ARCH})|g" iso_root/.disk/info
 
 
-echo "Creating casper liveiso..."
+echo "Creating casper liveiso (zstd level ${SQUASHFS_LEVEL})..."
 
 mkdir -p iso_root/extra
 
@@ -62,10 +70,10 @@ sh -c "set -e
            cp ${base_name}/boot/vmlinuz-\${KERNEL_VERSION} iso_root/casper/vmlinuz
            cp ${base_name}/boot/initrd.img-\${KERNEL_VERSION} iso_root/casper/initrd
            rm -f iso_root/casper/filesystem.squashfs
-           mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd
+           mksquashfs ${base_name} iso_root/casper/filesystem.squashfs -comp zstd -Xcompression-level ${SQUASHFS_LEVEL}
            echo 'Squashing raw image...'
-           mksquashfs '$RAW_IMAGE' 'iso_root/extra/$(basename "$RAW_IMAGE").squashfs' -comp zstd
-           grub-mkrescue -o ${OUT_ISO} iso_root/
+           mksquashfs '$RAW_IMAGE' 'iso_root/extra/$(basename "$RAW_IMAGE").squashfs' -comp zstd -Xcompression-level ${SQUASHFS_LEVEL}
+           grub-mkrescue -o ${OUT_ISO} -iso-level 3 -volid \"${ISO_LABEL}\" -appid \"elementary OS\" iso_root/
            echo 'Live environment generated!'"
 
 rm -f custom_ubuntu_live.iso
