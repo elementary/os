@@ -62,12 +62,18 @@ jobs:
         run: |
           echo "ARCH=$(just _get_arch)" >> "$GITHUB_ENV"
 
-      - name: Generate key
-        run: just genkey
+      # Private key used for verity check and secureboot
+      - name: Inject mkosi private key
+        run: |
+          echo ${{ secrets.MKOSI_PRIVATE_KEY }} > mkosi.key
+          chmod 600 mkosi.key
 
       - name: Build with mkosi
-        # Will either run do-daily or do-stable
-        run: just do-${{ inputs.stream }}
+        # Will either run do-daily, do-stable or do-proposed,
+        # then shred the key to make sure it's never accidently uploaded
+        run: |
+         just do-${{ inputs.stream }}
+         shred mkosi.key --remove -s 1k
 
       - name: Generate SHA256SUMS (all partitions)
         run: just checksum-repo
