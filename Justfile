@@ -1,16 +1,6 @@
-default:
-    #!/usr/bin/env bash
-    set -xeuo pipefail
+default: 
     just --choose
 
-_do-release stream:
-    #!/usr/bin/env bash
-    sudo rm -rf mkosi.output/ && \
-    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    sudo PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
-    sudo just compress-repo
-    sudo chown -R "$(id -u):$(id -g)" mkosi.output
-    sudo chmod -R u+rwX mkosi.output
 
 # Built every day from the main branch
 do-daily: (_do-release "daily")
@@ -21,21 +11,57 @@ do-stable: (_do-release "stable")
 # Built from PRs
 do-proposed: (_do-release "proposed")
 
+_do-release stream:
+    #!/usr/bin/env bash
+    sudo rm -rf mkosi.output/ && \
+    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
+    sudo PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
+    sudo just compress-repo
+    sudo chown -R "$(id -u):$(id -g)" mkosi.output
+    sudo chmod -R u+rwX mkosi.output
+
+# Get arch directly from systemd, to get the same format as mkosi
 _get_arch:
     @systemd-analyze architectures | awk '/native/ {print $1}'
 
+# Get current mkosi.version value
 _get_timestamp:
     #!/usr/bin/env bash
     set -euo pipefail
     echo "$(cat ./mkosi.version)"
 
-genkey:
-    just mkosi genkey
+
+# > Name: Owner of the key
+# > Days: Days before the key expires
+# Generate a new key if there is no existing ones
+genkey name=`whoami` days="7":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -f "./mkosi.key" ]; then
+        rm -f ./mkosi.crt
+        echo "Generating a new cert for {{name}}, valid for the next {{days}} days..."
+        just _podman_mkosi genkey --genkey-common-name="{{name}}" --genkey-valid-days="{{days}}"
+        echo "Done!"
+    fi
+    echo "Certificate OK"
+
+# > Name: Owner of the key
+# > Days: Days before the key expires
+# Delete old key and generate a new one
+regenkey name=`whoami` days="7":
+    rm -f mkosi.{crt,key}
+    echo "Old keys removed"
+    just genkey "{{name}}" "{{days}}"
+
 
 mkosi +subcommand:
+    #!/usr/bin/env bash
+    just genkey
+    just _podman_mkosi {{subcommand}}
+
+_podman_mkosi +args:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
     sudo mkdir -p ~/.cache/mkosi
-
     sudo podman run --rm \
         --network host \
         --dns 8.8.8.8 \
@@ -47,8 +73,7 @@ mkosi +subcommand:
         -w /work \
         -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
         ghcr.io/elementary/mkosi:tanit \
-        mkosi {{subcommand}}
-
+        mkosi {{args}}
 
 
 clean:
