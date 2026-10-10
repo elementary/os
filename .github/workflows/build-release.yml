@@ -64,8 +64,10 @@ jobs:
 
       # Private key used for verity check and secureboot
       - name: Inject mkosi private key
+        env:
+          MKOSI_PRIVATE_KEY: ${{ secrets.MKOSI_PRIVATE_KEY }}
         run: |
-          echo ${{ secrets.MKOSI_PRIVATE_KEY }} > mkosi.key
+          echo "$MKOSI_PRIVATE_KEY" > mkosi.key
           chmod 600 mkosi.key
 
       - name: Build with mkosi
