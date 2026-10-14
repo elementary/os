@@ -1,3 +1,4 @@
+[private]
 default:
     #!/usr/bin/env bash
     set -xeuo pipefail
@@ -5,12 +6,11 @@ default:
 
 _do-release stream:
     #!/usr/bin/env bash
-    sudo rm -rf mkosi.output/ && \
-    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
-    sudo PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
-    sudo just compress-repo
-    sudo chown -R "$(id -u):$(id -g)" mkosi.output
-    sudo chmod -R u+rwX mkosi.output
+    if [[ -n "${CI:-}" ]]; then touch mkosi.cache/.ci; fi
+    just mkosi -B --debug --profile={{stream}} --force --workspace-directory=mkosi.workspace
+    PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
+    if [[ -z "${CI:-}" ]]; then rsync -av --ignore-existing --include="*.iso" --exclude="*" mkosi.output/ isos/; fi
+    just compress-repo
 
 # Built every day from the main branch
 do-daily: (_do-release "daily")
@@ -32,29 +32,23 @@ _get_timestamp:
 genkey:
     just mkosi genkey
 
+[private]
 mkosi +subcommand:
-    mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
-    sudo mkdir -p ~/.cache/mkosi
-
-    sudo podman run --rm \
+    podman run --rm \
         --network host \
-        --dns 8.8.8.8 \
         --privileged \
         --security-opt label=disable \
-        -v ~/.cache/mkosi:/var/cache/mkosi \
         -v /dev:/dev \
-        -v "{{invocation_directory()}}:/work" \
+        -v "{{invocation_directory()}}":/work \
         -w /work \
-        -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
         ghcr.io/elementary/mkosi:tanit \
         mkosi {{subcommand}}
 
-
-
 clean:
-    just mkosi clean
-    sudo rm -r mkosi.tools/ mkosi.cache/ ~/.cache/mkosi/*
+    just mkosi clean -ff
+    rm -rf isos/* mkosi.cache/* mkosi.pkgcache/*
 
+[private]
 compress-repo:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -70,6 +64,7 @@ compress-repo:
     zstd -T0 --rm -f "${files[@]}"
     ls -l "${files[@]/%/.zst}"
 
+[private]
 checksum-repo:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -79,10 +74,11 @@ checksum-repo:
         > SHA256SUMS
     cat SHA256SUMS
 
+[private]
 checksum-ext:
     #!/usr/bin/env bash
     cd mkosi.output
-    mkdir ext
+    mkdir -p ext
     mv {ext,driver}-*.raw.zst ext/
     mv *addon.efi ext/
     cd ext/
