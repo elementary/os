@@ -36,8 +36,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Check free disk space
+        id: disk
+        run: |
+          avail=$(df -BG --output=avail / | tail -1 | tr -dc 0-9)
+          echo "Free disk space: ${avail}G"
+          echo "avail=$avail" >> "$GITHUB_OUTPUT"
+
       - name: Free Disk Space
-        uses: jlumbroso/free-disk-space@main
+        if: fromJSON(steps.disk.outputs.avail) < 60
+        uses: jlumbroso/free-disk-space@v2
         with:
           tool-cache: false
           android: true
@@ -45,7 +53,7 @@ jobs:
           haskell: true
           large-packages: true
           docker-images: true
-          swap-storage: true
+          swap-storage: false
 
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install just podman zstd -y

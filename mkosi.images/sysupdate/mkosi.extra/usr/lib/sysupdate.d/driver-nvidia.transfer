@@ -6,10 +6,10 @@ Verify=yes
 [Source]
 Type=url-file
 Path=https://%W.updates.elementaryos.org/%a/ext
-MatchPattern=driver-nvidia-runtime-%a_@v.raw.zst
+MatchPattern=driver-nvidia-%a_@v.raw.zst
 
 [Target]
 Type=regular-file
 Path=/var/lib/extensions/
-MatchPattern=driver-nvidia-runtime-%a_@v.raw
+MatchPattern=driver-nvidia-%a_@v.raw
 InstancesMax=2

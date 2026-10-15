@@ -1,0 +1,8 @@
+Explanation: Block everything by default in restricted, except NVIDIA and Broadcom.
+Package: *
+Pin: release c=restricted
+Pin-Priority: -1
+
+Package: /.*(nvidia|broadcom).*/
+Pin: release c=restricted
+Pin-Priority: 500
