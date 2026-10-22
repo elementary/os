@@ -47,7 +47,7 @@ mkosi +subcommand:
         -w /work \
         -v "{{env_var('HOME')}}/.cache/mkosi-workspace:/workspace" \
         ghcr.io/elementary/mkosi:tanit \
-        mkosi {{subcommand}}
+        sh -c 'apt-get update && apt-get install -y debian-archive-keyring && mkosi {{subcommand}}'
 
 
 
