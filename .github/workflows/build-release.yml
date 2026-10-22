@@ -11,9 +11,9 @@ on:
       iso_amd64:
         description: 'Filename of the amd64 ISO'
         value: ${{ jobs.build-and-release.outputs.iso_amd64 }}
-      iso_arm64:
-        description: 'Filename of the arm64 ISO'
-        value: ${{ jobs.build-and-release.outputs.iso_arm64 }}
+      # iso_arm64:
+      #   description: 'Filename of the arm64 ISO'
+      #   value: ${{ jobs.build-and-release.outputs.iso_arm64 }}
 
 jobs:
   build-and-release:
@@ -23,14 +23,14 @@ jobs:
           include:
             - runner: ubuntu-26.04
               arch: amd64
-            - runner: ubuntu-26.04-arm
-              arch: arm64
+            # - runner: ubuntu-26.04-arm
+            #   arch: arm64
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: write
     outputs:
       iso_amd64: ${{ steps.upload.outputs.iso_amd64 }}
-      iso_arm64: ${{ steps.upload.outputs.iso_arm64 }}
+      # iso_arm64: ${{ steps.upload.outputs.iso_arm64 }}
 
     steps:
       - name: Checkout repository
