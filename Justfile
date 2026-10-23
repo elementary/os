@@ -30,7 +30,11 @@ _get_timestamp:
     echo "$(cat ./mkosi.version)"
 
 genkey:
-    just mkosi genkey
+    # Like `mkosi genkey`, but with a fixed-length serial so every build's verity signature is the same size.
+    # A random serial is a byte shorter 1 in 256 times, and a shorter signature written over a longer one
+    # by an installed system's sysupdate leaves the old tail behind and breaks boot.
+    OPENSSL_CONF=/dev/null openssl req -new -x509 -newkey rsa:2048 -keyout mkosi.key -out mkosi.crt \
+        -days 730 -subj "/CN=mkosi of root/" -nodes -set_serial "0x40$(openssl rand -hex 19)"
 
 mkosi +subcommand:
     mkdir -p {{env_var('HOME')}}/.cache/mkosi-workspace
