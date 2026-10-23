@@ -42,6 +42,6 @@ Test it out in a VM, or create an [USB install drive](https://elementary.io/docs
 
 ## Further Information
 
-To get started with elementaryOS, begin by [learning the basics](https://elementary.io/docs/learning-the-basics#learning-the-basics).
+To get started with elementary OS, begin by [learning the basics](https://elementary.io/docs/learning-the-basics#learning-the-basics).
 
 For contributors and administrators, check out the [wiki](https://github.com/elementary/os/wiki/elementaryOS-%22Atomic%22-basic-guide) for in-depth information.
