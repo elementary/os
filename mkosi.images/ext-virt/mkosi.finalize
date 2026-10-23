@@ -9,3 +9,7 @@ if [[ ${#release[@]} -ne 1 || ! -f ${release[0]} ]]; then
     exit 1
 fi
 echo "EXTENSION_RELOAD_MANAGER=1" >> "${release[0]}"
+
+# mkosi removes empty directories from extensions, but mdevctl won't run without
+# its callout and notifier directories.
+mkdir -p "$BUILDROOT"/usr/lib/mdevctl/scripts.d/{callouts,notifiers}
