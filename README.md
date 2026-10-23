@@ -33,7 +33,7 @@ You'll need the following runtime dependencies:
 Generate keys and then build with `just`
 
 ```bash
-just regenkey
+just genkey
 just do-daily
 ```
 This will result in a bootable .iso. </br>
