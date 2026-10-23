@@ -10,7 +10,3 @@ ln -s /var/usrlocal /usr/local
 cp -a /usr/local/. /var/usrlocal/
 rm -rf /usr/local
 ln -s /var/usrlocal /usr/local
-
-# Keep a backup of the package database so it can be restored at runtime if needed
-mkdir -p /usr/share/factory/dpkg/
-tar -czf /usr/share/factory/dpkg/dpkg.tar.gz /var/lib/dpkg
