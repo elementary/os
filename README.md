@@ -10,7 +10,7 @@
   </a>
   <br>
   <h1 align="center"><center>elementary OS</center></h1>
-  <h3 align="center"><center>Mkosi configurations for building elementaryOS images</center></h3>
+  <h3 align="center"><center>Mkosi configurations for building elementary OS images</center></h3>
   <br>
   <br>
 </div>
