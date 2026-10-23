@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# virt-manager aborts at launch unless its GSettings schema is compiled. mkosi drops the
+# regenerated /usr/share/glib-2.0/schemas/gschemas.compiled since the base image already
+# has one, so compile the schema into our own directory and point virt-manager at it.
+schemas=/usr/share/ext-virt/glib-2.0/schemas
+mkdir -p "$schemas" /usr/libexec/ext-virt
+mv /usr/share/glib-2.0/schemas/*virt-manager* "$schemas/"
+glib-compile-schemas --strict "$schemas"
+
+mv /usr/bin/virt-manager /usr/libexec/ext-virt/virt-manager
+cat > /usr/bin/virt-manager <<EOF
+#!/bin/sh
+export GSETTINGS_SCHEMA_DIR=$schemas\${GSETTINGS_SCHEMA_DIR:+:\$GSETTINGS_SCHEMA_DIR}
+exec /usr/libexec/ext-virt/virt-manager "\$@"
+EOF
+chmod 755 /usr/bin/virt-manager
