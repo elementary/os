@@ -62,13 +62,15 @@ jobs:
         run: |
           echo "ARCH=$(just _get_arch)" >> "$GITHUB_ENV"
 
-      # Private key used for verity check and secureboot
+      # Private key used for verity check and secureboot, paired with the public elementary.crt.
+      # mkosi.crt stays gitignored so local builds can generate their own key pair with `just genkey`.
       - name: Inject mkosi private key
         env:
           MKOSI_SECRET_KEY: ${{ secrets.MKOSI_SECRET_KEY }}
         run: |
           echo "$MKOSI_SECRET_KEY" > mkosi.key
           chmod 600 mkosi.key
+          cp elementary.crt mkosi.crt
 
       - name: Build with mkosi
         # Will either run do-daily, do-stable or do-proposed,

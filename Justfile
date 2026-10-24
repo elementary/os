@@ -36,7 +36,7 @@ _get_timestamp:
 genkey name=`whoami` days="730":
     #!/usr/bin/env bash
     set -euo pipefail
-    if [ ! -f "./mkosi.key" ]; then
+    if [ ! -f "./mkosi.key" ] || [ ! -f "./mkosi.crt" ]; then
         echo "Generating a new cert for {{name}}, valid for the next {{days}} days..."
         # Like `mkosi genkey`, but with a fixed-length serial so every build's verity signature is the same size.
         # A random serial is a byte shorter 1 in 256 times, and a shorter signature written over a longer one
