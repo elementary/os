@@ -1,0 +1,7 @@
+#!/bin/bash
+set -xeuo pipefail
+
+# Keep a backup of the package database so it can be restored at runtime if needed.
+# This runs after RemovePackages= so the database matches what's in the image.
+mkdir -p /usr/share/factory/dpkg/
+tar -czf /usr/share/factory/dpkg/dpkg.tar.gz -C / var/lib/dpkg
