@@ -10,7 +10,7 @@
   </a>
   <br>
   <h1 align="center"><center>elementary OS</center></h1>
-  <h3 align="center"><center>Build scripts for image creation</center></h3>
+  <h3 align="center"><center>Mkosi configurations for building elementary OS images</center></h3>
   <br>
   <br>
 </div>
@@ -22,7 +22,7 @@
 
 ---
 
-## Building, Testing, and Installation
+## Building locally
 
 You'll need the following runtime dependencies:
 * podman
@@ -36,32 +36,12 @@ Generate keys and then build with `just`
 just genkey
 just do-daily
 ```
-Create install media with [Fedora Media Writer](https://flathub.org/en/apps/org.fedoraproject.MediaWriter) or [Impression](flathub.org/en/apps/io.gitlab.adhami3310.Impression), or boot with GNOME Boxes (>=51).
+This will result in a bootable .iso. </br>
+Test it out in a VM, or create an [USB install drive](https://elementary.io/docs/installation#installation) (>= 8GB)
 
-### Installation (sysupdate)
 
-Once in the liveiso, inside the terminal or a tty, run:
+## Further Information
 
-```bash
-sudo elementary-install
-```
-You will be prompted with installation options.
+To get started with elementary OS, begin by [learning the basics](https://elementary.io/docs/learning-the-basics#learning-the-basics).
 
-### Installation (classic)
-
-To install classic mode, follow the steps in the GUI installer from the liveiso.
-
-## Operations
-
-### Upgrades
-
-`updatectl update`
-
-Append the exact version ID at the end to upgrade to a specific version, or downgrade.
-
-## Minimum specs
-- UEFI with secure boot disabled
-- 8 GB of USB flash drive
-- GNOME Boxes >=51 (for VM only)
-- 55 GB of destination disk
-- 4 GB of system memory (RAM)
+For contributors and administrators, check out the [wiki](https://github.com/elementary/os/wiki/elementaryOS-%22Atomic%22-basic-guide) for in-depth information.
