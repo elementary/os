@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Reload the service manager once this extension is merged so the units it ships
+# get loaded. mkosi names the file after the image version, hence the glob.
+release=("$BUILDROOT"/usr/lib/extension-release.d/extension-release.*)
+if [[ ${#release[@]} -ne 1 || ! -f ${release[0]} ]]; then
+    echo "Expected one extension-release file, found: ${release[*]}" >&2
+    exit 1
+fi
+echo "EXTENSION_RELOAD_MANAGER=1" >> "${release[0]}"
+
+# mkosi removes empty directories from extensions, but mdevctl won't run without
+# its callout and notifier directories.
+mkdir -p "$BUILDROOT"/usr/lib/mdevctl/scripts.d/{callouts,notifiers}

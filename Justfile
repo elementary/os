@@ -30,17 +30,19 @@ _get_timestamp:
     set -euo pipefail
     echo "$(cat ./mkosi.version)"
 
-
 # > Name: Owner of the key
 # > Days: Days before the key expires
 # Generate a new key if there is no existing ones
-genkey name=`whoami` days="7":
+genkey name=`whoami` days="730":
     #!/usr/bin/env bash
     set -euo pipefail
     if [ ! -f "./mkosi.key" ]; then
-        rm -f ./mkosi.crt
         echo "Generating a new cert for {{name}}, valid for the next {{days}} days..."
-        just _podman_mkosi genkey --genkey-common-name="{{name}}" --genkey-valid-days="{{days}}"
+        # Like `mkosi genkey`, but with a fixed-length serial so every build's verity signature is the same size.
+        # A random serial is a byte shorter 1 in 256 times, and a shorter signature written over a longer one
+        # by an installed system's sysupdate leaves the old tail behind and breaks boot.
+        OPENSSL_CONF=/dev/null openssl req -new -x509 -newkey rsa:2048 -keyout mkosi.key -out mkosi.crt \
+            -days "{{days}}" -subj "/CN={{name}}/" -nodes -set_serial "0x40$(openssl rand -hex 19)"
         echo "Done!"
     fi
     echo "Certificate OK"
@@ -48,11 +50,10 @@ genkey name=`whoami` days="7":
 # > Name: Owner of the key
 # > Days: Days before the key expires
 # Delete old key and generate a new one
-regenkey name=`whoami` days="7":
-    rm -f mkosi.{crt,key}
+regenkey name=`whoami` days="730":
+    rm -f mkosi.crt mkosi.key
     echo "Old keys removed"
     just genkey "{{name}}" "{{days}}"
-
 
 mkosi +subcommand:
     #!/usr/bin/env bash
