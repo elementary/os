@@ -1,4 +1,4 @@
-default: 
+default:
     just --choose
 
 
@@ -14,6 +14,7 @@ do-proposed: (_do-release "proposed")
 _do-release stream:
     #!/usr/bin/env bash
     sudo rm -rf mkosi.output/ && \
+    just genkey
     just mkosi -B --debug --profile={{stream}} --force --workspace-directory=/workspace && \
     sudo PROFILE={{stream}} SQUASHFS_LEVEL="${SQUASHFS_LEVEL:-}" ./assemble-iso.sh
     sudo just compress-repo
@@ -32,28 +33,24 @@ _get_timestamp:
 
 # > Name: Owner of the key
 # > Days: Days before the key expires
-# Generate a new key if there is no existing ones
+# Generate a new key if there are none
 genkey name=`whoami` days="730":
     #!/usr/bin/env bash
     set -euo pipefail
     if [ ! -f "./mkosi.key" ] || [ ! -f "./mkosi.crt" ]; then
-        echo "Generating a new cert for {{name}}, valid for the next {{days}} days..."
+        # Drop exising keys
+        rm -f mkosi.key mkosi.crt
         # Like `mkosi genkey`, but with a fixed-length serial so every build's verity signature is the same size.
         # A random serial is a byte shorter 1 in 256 times, and a shorter signature written over a longer one
         # by an installed system's sysupdate leaves the old tail behind and breaks boot.
         OPENSSL_CONF=/dev/null openssl req -new -x509 -newkey rsa:2048 -keyout mkosi.key -out mkosi.crt \
             -days "{{days}}" -subj "/CN={{name}}/" -nodes -set_serial "0x40$(openssl rand -hex 19)"
         echo "Done!"
+    echo "Pair has been generated, owned by {{name}}, valid for {{days}} days"
+    else
+        echo "Existing key pair detected, will not generate a new one."
+        echo "Delete mkosi.key and mkosi.crt and rerun to generate a new pair"
     fi
-    echo "Certificate OK"
-
-# > Name: Owner of the key
-# > Days: Days before the key expires
-# Delete old key and generate a new one
-regenkey name=`whoami` days="730":
-    rm -f mkosi.crt mkosi.key
-    echo "Old keys removed"
-    just genkey "{{name}}" "{{days}}"
 
 mkosi +subcommand:
     #!/usr/bin/env bash
