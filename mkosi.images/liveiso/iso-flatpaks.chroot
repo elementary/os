@@ -5,4 +5,21 @@ if [[ "${1:-}" != "final" ]]; then
     exit 0
 fi
 
+CACHED_REPO_DIR="${SRCDIR}/mkosi.cache/flatpak/repo"
+FLATPAK_REPO_DIR="/var/lib/flatpak/repo"
+
+if [[ ! -f "${SRCDIR}/mkosi.cache/.ci" && -d "${CACHED_REPO_DIR}" ]]; then
+    echo "Load flatpak repo from local cache"
+    mkdir -p "${FLATPAK_REPO_DIR}"
+    rsync -aH "${CACHED_REPO_DIR}/" "${FLATPAK_REPO_DIR}/"
+fi
+
 flatpak preinstall -y --noninteractive --system
+
+if [[ -f "${SRCDIR}/mkosi.cache/.ci" ]]; then
+    exit 0
+fi
+
+echo "Save flatpak repo to local cache"
+mkdir -p "${CACHED_REPO_DIR}"
+rsync -aH --delete "${FLATPAK_REPO_DIR}/" "${CACHED_REPO_DIR}/"
