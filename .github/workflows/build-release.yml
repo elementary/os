@@ -88,6 +88,8 @@ jobs:
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT }}
         run: |
           set -euo pipefail
+          aws configure set default.s3.multipart_chunksize 64MB
+          aws configure set default.s3.multipart_threshold 64MB
 
           R2_BUCKET_UPDATES="${{inputs.stream}}-updates"
           R2_BUCKET_INSTALLER="${{inputs.stream}}-installer"
