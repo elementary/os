@@ -58,7 +58,7 @@ echo "Creating casper liveiso (zstd level ${SQUASHFS_LEVEL})..."
 
 mkdir -p iso_root/extra
 
-sudo podman run --rm -it \
+podman run --rm -it \
 --network host \
 --dns 8.8.8.8 \
 -v "$(pwd)":/workspace:Z \

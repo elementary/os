@@ -28,6 +28,7 @@ You'll need the following runtime dependencies:
 * podman
 * just
 * zstd
+* fzf
 * systemd
 
 Generate keys and then build with `just`
