@@ -17,7 +17,7 @@ fi
 
 ISO_LABEL="elementary OS ${PROFILE} ${ARCH}"
 
-OUT_ISO="./elementaryos-9.0-${PROFILE}-${ARCH}.${DATE}.iso"
+OUT_ISO="./elementaryos-${DATE}-${PROFILE}-${ARCH}.iso"
 
 RAW_IMAGE=$(ls elementary_${DATE}.raw)
 
