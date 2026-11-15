@@ -8,4 +8,4 @@ tar -czf /usr/share/factory/dpkg/dpkg.tar.gz -C / var/lib/dpkg
 
 # Fix kernel naming scheme to match what sysupdate will generate
 # Will otherwise result in a stale .efi that never gets removed
-mv /boot/EFI/Linux/elementary-*.efi "/boot/EFI/Linux/elementary_${IMAGE_VERSION}_${ARCHITECTURE}.efi"
+mv /buildroot/boot/EFI/Linux/elementary-*.efi "/buildroot/boot/EFI/Linux/elementary_${IMAGE_VERSION}_${ARCHITECTURE}.efi"
