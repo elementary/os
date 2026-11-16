@@ -5,8 +5,3 @@ set -xeuo pipefail
 # This runs after RemovePackages= so the database matches what's in the image.
 mkdir -p /usr/share/factory/dpkg/
 tar -czf /usr/share/factory/dpkg/dpkg.tar.gz -C / var/lib/dpkg
-
-# Fix kernel naming scheme to match what sysupdate will generate
-# Will otherwise result in a stale .efi that never gets removed
-ls -la /boot/EFI/Linux/ /buildroot/boot/EFI/Linux/ 2>&1
-mv /boot/EFI/Linux/elementary-*.efi "/boot/EFI/Linux/elementary_${IMAGE_VERSION}_${ARCHITECTURE}.efi"
